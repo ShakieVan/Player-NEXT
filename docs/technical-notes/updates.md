@@ -84,6 +84,9 @@ Sperre.
 2. `.\gradlew.bat :app:testDebugUnitTest :app:assembleRelease`
 3. APK als `release-artifacts/Player-NEXT-X.Y.Z.apk` ablegen.
 4. `docs/releases/vX.Y.Z.md` schreiben, committen, Tag `vX.Y.Z` pushen.
+   Die App zeigt die Notizen als reinen Text: ohne Überschriften-Markdown und
+   ohne harte Zeilenumbrüche (ein Absatz bzw. Punkt je Zeile), sonst bricht der
+   Text in der App mitten im Satz um (so noch bei 1.1.0).
 5. Release (X.Y.0): `gh release create vX.Y.Z release-artifacts/Player-NEXT-X.Y.Z.apk --title "Player NEXT X.Y.Z" --notes-file docs/releases/vX.Y.Z.md --latest --verify-tag`
 6. Beta (X.Y.Z, Z ≠ 0): `gh release create vX.Y.Z release-artifacts/Player-NEXT-X.Y.Z.apk -R ShakieVan/Player-NEXT-Beta --title "Player NEXT X.Y.Z (Beta)" --notes-file docs/releases/vX.Y.Z.md --prerelease`
 7. Nachprüfen wie der Updater: `gh api repos/<Repo>/releases/tags/vX.Y.Z` –
@@ -107,6 +110,19 @@ findet beim Start 1.1.0, lädt 7,0 MB, Prüfsumme passt, die Einstellung
 Android-Installer → „App wurde installiert.“ Auf dem S21 (Android 15) mit dem
 Debug-Bau: Prüfung erreicht GitHub („Noch kein passendes Release
 veröffentlicht.“ vor dem ersten Release).
+
+03.11.2026 Beta-Kanal im Emulator gegen das echte Beta-Release v1.1.1
+(`ShakieVan/Player-NEXT-Beta`): 1.1.0 mit neuem Code (`-PpnVersion=1.1.0`)
+meldet ohne Beta-Kanal „Du hast die neueste Version.“, nach dem Einschalten
+sofort „Neue Testversion 1.1.1 verfügbar.“ und „Neuerungen in 1.1.1 (Beta)“;
+Download 7,0 MB, Prüfungen und Android-Installer → „App wurde installiert.“
+Danach zeigt 1.1.1 „Installiert: Player NEXT 1.1.1 (Beta)“, Schalter an. Ein
+Bau 1.1.1 ohne gespeicherte Wahl hat den Schalter von selbst an.
+
+Play Protect zeigte dabei „App-Scan empfohlen“ (unbekannte App). Den Link
+„Ohne Scan installieren“ nimmt der Dialog über `adb shell input` nicht an;
+„App scannen“ → „Diese App ist anscheinend sicher“ → „Installieren“. Nutzer
+sehen diesen Dialog womöglich auch.
 
 Hinweis für Tests: Nach „Aktualisieren“ prüft Play Protect die APK einige
 Sekunden. Wird in dieser Zeit das Installationsrecht der App geändert, beendet
