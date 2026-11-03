@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/settings">
+
+    <PreferenceCategory android:title="Einstellungen" app:iconSpaceReserved="false">
+
+        <!-- ===================================================== Bibliothek -->
+        <PreferenceScreen
+            android:icon="@drawable/ic_genre"
+            android:key="music_library"
+            android:title="Bibliothek"
+            android:summary="Musikordner, Medienscanner, Musikstatistiken, Liedtexte und Playlists">
+
+            <PreferenceCategory android:title="Allgemein" app:iconSpaceReserved="false">
+                <Preference
+                    android:key="music_folder"
+                    android:title="Musikordner festlegen"
+                    android:summary="Bibliothek auf bestimmte Ordner beschränken"
+                    app:iconSpaceReserved="false" />
+                <Preference
+                    android:key="trigger_refresh_mediastore"
+                    android:title="Medien aktualisieren"
+                    android:summary="Medienscanner zur Aktualisierung ausführen"
+                    app:iconSpaceReserved="false" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="include_all_audio"
+                    android:title="Alle Audiodateien anzeigen"
+                    android:summary="Auch Dateien aufnehmen, die Android nicht als Musik einstuft (z. B. Sprachaufnahmen)"
+                    app:iconSpaceReserved="false" />
+                <SeekBarPreference
+                    android:defaultValue="0"
+                    android:key="min_duration_sec"
+                    android:max="120"
+                    android:title="Kurze Titel ausblenden (Sekunden)"
+                    android:summary="Titel unter dieser Länge nicht anzeigen (0 = alle)"
+                    app:iconSpaceReserved="false"
+                    app:showSeekBarValue="true" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Musikstatistiken" app:iconSpaceReserved="false">
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="ratings_half_stars"
+                    android:title="Halbsterne Bewertungen"
+                    android:summary="Halbe Sterne beim Bewerten erlauben (linke Hälfte eines Sterns antippen)"
+                    app:iconSpaceReserved="false" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="ratings_write_tags"
+                    android:title="Bewertungen in Dateien schreiben"
+                    android:summary="Bewertungen zusätzlich als Tag (POPM/RATING) in der Musikdatei speichern"
+                    app:iconSpaceReserved="false" />
+                <Preference
+                    android:key="import_metadata"
+                    android:title="Bewertungen aus Dateien importieren"
+                    android:summary="In Musikdateien gespeicherte Bewertungen übernehmen"
+                    app:iconSpaceReserved="false" />
+                <Preference
+                    android:key="music_stats_export"
+                    android:title="Musikstatistiken exportieren"
+                    android:summary="Bewertungen, Wiedergabe- und Überspringen-Zähler sowie letztes Abspieldatum in eine Datei sichern"
+                    app:iconSpaceReserved="false" />
+                <Preference
+                    android:key="restore_music_stats"
+                    android:title="Musikstatistiken wiederherstellen"
+                    android:summary="Musikstatistiken aus einer gesicherten Datei wiederherstellen"
+                    app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Liedtexte" app:iconSpaceReserved="false">
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="lyrics_prefer_id3"
+                    android:title="Liedtexte aus dem ID3-Tag bevorzugen"
+                    android:summary="Eingebettete Liedtexte vor .lrc-Dateien neben der Musikdatei anzeigen"
+                    app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+
+        <!-- ===================================================== Ansichten -->
+        <PreferenceScreen
+            android:icon="@drawable/ic_grid"
+            android:key="browsers"
+            android:title="Ansichten"
+            android:summary="Übersichten, Darstellung, Bildverwaltung und Auswahlaktionen">
+
+            <PreferenceCategory android:title="Suchbrowser" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_search_browser" android:title="Suchbrowser verwenden" android:summary="Musikbibliothek durchsuchen" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Albumübersicht" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_albums_browser" android:title="Albumansicht nutzen" android:summary="Musik nach Alben durchsuchen" app:iconSpaceReserved="false" />
+                <ListPreference android:defaultValue="grid" android:dependency="use_albums_browser" android:entries="@array/layout_entries" android:entryValues="@array/layout_values" android:key="albums_layout" android:title="Darstellung auswählen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="browse_tracks" android:dependency="use_albums_browser" android:entries="@array/album_click_entries" android:entryValues="@array/album_click_values" android:key="album_click_action" android:title="Auswahlaktion festlegen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <Preference android:dependency="use_albums_browser" android:key="delete_album_art" android:title="Eigene Albumcover löschen" android:summary="Alle selbst gewählten Albumcover entfernen (eingebettete Cover bleiben)" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Interpretenübersicht" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_artists_browser" android:title="Interpretenansicht nutzen" android:summary="Musik nach Interpreten durchsuchen" app:iconSpaceReserved="false" />
+                <ListPreference android:defaultValue="grid" android:dependency="use_artists_browser" android:entries="@array/layout_entries" android:entryValues="@array/layout_values" android:key="artists_layout" android:title="Darstellung auswählen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="browse_albums" android:dependency="use_artists_browser" android:entries="@array/artist_click_entries" android:entryValues="@array/artist_click_values" android:key="artist_click_action" android:title="Auswahlaktion festlegen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <CheckBoxPreference android:defaultValue="false" android:dependency="use_artists_browser" android:key="artist_use_album_artist" android:title="Albuminterpreten verwenden" android:summary="Interpreten nach Albuminterpret gruppieren (Sampler erscheinen unter dem Albuminterpreten)" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="false" android:dependency="use_artists_browser" android:key="show_album_artist" android:title="Nur mit Album anzeigen" android:summary="Nur Interpreten mit eigenem Album anzeigen" app:iconSpaceReserved="false" />
+                <Preference android:dependency="use_artists_browser" android:key="delete_artist_art" android:title="Interpretenbilder löschen" android:summary="Alle selbst gewählten Interpretenbilder entfernen" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Komponistenbrowser" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_composers_browser" android:title="Komponistenbrowser verwenden" android:summary="Musik nach Komponisten durchsuchen" app:iconSpaceReserved="false" />
+                <ListPreference android:defaultValue="grid" android:dependency="use_composers_browser" android:entries="@array/layout_entries" android:entryValues="@array/layout_values" android:key="composers_layout" android:title="Darstellung auswählen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="browse_tracks" android:dependency="use_composers_browser" android:entries="@array/composer_click_entries" android:entryValues="@array/composer_click_values" android:key="composer_click_action" android:title="Auswahlaktion festlegen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Genreübersicht" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_genres_browser" android:title="Genreansicht nutzen" android:summary="Musik nach Genres durchsuchen" app:iconSpaceReserved="false" />
+                <ListPreference android:defaultValue="grid" android:dependency="use_genres_browser" android:entries="@array/layout_entries" android:entryValues="@array/layout_values" android:key="genres_layout" android:title="Darstellung auswählen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="browse_albums" android:dependency="use_genres_browser" android:entries="@array/genre_click_entries" android:entryValues="@array/genre_click_values" android:key="genre_click_action" android:title="Auswahlaktion festlegen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <Preference android:dependency="use_genres_browser" android:key="delete_genre_art" android:title="Genre-Bilder löschen" android:summary="Alle selbst gewählten Bilder für Genres, Komponisten und Playlists entfernen" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Wiedergabelisten-Browser" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_playlists_browser" android:title="Playlistansicht nutzen" android:summary="Musik nach Playlists durchsuchen" app:iconSpaceReserved="false" />
+                <MultiSelectListPreference android:defaultValue="@array/smart_playlist_values" android:dependency="use_playlists_browser" android:entries="@array/smart_playlist_entries" android:entryValues="@array/smart_playlist_values" android:key="smart_playlists" android:title="Smarte Playlists auswählen" android:summary="Welche der intelligenten Wiedergabelisten angezeigt werden" app:iconSpaceReserved="false" />
+                <Preference android:dependency="use_playlists_browser" android:key="export_playlists" android:title="Wiedergabelisten exportieren" android:summary="Alle Playlists als M3U-Dateien in einen Ordner sichern" app:iconSpaceReserved="false" />
+                <Preference android:dependency="use_playlists_browser" android:key="import_playlists" android:title="Wiedergabeliste importieren" android:summary="Eine M3U-Playlist importieren" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Ordnerübersicht" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_folders_browser" android:title="Ordneransicht nutzen" android:summary="Musik nach Ordnern durchsuchen" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:dependency="use_folders_browser" android:key="display_title_tag" android:title="Titelnamen anzeigen" android:summary="Titelnamen anstatt der Dateinamen anzeigen" app:iconSpaceReserved="false" />
+                <ListPreference android:defaultValue="play_all" android:dependency="use_folders_browser" android:entries="@array/song_click_entries" android:entryValues="@array/song_click_values" android:key="folder_click_action" android:title="Auswahlaktion festlegen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Titelübersicht" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_songs_browser" android:title="Titelansicht nutzen" android:summary="Musik nach Titeln durchsuchen" app:iconSpaceReserved="false" />
+                <ListPreference android:defaultValue="play_all" android:dependency="use_songs_browser" android:entries="@array/song_click_entries" android:entryValues="@array/song_click_values" android:key="song_click_action" android:title="Auswahlaktion festlegen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Videoübersicht" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_videos_browser" android:title="Videoansicht nutzen" android:summary="Videos durchsuchen" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:dependency="use_videos_browser" android:key="display_title_vid_tag" android:title="Videotitel anzeigen" android:summary="Videotitel anstatt des Dateinamens anzeigen" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:dependency="use_videos_browser" android:key="play_next_video" android:title="Wiedergabe fortführen" android:summary="Nächstes Video wiedergeben, nachdem das aktuelle beendet wurde" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+
+        <!-- ===================================================== Erscheinungsbild -->
+        <PreferenceScreen
+            android:icon="@drawable/ic_edit"
+            android:key="look_and_feel_settings"
+            android:title="Erscheinungsbild"
+            android:summary="Skins, Darstellung, Displayanzeige, Ausrichtung und Benachrichtigungsleiste">
+
+            <PreferenceCategory android:title="Allgemein" app:iconSpaceReserved="false">
+                <ListPreference android:defaultValue="orange" android:entries="@array/skin_entries" android:entryValues="@array/skin_values" android:key="prefskin" android:title="Skin auswählen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="none" android:entries="@array/night_skin_entries" android:entryValues="@array/night_skin_values" android:key="prefnightskin" android:title="Nacht-Skin auswählen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <EditTextPreference android:defaultValue="22:00" android:key="nighttime_skin_start" android:title="Nachtmodus Start" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <EditTextPreference android:defaultValue="07:00" android:key="nighttime_skin_end" android:title="Nachtmodus Ende" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="startup_library" android:entries="@array/startup_entries" android:entryValues="@array/startup_values" android:key="startup_screen" android:title="Startbildschirm" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="lock_none" android:entries="@array/orientation_entries" android:entryValues="@array/orientation_values" android:key="lock_orientation" android:title="Ausrichtung auswählen" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Navigationsmenü" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="false" android:key="show_browsers_first" android:title="Browser zuerst anzeigen" android:summary="Browser zuerst anzeigen, dann Favoriten" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Player" app:iconSpaceReserved="false">
+                <ListPreference android:defaultValue="player_art_normal" android:entries="@array/player_art_entries" android:entryValues="@array/player_art_values" android:key="player_art" android:title="Albumcover-Skalierung" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <CheckBoxPreference android:defaultValue="false" android:key="prefer_embedded" android:title="ID3-Albumcover anzeigen" android:summary="Im ID3-Tag eingebundene Albumcover anstatt selbst gewählter anzeigen" app:iconSpaceReserved="false" />
+                <ListPreference android:defaultValue="player_swipe_drawer" android:entries="@array/swipe_entries" android:entryValues="@array/swipe_values" android:key="player_swipe_effect" android:title="Albumcover-Übergang" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="player_gesture_none" android:entries="@array/gesture_entries" android:entryValues="@array/gesture_values" android:key="player_gesture" android:title="Pause/Fortsetzen Geste" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <CheckBoxPreference android:defaultValue="true" android:key="player_visible_ratings" android:title="Liedbewertung" android:summary="Bewertungsleiste und Aktionen immer anzeigen (sonst durch Tippen auf das Albumcover)" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="false" android:key="player_display_remaining" android:title="Restzeit" android:summary="Verbleibende Zeit anstatt Lieddauer anzeigen" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="false" android:key="player_full_screen" android:title="Vollbild" android:summary="Die Player-Ansicht blendet die Statusleiste aus" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="false" android:key="player_keep_screen_on" android:title="Display anlassen" android:summary="Display in der Wiedergabeansicht anlassen (kostet Akku)" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Benachrichtigung" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="false" android:key="statusbar_remove_pause" android:title="Beim Pausieren ausblenden" android:summary="Benachrichtigung entfernen, solange die Wiedergabe pausiert ist" app:iconSpaceReserved="false" />
+                <ListPreference android:defaultValue="custom_action_favorite" android:entries="@array/custom_action_entries" android:entryValues="@array/custom_action_values" android:key="statusbar_custom_action_1" android:title="Benutzerdefinierte Taste links" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="custom_action_stop" android:entries="@array/custom_action_entries" android:entryValues="@array/custom_action_values" android:key="statusbar_custom_action_2" android:title="Benutzerdefinierte Taste rechts" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <CheckBoxPreference android:defaultValue="true" android:key="statusbar_use_prev" android:title="Zurück-Taste" android:summary="Taste für vorherigen Titel in der Benachrichtigung anzeigen" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Widgets" app:iconSpaceReserved="false">
+                <Preference android:key="widget_settings" android:title="Widgets anpassen" android:summary="Transparenz des Hintergrunds und Cover für alle Widgets; einzelne Widgets über „Einstellungen“ im Startbildschirm" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Sperrbildschirm" app:iconSpaceReserved="false">
+                <Preference android:selectable="false" android:title="Steuerung über Android" android:summary="Auf dem Sperrbildschirm zeigt Android die Mediensteuerung mit Cover. Eine eigene Sperrbildschirm-App ist unter aktuellen Android-Versionen nicht mehr zuverlässig möglich." app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+
+        <!-- ===================================================== Audio -->
+        <PreferenceScreen
+            android:icon="@drawable/ic_equalizer"
+            android:key="audio_settings"
+            android:title="Audio"
+            android:summary="Equalizer, Ausgabe, Gapless Playback, Crossfading, ReplayGain und Energiesparen">
+
+            <PreferenceCategory android:title="Allgemein" app:iconSpaceReserved="false">
+                <Preference android:key="open_equalizer" android:title="Equalizer" android:summary="10-Band-Equalizer, Hall, Bass und Virtualizer" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:key="audio_offload" android:title="Stromsparende Hardware-Wiedergabe" android:summary="Dekodierung an den Audio-Chip abgeben, solange keine Effekte aktiv sind (spart deutlich Akku)" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="false" android:dependency="audio_offload" android:key="audio_offload_gapless" android:title="Nur mit lückenlosen Übergängen" android:summary="Hardware-Wiedergabe nur nutzen, wenn das Gerät dabei lückenlose Titelwechsel meldet (viele Geräte melden das nicht, dann entfällt die Ersparnis)" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Ausgabe" app:iconSpaceReserved="false">
+                <SeekBarPreference android:defaultValue="0" android:key="audio_balance" android:max="100" android:title="Kanal-Balance" android:summary="Links (negativ) / Rechts (positiv) in Prozent" app:iconSpaceReserved="false" app:min="-100" app:showSeekBarValue="true" />
+                <CheckBoxPreference android:defaultValue="false" android:key="mono_output" android:title="Mono" android:summary="Stereo als Mono abspielen" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:key="use_limiter" android:title="Begrenzer" android:summary="Ausgabe begrenzen, um Verzerrungen durch Anhebungen zu vermeiden" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Wiedergabe" app:iconSpaceReserved="false">
+                <Preference android:selectable="false" android:title="Gapless Playback" android:summary="Lückenlose Titelwechsel sind immer aktiv" app:iconSpaceReserved="false" />
+                <SeekBarPreference android:defaultValue="100" android:key="audio_pitch" android:max="200" android:title="Tonhöhe (%)" android:summary="Tonhöhe der Wiedergabe" app:iconSpaceReserved="false" app:min="50" app:showSeekBarValue="true" />
+                <SeekBarPreference android:defaultValue="100" android:key="audio_speed" android:max="200" android:title="Audio-Geschwindigkeit (%)" android:summary="Wiedergabe-Geschwindigkeit" app:iconSpaceReserved="false" app:min="50" app:showSeekBarValue="true" />
+                <CheckBoxPreference android:defaultValue="false" android:key="pause_between_songs" android:title="Pause zwischen den Titeln" android:summary="Nach jedem Titel pausieren (nützlich für Musiker, Lehrer usw.)" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:key="skip_unsupported_audio" android:title="Nicht unterstützte Dateien überspringen" android:summary="Defekte oder nicht abspielbare Dateien automatisch überspringen" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Audiofokus" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="audio_focus_loss" android:title="Dauerhafter Audiofokusverlust" android:summary="Wiedergabe pausieren, wenn eine andere App dauerhaft Audio übernimmt" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:key="audio_focus_transient_loss" android:title="Vorübergehender Audiofokusverlust" android:summary="Wiedergabe pausieren bei Anrufen, Navigation usw. und danach fortsetzen" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:key="audio_focus_transient_loss_can_duck" android:title="Niedrige Lautstärke" android:summary="Bei kurzen Unterbrechungen nur leiser werden, falls möglich" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Effekte" app:iconSpaceReserved="false">
+                <Preference android:key="use_system_sound_effects" android:title="System-Klangeffekte" android:summary="Klangeffekte-Panel des Systems öffnen (falls vorhanden)" app:iconSpaceReserved="false" />
+                <Preference android:key="reset_eq_presets" android:title="Equalizer-Voreinstellungen zurücksetzen" android:summary="Eigene Presets löschen und den Equalizer auf Normal stellen" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Crossfading" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="false" android:key="auto_cfade" android:title="Automat. Crossfading aktivieren" android:summary="Überblendungen beim automatischen Titelwechsel" app:iconSpaceReserved="false" />
+                <SeekBarPreference android:defaultValue="5000" android:dependency="auto_cfade" android:key="auto_cfade_time" android:max="12000" android:title="Überblendzeit (ms)" app:iconSpaceReserved="false" app:min="1000" app:seekBarIncrement="500" app:showSeekBarValue="true" />
+                <CheckBoxPreference android:defaultValue="true" android:dependency="auto_cfade" android:key="auto_cfade_shuffle" android:title="Nur bei Zufallswiedergabe verwenden" android:summary="Automatische Überblendung nur bei Zufallswiedergabe" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="false" android:key="manual_cfade" android:title="Manuelles Crossfading aktivieren" android:summary="Überblendungen beim manuellen Titelwechsel" app:iconSpaceReserved="false" />
+                <SeekBarPreference android:defaultValue="1000" android:dependency="manual_cfade" android:key="manual_cfade_time" android:max="5000" android:title="Überblendzeit (ms)" app:iconSpaceReserved="false" app:min="200" app:seekBarIncrement="100" app:showSeekBarValue="true" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="ReplayGain" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="rg" android:title="ReplayGain-Option" android:summary="ReplayGain-Lautstärkenormalisierung aktivieren" app:iconSpaceReserved="false" />
+                <ListPreference android:defaultValue="album" android:dependency="rg" android:entries="@array/rg_source_entries" android:entryValues="@array/rg_source_values" android:key="rg_source" android:title="Normalisierungsmethode" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <SeekBarPreference android:defaultValue="0" android:dependency="rg" android:key="rg_dg" android:max="15" android:title="Standard-Verstärkung (dB)" android:summary="Für Dateien ohne ReplayGain-Angaben" app:iconSpaceReserved="false" app:min="-15" app:showSeekBarValue="true" />
+                <SeekBarPreference android:defaultValue="0" android:dependency="rg" android:key="rg_preamp" android:max="15" android:title="Vorverstärkung (dB)" app:iconSpaceReserved="false" app:min="-15" app:showSeekBarValue="true" />
+                <CheckBoxPreference android:defaultValue="true" android:dependency="rg" android:key="rg_clipping" android:title="Übersteuerungsschutz" android:summary="ReplayGain-Spitzenwerte verwenden, um Übersteuerungen zu vermeiden" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+
+        <!-- ===================================================== Headset -->
+        <PreferenceScreen
+            android:icon="@drawable/ic_volume"
+            android:key="headset_settings"
+            android:title="Headset"
+            android:summary="Headset-Tasten, Funktionsweise und Verbindungsverhalten">
+            <CheckBoxPreference android:defaultValue="true" android:key="use_headset" android:title="Headsettasten ändern" android:summary="Eigene Belegung der Headsettaste verwenden" app:iconSpaceReserved="false" />
+            <ListPreference android:defaultValue="none" android:dependency="use_headset" android:entries="@array/headset_long_entries" android:entryValues="@array/headset_long_values" android:key="headset_long_press" android:title="Langes Drücken" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+            <CheckBoxPreference android:defaultValue="false" android:dependency="use_headset" android:key="headset_use_db_press" android:title="Mehrfachdrücken nutzen" android:summary="Zweimal drücken: nächster Titel, dreimal: vorheriger Titel" app:iconSpaceReserved="false" />
+            <CheckBoxPreference android:defaultValue="false" android:key="headset_auto_start" android:title="Musikwiedergabe starten" android:summary="Wiedergabe nach dem Einstecken eines Headsets automatisch fortsetzen (solange Player NEXT läuft)" app:iconSpaceReserved="false" />
+            <CheckBoxPreference android:defaultValue="true" android:key="headset_bt_auto_start" android:title="Nach Bluetooth-Verbindung starten" android:summary="Wiedergabe nach dem Verbinden eines Bluetooth-Kopfhörers fortsetzen (solange Player NEXT läuft)" app:iconSpaceReserved="false" />
+            <CheckBoxPreference android:defaultValue="true" android:key="headset_bt_auto_stop" android:title="Automatisch pausieren" android:summary="Wiedergabe pausieren, wenn Kopfhörer oder Bluetooth-Gerät getrennt werden" app:iconSpaceReserved="false" />
+        </PreferenceScreen>
+
+        <!-- ===================================================== Bewegungssteuerung -->
+        <PreferenceScreen
+            android:icon="@drawable/ic_rotate"
+            android:key="shake_settings"
+            android:title="Bewegungssteuerung"
+            android:summary="Bewegungssteuerung und Empfindlichkeit">
+            <CheckBoxPreference android:defaultValue="false" android:key="use_shake" android:title="Bewegungssteuerung nutzen" android:summary="Gerät nach links/rechts oder oben/unten schütteln, um den Titel zu wechseln" app:iconSpaceReserved="false" />
+            <SeekBarPreference android:defaultValue="50" android:dependency="use_shake" android:key="shake_sensitivity" android:max="100" android:title="Empfindlichkeit festlegen" app:iconSpaceReserved="false" app:min="0" app:showSeekBarValue="true" />
+            <CheckBoxPreference android:defaultValue="false" android:key="shake_pause_upsidedown" android:title="Umdrehbewegung erlauben" android:summary="Gerät mit dem Display nach unten legen, um die Wiedergabe zu pausieren" app:iconSpaceReserved="false" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Sonstiges" app:iconSpaceReserved="false">
+        <PreferenceScreen
+            android:icon="@drawable/ic_info"
+            android:key="advanced_settings"
+            android:title="Über"
+            android:summary="Einstellungen sichern/wiederherstellen, Updates, Version und Lizenzen">
+            <PreferenceCategory android:title="Sichern/Wiederherstellen" app:iconSpaceReserved="false">
+                <Preference android:key="export_settings" android:title="Einstellungen exportieren" android:summary="Einstellungen und Equalizer in eine Datei sichern" app:iconSpaceReserved="false" />
+                <Preference android:key="restore_settings" android:title="Einstellungen wiederherstellen" android:summary="Einstellungen aus einer Datei wiederherstellen (vorhandene werden überschrieben)" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+            <PreferenceCategory android:title="Player NEXT" app:iconSpaceReserved="false">
+                <Preference android:key="ppo_version" android:title="Version" app:iconSpaceReserved="false" />
+                <Preference android:key="updates" android:title="Updates" android:summary="Neue Versionen von GitHub laden und installieren" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:key="update_auto_check" android:title="Automatisch nach Updates suchen" android:summary="Einmal täglich beim Start bei GitHub nachsehen" app:iconSpaceReserved="false" />
+                <Preference android:key="ppo_licenses" android:title="Lizenzen" android:summary="Verwendete Open-Source-Projekte" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="menu_play_all" type="id" />
+    <item name="menu_shuffle_all" type="id" />
+    <item name="menu_sort" type="id" />
+    <item name="menu_layout" type="id" />
+    <item name="menu_new_smart" type="id" />
+    <item name="menu_import_playlist" type="id" />
+    <item name="group_sort" type="id" />
+    <item name="menu_search" type="id" />
+    <item name="menu_equalizer" type="id" />
+    <item name="menu_settings" type="id" />
+    <item name="menu_save_queue" type="id" />
+    <item name="menu_clear_queue" type="id" />
+    <item name="menu_party" type="id" />
+    <item name="menu_sleep" type="id" />
+    <item name="menu_exit" type="id" />
+    <item name="menu_rescan" type="id" />
+    <item name="content_frame" type="id" />
+</resources>

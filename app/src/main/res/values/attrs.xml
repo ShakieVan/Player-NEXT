@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Skin colors; every custom drawable refers to these so skins can swap them. -->
+    <attr name="pnAccent" format="color" />
+    <attr name="pnAccentStrong" format="color" />
+    <attr name="pnActiveBg" format="color" />
+
+    <declare-styleable name="KnobView">
+        <attr name="knobLabel" format="string" />
+    </declare-styleable>
+</resources>

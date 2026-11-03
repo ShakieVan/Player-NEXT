@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="layout_entries">
+        <item>Gitterdarstellung</item>
+        <item>Raster (klein)</item>
+        <item>Raster (extra klein)</item>
+        <item>Liste</item>
+    </string-array>
+    <string-array name="layout_values">
+        <item>grid</item>
+        <item>grid_small</item>
+        <item>grid_xsmall</item>
+        <item>list</item>
+    </string-array>
+
+    <string-array name="album_click_entries">
+        <item>Lieder durchsuchen</item>
+        <item>Wiedergabe</item>
+        <item>Zur Warteschlange hinzufügen</item>
+        <item>Als Nächstes wiedergeben</item>
+    </string-array>
+    <string-array name="album_click_values">
+        <item>browse_tracks</item>
+        <item>play</item>
+        <item>enqueue</item>
+        <item>play_next</item>
+    </string-array>
+
+    <string-array name="artist_click_entries">
+        <item>Alben durchsuchen</item>
+        <item>Lieder durchsuchen</item>
+        <item>Wiedergabe</item>
+        <item>Zur Warteschlange hinzufügen</item>
+        <item>Als Nächstes wiedergeben</item>
+    </string-array>
+    <string-array name="artist_click_values">
+        <item>browse_albums</item>
+        <item>browse_tracks</item>
+        <item>play</item>
+        <item>enqueue</item>
+        <item>play_next</item>
+    </string-array>
+
+    <string-array name="composer_click_entries">
+        <item>Alle Titel anzeigen</item>
+        <item>Wiedergabe</item>
+        <item>Zur Warteschlange hinzufügen</item>
+        <item>Als Nächstes wiedergeben</item>
+    </string-array>
+    <string-array name="composer_click_values">
+        <item>browse_tracks</item>
+        <item>play</item>
+        <item>enqueue</item>
+        <item>play_next</item>
+    </string-array>
+
+    <string-array name="genre_click_entries">
+        <item>Alben durchsuchen</item>
+        <item>Interpreten durchsuchen</item>
+        <item>Lieder durchsuchen</item>
+        <item>Wiedergabe</item>
+        <item>Zur Warteschlange hinzufügen</item>
+        <item>Als Nächstes wiedergeben</item>
+    </string-array>
+    <string-array name="genre_click_values">
+        <item>browse_albums</item>
+        <item>browse_artists</item>
+        <item>browse_tracks</item>
+        <item>play</item>
+        <item>enqueue</item>
+        <item>play_next</item>
+    </string-array>
+
+    <string-array name="song_click_entries">
+        <item>Alle abspielen</item>
+        <item>Alle mischen</item>
+        <item>Als Nächstes wiedergeben</item>
+        <item>Am Ende anhängen</item>
+    </string-array>
+    <string-array name="song_click_values">
+        <item>play_all</item>
+        <item>shuffle_all</item>
+        <item>play_next</item>
+        <item>play_last</item>
+    </string-array>
+
+    <string-array name="smart_playlist_entries">
+        <item>Kürzlich hinzugefügt</item>
+        <item>Am besten bewertet</item>
+        <item>Am häufigsten wiedergegeben</item>
+        <item>Kürzlich wiedergegeben</item>
+        <item>Am seltensten wiedergegeben</item>
+        <item>Podcasts</item>
+    </string-array>
+    <string-array name="smart_playlist_values">
+        <item>ra</item>
+        <item>tr</item>
+        <item>mp</item>
+        <item>rp</item>
+        <item>lp</item>
+        <item>pd</item>
+    </string-array>
+
+    <string-array name="skin_entries">
+        <item>NEXT Orange (Standard)</item>
+        <item>NEXT Rot</item>
+        <item>Grün</item>
+        <item>Blau</item>
+        <item>Violett</item>
+    </string-array>
+    <string-array name="skin_values">
+        <item>orange</item>
+        <item>red</item>
+        <item>green</item>
+        <item>blue</item>
+        <item>violet</item>
+    </string-array>
+
+    <string-array name="night_skin_entries">
+        <item>Keinen</item>
+        <item>Nacht (gedämpft, schwarz)</item>
+    </string-array>
+    <string-array name="night_skin_values">
+        <item>none</item>
+        <item>night</item>
+    </string-array>
+
+    <string-array name="startup_entries">
+        <item>Bibliothek (immer)</item>
+        <item>Zuletzt besucht (Bibliothek oder Player)</item>
+        <item>Player (falls spielt)</item>
+        <item>Player (wenn die Warteschlange nicht leer ist)</item>
+    </string-array>
+    <string-array name="startup_values">
+        <item>startup_library</item>
+        <item>startup_last_visited</item>
+        <item>startup_player_if_playing</item>
+        <item>startup_player_if_queue</item>
+    </string-array>
+
+    <string-array name="orientation_entries">
+        <item>Automatisch</item>
+        <item>Hochformat</item>
+        <item>Querformat</item>
+    </string-array>
+    <string-array name="orientation_values">
+        <item>lock_none</item>
+        <item>lock_portrait</item>
+        <item>lock_landscape</item>
+    </string-array>
+
+    <string-array name="player_art_entries">
+        <item>Normal</item>
+        <item>Gezoomt</item>
+        <item>Gepolstert</item>
+    </string-array>
+    <string-array name="player_art_values">
+        <item>player_art_normal</item>
+        <item>player_art_zoomed</item>
+        <item>player_art_padded</item>
+    </string-array>
+
+    <string-array name="swipe_entries">
+        <item>Standard</item>
+        <item>Akkordeon</item>
+        <item>Stapel</item>
+        <item>Schublade</item>
+        <item>Tablett</item>
+        <item>Würfel</item>
+        <item>Umdrehen</item>
+        <item>Zoomen</item>
+        <item>Zoomen und wischen</item>
+        <item>Aufdrehen</item>
+        <item>Herunterdrehen</item>
+        <item>Tiefe</item>
+    </string-array>
+    <string-array name="swipe_values">
+        <item>player_swipe_standard</item>
+        <item>player_swipe_accordion</item>
+        <item>player_swipe_stack</item>
+        <item>player_swipe_drawer</item>
+        <item>player_swipe_tablet</item>
+        <item>player_swipe_cube</item>
+        <item>player_swipe_flip</item>
+        <item>player_swipe_zoom</item>
+        <item>player_swipe_zoom_slide</item>
+        <item>player_swipe_rotate_up</item>
+        <item>player_swipe_rotate_down</item>
+        <item>player_swipe_depth</item>
+    </string-array>
+
+    <string-array name="gesture_entries">
+        <item>Nichts</item>
+        <item>Doppelt tippen</item>
+        <item>Langer Druck</item>
+    </string-array>
+    <string-array name="gesture_values">
+        <item>player_gesture_none</item>
+        <item>player_gesture_doubletap</item>
+        <item>player_gesture_longpress</item>
+    </string-array>
+
+    <string-array name="custom_action_entries">
+        <item>Keine</item>
+        <item>Zufällig wiedergeben</item>
+        <item>Wiederholen</item>
+        <item>Bewerten</item>
+        <item>Favorit</item>
+        <item>Stopp</item>
+        <item>Zurückspulen 5 s</item>
+        <item>Zurückspulen 10 s</item>
+        <item>Zurückspulen 30 s</item>
+        <item>Überspringen 5 s</item>
+        <item>Überspringen 10 s</item>
+        <item>Überspringen 30 s</item>
+    </string-array>
+    <string-array name="custom_action_values">
+        <item>custom_action_none</item>
+        <item>custom_action_shuffle</item>
+        <item>custom_action_repeat</item>
+        <item>custom_action_rate</item>
+        <item>custom_action_favorite</item>
+        <item>custom_action_stop</item>
+        <item>custom_action_rewind_5</item>
+        <item>custom_action_rewind_10</item>
+        <item>custom_action_rewind_30</item>
+        <item>custom_action_skip_5</item>
+        <item>custom_action_skip_10</item>
+        <item>custom_action_skip_30</item>
+    </string-array>
+
+    <string-array name="rg_source_entries">
+        <item>Album-Dynamik beibehalten</item>
+        <item>Alle Lieder gleich laut (pro Titel)</item>
+    </string-array>
+    <string-array name="rg_source_values">
+        <item>album</item>
+        <item>track</item>
+    </string-array>
+
+    <string-array name="headset_long_entries">
+        <item>Wiedergabe/Pause</item>
+        <item>Nächsten Titel wiedergeben</item>
+        <item>Partymix starten/beenden</item>
+        <item>Bibliothek öffnen</item>
+    </string-array>
+    <string-array name="headset_long_values">
+        <item>none</item>
+        <item>next</item>
+        <item>partyshuffle</item>
+        <item>openml</item>
+    </string-array>
+</resources>

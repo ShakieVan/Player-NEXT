@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Player NEXT</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="delete">Löschen</string>
+    <string name="rename">Umbenennen</string>
+    <string name="save">Speichern</string>
+    <string name="close">Schließen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="unknown_artist">Unbekannter Interpret</string>
+    <string name="unknown_album">Unbekanntes Album</string>
+    <string name="unknown_genre">Unbekanntes Genre</string>
+    <string name="various_artists">Verschiedene Interpreten</string>
+    <string name="open_menu">Menü öffnen</string>
+    <string name="close_menu">Menü schließen</string>
+    <string name="more_options">Weitere Optionen</string>
+    <string name="back">Zurück</string>
+
+    <plurals name="n_songs">
+        <item quantity="one">%d Titel</item>
+        <item quantity="other">%d Titel</item>
+    </plurals>
+    <plurals name="n_albums">
+        <item quantity="one">%d Album</item>
+        <item quantity="other">%d Alben</item>
+    </plurals>
+    <plurals name="n_folders">
+        <item quantity="one">%d Ordner</item>
+        <item quantity="other">%d Ordner</item>
+    </plurals>
+    <plurals name="n_selected">
+        <item quantity="one">%d ausgewählt</item>
+        <item quantity="other">%d ausgewählt</item>
+    </plurals>
+
+    <!-- Browsers / drawer -->
+    <string name="browser_search">Suche</string>
+    <string name="browser_albums">Alben</string>
+    <string name="browser_artists">Interpreten</string>
+    <string name="browser_composers">Komponisten</string>
+    <string name="browser_genres">Genres</string>
+    <string name="browser_playlists">Playlists</string>
+    <string name="browser_folders">Ordner</string>
+    <string name="browser_songs">Titel</string>
+    <string name="browser_videos">Videos</string>
+    <string name="drawer_favorites">FAVORITEN</string>
+    <string name="drawer_browsers">BROWSER</string>
+    <string name="drawer_edit">Navigationsmenü anpassen</string>
+    <string name="drawer_edit_done">Fertig</string>
+    <string name="drawer_edit_hint">Browser antippen zum Ein-/Ausblenden, Favoriten nach links wischen zum Entfernen, am Symbol ziehen zum Sortieren.</string>
+    <string name="drawer_no_favorites">Noch keine Favoriten. Über „Zu Favoriten hinzufügen“ im Kontextmenü anlegen.</string>
+
+    <string name="smart_recently_added">Kürzlich hinzugefügt</string>
+    <string name="smart_top_rated">Am besten bewertet</string>
+    <string name="smart_most_played">Am häufigsten wiedergegeben</string>
+    <string name="smart_recently_played">Kürzlich wiedergegeben</string>
+    <string name="smart_least_played">Am seltensten wiedergegeben</string>
+    <string name="smart_podcasts">Podcasts</string>
+
+    <!-- Overflow menus -->
+    <string name="play_all">Alle wiedergeben</string>
+    <string name="shuffle_all">Alle zufällig wiedergeben</string>
+    <string name="sort">Sortieren</string>
+    <string name="layout">Darstellung</string>
+    <string name="equalizer">Equalizer</string>
+    <string name="settings">Einstellungen</string>
+    <string name="save_queue">Aktuelle Playlist speichern</string>
+    <string name="clear_queue">Aktuelle Playlist verwerfen</string>
+    <string name="party_on">Partymix an</string>
+    <string name="party_off">Partymix aus</string>
+    <string name="sleep_timer">Einschlaf-Timer</string>
+    <string name="exit">Beenden</string>
+    <string name="rescan">Medien aktualisieren</string>
+
+    <string name="sort_title">Nach Titelname</string>
+    <string name="sort_name">Nach Name</string>
+    <string name="sort_artist">Nach Interpretenname</string>
+    <string name="sort_album">Nach Albumname</string>
+    <string name="sort_year">Nach Jahr</string>
+    <string name="sort_track_count">Nach Titelanzahl</string>
+    <string name="sort_album_count">Nach Albumanzahl</string>
+    <string name="sort_duration">Nach Dauer</string>
+    <string name="sort_date_added">Nach Hinzufügedatum</string>
+    <string name="sort_track">Nach Titelnummer</string>
+    <string name="sort_filename">Nach Dateiname</string>
+    <string name="sort_reverse">In umgekehrter Reihenfolge</string>
+    <string name="sort_playlist_order">Playlist-Reihenfolge</string>
+    <string name="layout_grid">Gitterdarstellung</string>
+    <string name="layout_grid_small">Raster (klein)</string>
+    <string name="layout_grid_xsmall">Raster (extra klein)</string>
+    <string name="layout_list">Liste</string>
+
+    <!-- Item actions -->
+    <string name="action_play">Wiedergeben</string>
+    <string name="action_enqueue">Zu akt. Playlist hinzufügen</string>
+    <string name="action_play_next">Als Nächstes wiedergeben</string>
+    <string name="action_shuffle">Zufällig wiedergeben</string>
+    <string name="action_add_to_playlist">Zu best. Playlist hinzufügen</string>
+    <string name="action_add_favorite">Zu Favoriten hinzufügen</string>
+    <string name="action_remove_favorite">Aus Favoriten entfernen</string>
+    <string name="action_album_info">Albuminfos anzeigen</string>
+    <string name="action_manage_art">Albumcover verwalten</string>
+    <string name="action_manage_artist_art">Interpretenbild verwalten</string>
+    <string name="action_manage_picture">Bild verwalten</string>
+    <string name="action_edit_tags">ID3-Tag editieren</string>
+    <string name="action_search">Suchen</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_lyrics">Liedtext anzeigen</string>
+    <string name="action_details">Details anzeigen</string>
+    <string name="action_share">Weiterleiten</string>
+    <string name="action_ringtone">Als Klingelton verwenden</string>
+    <string name="action_rename">Umbenennen</string>
+    <string name="action_edit_smart">Smarte Playlist bearbeiten</string>
+    <string name="action_export">Als M3U exportieren</string>
+    <string name="action_select_all">Alle auswählen</string>
+    <string name="action_remove_from_queue">Aus Warteschlange entfernen</string>
+    <string name="action_remove_from_playlist">Aus Playlist entfernen</string>
+    <string name="action_show_album">Alle Albumtitel anzeigen</string>
+    <string name="action_show_artist">Alle Interpretentitel anzeigen</string>
+    <string name="action_show_folder">Alle Ordnertitel anzeigen</string>
+    <string name="action_play_video">Video abspielen</string>
+
+    <string name="art_choose">Bild aus Galerie wählen</string>
+    <string name="art_use_embedded">Eingebettetes Cover verwenden</string>
+    <string name="art_remove">Eigenes Bild entfernen</string>
+    <string name="art_saved">Bild gespeichert</string>
+    <string name="art_failed">Bild konnte nicht geladen werden</string>
+
+    <!-- List header -->
+    <string name="header_play_all">Alle abspielen</string>
+    <string name="header_shuffle">Zufällig</string>
+    <string name="header_queue_all">Alle zu Warteschlange</string>
+    <string name="released_in">Veröffentlicht %1$d</string>
+
+    <!-- Now playing -->
+    <string name="now_playing">Aktuelle Playlist</string>
+    <string name="now_playing_empty">Nichts in der Warteschlange</string>
+    <string name="add_to">Hinzufügen zu</string>
+    <string name="share">Teilen</string>
+    <string name="lyrics">Liedtexte</string>
+    <string name="queue">Warteschlange</string>
+    <string name="no_lyrics">Für diesen Titel sind keine Liedtexte gespeichert.\n\nÜber „Bearbeiten“ kannst du einen Liedtext in die Datei schreiben, oder lege eine .lrc-Datei mit gleichem Namen neben die Musikdatei.</string>
+    <string name="lyrics_edit">Liedtext bearbeiten</string>
+    <string name="previous">Zurück</string>
+    <string name="next">Weiter</string>
+    <string name="play">Wiedergabe</string>
+    <string name="pause">Pause</string>
+    <string name="shuffle">Zufallswiedergabe</string>
+    <string name="repeat">Wiederholen</string>
+    <string name="rate">Bewerten</string>
+    <string name="favorite">Favorit</string>
+    <string name="stop">Stopp</string>
+    <string name="rewind">Zurückspulen</string>
+    <string name="fast_forward">Vorspulen</string>
+    <string name="volume">Lautstärke</string>
+    <string name="shuffle_on">Zufallswiedergabe an</string>
+    <string name="shuffle_off">Zufallswiedergabe aus</string>
+    <string name="repeat_off">Wiederholen aus</string>
+    <string name="repeat_all">Alle wiederholen</string>
+    <string name="repeat_one">Titel wiederholen</string>
+    <string name="offload_active">Hardware-Wiedergabe</string>
+    <string name="rating_set">Bewertung: %1$s</string>
+
+    <!-- Details -->
+    <string name="details_title">Titelinfos</string>
+    <string name="details_path">Pfad:</string>
+    <string name="details_header">Kopfzeile:</string>
+    <string name="details_title_label">Titel:</string>
+    <string name="details_album">Album:</string>
+    <string name="details_artist">Interpret:</string>
+    <string name="details_album_artist">Albuminterpret:</string>
+    <string name="details_composer">Komponist:</string>
+    <string name="details_genre">Genre:</string>
+    <string name="details_track">Titelnr.:</string>
+    <string name="details_disc">CD:</string>
+    <string name="details_year">Jahr:</string>
+    <string name="details_added">Hinzugefügt am:</string>
+    <string name="details_last_played">Zuletzt abgespielt:</string>
+    <string name="details_rating">Bewertung:</string>
+    <string name="details_play_count">Wiedergabeanzahl:</string>
+    <string name="details_skip_count">Überspringanzahl:</string>
+    <string name="details_not_rated">Nicht bewertet</string>
+    <string name="details_never">Nie</string>
+    <string name="details_clear_stats">Statistiken löschen</string>
+    <string name="album_info_title">Albuminfos</string>
+
+    <!-- Equalizer -->
+    <string name="eq_preset">Preset</string>
+    <string name="eq_preamp">PREAMP</string>
+    <string name="eq_reverb">Hall</string>
+    <string name="eq_bass">Bass</string>
+    <string name="eq_virtualizer">Virtualizer</string>
+    <string name="eq_volume">Lautstärke</string>
+    <string name="eq_save_preset">Preset speichern</string>
+    <string name="eq_preset_name">Name des Presets</string>
+    <string name="eq_rename_preset">Preset umbenennen</string>
+    <string name="eq_reset">Zurücksetzen</string>
+    <string name="eq_manual">Manuell</string>
+    <string name="eq_select_preset">Preset auswählen</string>
+    <string name="eq_select_reverb">Halleffekt auswählen</string>
+    <string name="eq_builtin_readonly">Eingebaute Presets können nicht geändert werden</string>
+
+    <!-- Sleep timer -->
+    <plurals name="sleep_minutes">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minuten</item>
+    </plurals>
+    <string name="sleep_fade">Lautstärke zum Ende langsam ausblenden</string>
+    <string name="sleep_finish">Aktuellen Titel zu Ende spielen</string>
+    <string name="sleep_start">Starten</string>
+    <string name="sleep_cancel">Timer beenden</string>
+    <string name="sleep_active">Timer läuft noch %s</string>
+    <plurals name="sleep_started">
+        <item quantity="one">Einschlaf-Timer: %d Minute</item>
+        <item quantity="other">Einschlaf-Timer: %d Minuten</item>
+    </plurals>
+    <string name="sleep_stopped">Einschlaf-Timer beendet</string>
+
+    <!-- Playlists -->
+    <string name="new_playlist">Neue Playlist</string>
+    <string name="new_smart_playlist">Neue smarte Playlist</string>
+    <string name="playlist_name">Name der Playlist</string>
+    <string name="playlist_created">Playlist „%1$s“ erstellt</string>
+    <string name="added_to_playlist">%1$d Titel zu „%2$s“ hinzugefügt</string>
+    <string name="delete_playlist_confirm">Playlist „%1$s“ löschen?</string>
+    <string name="queue_saved">Warteschlange als „%1$s“ gespeichert</string>
+    <string name="import_playlist">Playlist importieren (M3U)</string>
+    <string name="playlist_imported">%1$d Titel importiert</string>
+    <string name="playlist_exported">Playlist exportiert</string>
+    <string name="choose_playlist">Playlist auswählen</string>
+
+    <string name="added_favorite">Zu Favoriten hinzugefügt</string>
+    <string name="removed_favorite">Aus Favoriten entfernt</string>
+    <string name="enqueued">%d Titel zur Warteschlange hinzugefügt</string>
+    <string name="play_next_added">%d Titel werden als Nächstes gespielt</string>
+    <string name="delete_confirm_songs">%d Titel endgültig von diesem Gerät löschen?</string>
+    <string name="deleted_songs">%d Titel gelöscht</string>
+    <string name="ringtone_set">„%1$s“ ist jetzt Klingelton</string>
+    <string name="ringtone_permission">Bitte erlaube Player NEXT, Systemeinstellungen zu ändern, und wähle die Aktion erneut.</string>
+
+    <!-- Permissions and empty states -->
+    <string name="perm_title">Zugriff auf deine Musik</string>
+    <string name="perm_message">Player NEXT braucht Zugriff auf Musik und Videos auf diesem Gerät. Optional erlaubt die Benachrichtigung die Steuerung im Hintergrund.</string>
+    <string name="perm_grant">Zugriff erlauben</string>
+    <string name="perm_settings">App-Einstellungen öffnen</string>
+    <string name="empty_library">Keine Musik gefunden.\nKopiere Musik auf das Gerät oder prüfe den Musikordner in den Einstellungen.</string>
+    <string name="empty_list">Keine Einträge</string>
+    <string name="empty_queue">Die Warteschlange ist leer</string>
+    <string name="empty_search">Keine Treffer</string>
+    <string name="loading">Bibliothek wird geladen …</string>
+    <string name="rescan_started">Medienscanner gestartet</string>
+
+    <string name="search_hint">Bibliothek durchsuchen</string>
+    <string name="filter_hint">Filtern …</string>
+
+    <!-- Tag editor -->
+    <string name="tag_editor_title">ID3-Tag editieren</string>
+    <string name="tag_editor_batch">%d Titel bearbeiten</string>
+    <string name="tag_title">Titel</string>
+    <string name="tag_artist">Interpret</string>
+    <string name="tag_album">Album</string>
+    <string name="tag_album_artist">Albuminterpret</string>
+    <string name="tag_composer">Komponist</string>
+    <string name="tag_genre">Genre</string>
+    <string name="tag_year">Jahr</string>
+    <string name="tag_track">Titelnr.</string>
+    <string name="tag_track_total">von</string>
+    <string name="tag_disc">CD</string>
+    <string name="tag_disc_total">von</string>
+    <string name="tag_grouping">Gruppierung</string>
+    <string name="tag_comment">Kommentar</string>
+    <string name="tag_bpm">BPM</string>
+    <string name="tag_lyrics">Liedtext</string>
+    <string name="tag_rating">Bewertung</string>
+    <string name="tag_artwork_change">Cover ändern</string>
+    <string name="tag_artwork_remove">Cover entfernen</string>
+    <string name="tag_batch_hint">Felder mit &lt;verschiedene&gt; bleiben unverändert, solange du sie nicht änderst.</string>
+    <string name="tag_multiple">&lt;verschiedene&gt;</string>
+    <string name="tag_saved">Tags gespeichert</string>
+    <string name="tag_failed">Tags konnten nicht gespeichert werden: %1$s</string>
+    <string name="tag_loading">Tags werden gelesen …</string>
+    <string name="tag_saving">Tags werden geschrieben …</string>
+    <string name="tag_permission_denied">Schreibzugriff wurde nicht erlaubt</string>
+
+    <!-- Smart playlist editor -->
+    <string name="spl_title">Smarte Playlist</string>
+    <string name="spl_name">Name</string>
+    <string name="spl_match">Titel auswählen, die</string>
+    <string name="spl_match_all">allen folgenden Kriterien entsprechen</string>
+    <string name="spl_match_any">einem der folgenden Kriterien entsprechen</string>
+    <string name="spl_add_rule">Kriterium hinzufügen</string>
+    <string name="spl_limit">Begrenzen auf</string>
+    <string name="spl_selected_by">ausgewählt nach</string>
+    <string name="spl_value">Wert</string>
+    <string name="spl_date_hint">TT.MM.JJJJ</string>
+    <string name="spl_preview">%d Titel entsprechen den Kriterien</string>
+
+    <!-- Widgets -->
+    <string name="widget_small">Player NEXT 4×1</string>
+    <string name="widget_square">Player NEXT 2×2</string>
+    <string name="widget_medium">Player NEXT 4×2</string>
+    <string name="widget_large">Player NEXT 4×4</string>
+    <string name="widget_plus">Player NEXT Plus 4×2</string>
+    <string name="widget_plus_description">Position, Titel, Interpret, Album und große Tasten; Hintergrund einstellbar transparent</string>
+    <string name="play_pause">Wiedergabe/Pause</string>
+    <string name="widget_config_title">Widget anpassen</string>
+    <string name="widget_config_all_title">Widgets anpassen</string>
+    <string name="widget_opacity">Hintergrund: %d %% deckend</string>
+    <string name="widget_show_cover">Cover anzeigen</string>
+    <string name="widget_click_hint">Ein Tipp auf das Widget außerhalb der Tasten öffnet den Player.</string>
+    <string name="widget_config_all_hint">Gilt für alle platzierten Widgets und als Vorgabe für neue.</string>
+    <string name="widget_done">Fertig</string>
+    <string name="widget_pin">Zum Startbildschirm hinzufügen</string>
+
+    <!-- Updates -->
+    <string name="updates_title">Updates</string>
+    <string name="update_installed">Installiert: Player NEXT %s</string>
+    <string name="update_check_now">Jetzt prüfen</string>
+    <string name="update_download">Herunterladen (%s)</string>
+    <string name="update_install">Installieren</string>
+    <string name="update_open_browser">Im Browser öffnen</string>
+    <string name="update_auto">Einmal täglich automatisch prüfen</string>
+    <string name="update_notes">Neuerungen in %s</string>
+    <string name="update_source_hint">Updates kommen aus github.com/ShakieVan/Player-NEXT. Vor der Installation prüft Player NEXT Größe, SHA-256-Prüfsumme, Paket, Version und Signatur; installiert wird über den Android-Installer. Das ist der einzige Teil der App, der das Internet nutzt.</string>
+    <string name="update_snackbar">Player NEXT %s ist verfügbar.</string>
+    <string name="update_snackbar_action">Ansehen</string>
+    <string name="update_not_checked">Noch nicht geprüft.</string>
+    <string name="update_available">Neue Version %s verfügbar.</string>
+    <string name="update_checking">Suche nach Updates …</string>
+    <string name="update_no_connection">Keine Verbindung zu GitHub. Prüfe das Internet – auch VPN- oder Firewall-Apps können es sperren.</string>
+    <string name="update_github_error">GitHub antwortet gerade nicht (Fehler %d). Bitte später erneut versuchen.</string>
+    <string name="update_rate_limited">GitHub-Limit erreicht – später erneut versuchen.</string>
+    <string name="update_rate_limited_wait">GitHub-Limit erreicht – später erneut versuchen (in etwa %s).</string>
+    <plurals name="update_minutes">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minuten</item>
+    </plurals>
+    <string name="update_no_release">Noch kein passendes Release veröffentlicht.</string>
+    <string name="update_up_to_date">Du hast die neueste Version.</string>
+    <string name="update_last_checked">Zuletzt geprüft: %s.</string>
+    <string name="update_downloading">Lade herunter …</string>
+    <string name="update_ready">Bereit zur Installation.</string>
+    <string name="update_corrupt">Download beschädigt (Prüfsumme falsch) – bitte erneut laden.</string>
+    <string name="update_download_failed">Download fehlgeschlagen.</string>
+    <string name="update_allow_install">Bitte „Apps installieren“ für Player NEXT erlauben und erneut tippen.</string>
+    <string name="update_unlock_wait">Bitte das Handy entsperren – danach geht es weiter.</string>
+    <string name="update_unlock_again">Bitte das Handy entsperren und noch einmal tippen.</string>
+    <string name="update_rejected">Update abgelehnt: %s</string>
+    <string name="update_installer_started">Installer gestartet.</string>
+    <string name="update_reject_unreadable">APK nicht lesbar (Datei beschädigt?)</string>
+    <string name="update_reject_package">Falsches Paket – die Datei ist nicht Player NEXT</string>
+    <string name="update_reject_older">Keine neuere Version (eine ältere wird nie installiert)</string>
+    <string name="update_reject_version">Versionsangabe passt nicht zur Datei</string>
+    <string name="update_reject_signature">Signatur passt nicht – die Datei stammt nicht vom Player-NEXT-Projekt oder wurde verändert</string>
+    <string name="update_reject_failed">Prüfung fehlgeschlagen: %s</string>
+
+    <!-- Video -->
+    <string name="video_scale">Skalierung</string>
+    <string name="video_rotate">Drehen</string>
+    <string name="video_scale_fit">Einpassen</string>
+    <string name="video_scale_fill">Ausfüllen</string>
+    <string name="video_scale_zoom">Zoomen</string>
+    <string name="video_scale_stretch">Strecken</string>
+
+    <!-- Settings helpers -->
+    <string name="music_folders_all">Alle Ordner</string>
+    <string name="music_folders_title">Musikordner auswählen</string>
+    <string name="settings_exported">Einstellungen exportiert</string>
+    <string name="settings_restored">Einstellungen wiederhergestellt</string>
+    <string name="stats_exported">Musikstatistiken exportiert</string>
+    <string name="stats_restored">%d Statistik-Einträge wiederhergestellt</string>
+    <string name="stats_imported">%d Bewertungen aus Dateien übernommen</string>
+    <string name="eq_presets_reset">Equalizer-Presets zurückgesetzt</string>
+    <string name="art_deleted">Eigene Bilder gelöscht</string>
+    <string name="failed">Fehlgeschlagen: %1$s</string>
+    <string name="version_summary">Version %1$s</string>
+    <string name="licenses_text">Player NEXT verwendet:\n\n• AndroidX Media3 / ExoPlayer (Apache 2.0)\n• AndroidX, Material Components (Apache 2.0)\n• Kotlin, kotlinx.coroutines (Apache 2.0)\n• jaudiotagger (LGPL 2.1)\n\nDas Logo wurde mit Qwen-Image-Edit (Apache 2.0) aus dem Tube-NEXT-Logo abgeleitet.</string>
+</resources>

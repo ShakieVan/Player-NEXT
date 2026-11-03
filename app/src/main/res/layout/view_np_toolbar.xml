@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/pn_surface_low"
+    app:contentInsetStartWithNavigation="0dp"
+    app:navigationIcon="@drawable/ic_back"
+    app:navigationIconTint="@color/pn_on_surface">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:background="@drawable/toolbar_icon_background"
+            android:padding="7dp"
+            android:src="@drawable/ic_play"
+            app:tint="@android:color/white"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/now_playing"
+            android:textColor="@color/pn_on_surface"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</com.google.android.material.appbar.MaterialToolbar>

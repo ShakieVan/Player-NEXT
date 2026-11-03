@@ -1,0 +1,16 @@
+# Android / Gradle
+.gradle/
+.kotlin/
+build/
+*/build/
+local.properties
+key.properties
+release-artifacts/
+
+# IDE
+.idea/
+*.iml
+
+# OS
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/art_area"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pn_surface_lowest">
+
+    <ImageView
+        android:id="@+id/art_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/art_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- rating bar: volume, five stars, close -->
+    <LinearLayout
+        android:id="@+id/overlay_top"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_gravity="top"
+        android:background="@drawable/header_bar_background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_volume"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/round_ripple"
+            android:contentDescription="@string/volume"
+            android:src="@drawable/ic_volume"
+            app:tint="@color/pn_on_surface" />
+
+        <de.shakie.playernext.ui.common.RatingView
+            android:id="@+id/rating"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/btn_overlay_close"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/round_ripple"
+            android:contentDescription="@string/close"
+            android:src="@drawable/ic_close"
+            app:tint="@color/pn_on_surface" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/volume_panel"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="52dp"
+        android:background="@drawable/header_bar_background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:visibility="gone">
+
+        <SeekBar
+            android:id="@+id/volume_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progressDrawable="@drawable/seek_progress"
+            android:thumb="@drawable/seek_thumb" />
+    </LinearLayout>
+
+    <!-- lyrics overlay -->
+    <FrameLayout
+        android:id="@+id/lyrics_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E60E0E11"
+        android:visibility="gone">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/lyrics_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:lineSpacingMultiplier="1.25"
+                android:padding="24dp"
+                android:paddingBottom="80dp"
+                android:textColor="@color/pn_on_surface"
+                android:textIsSelectable="true"
+                android:textSize="17sp" />
+        </ScrollView>
+
+        <ImageButton
+            android:id="@+id/lyrics_edit"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:background="@drawable/round_ripple"
+            android:contentDescription="@string/lyrics_edit"
+            android:src="@drawable/ic_edit"
+            app:tint="?attr/pnAccent" />
+    </FrameLayout>
+
+    <!-- play queue -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/queue_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/pn_surface"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/now_playing_empty"
+        android:textColor="@color/pn_on_surface_dim"
+        android:visibility="gone" />
+
+    <!-- common actions -->
+    <LinearLayout
+        android:id="@+id/overlay_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/header_bar_background"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/btn_add_to"
+            style="@style/NowPlayingAction"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView style="@style/NowPlayingActionIcon" android:src="@drawable/ic_add" tools:ignore="ContentDescription" />
+            <TextView style="@style/NowPlayingActionText" android:text="@string/add_to" />
+        </LinearLayout>
+
+        <View android:layout_width="1dp" android:layout_height="match_parent" android:layout_marginTop="10dp" android:layout_marginBottom="10dp" android:background="#33FFFFFF" />
+
+        <LinearLayout
+            android:id="@+id/btn_share"
+            style="@style/NowPlayingAction"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView style="@style/NowPlayingActionIcon" android:src="@drawable/ic_share" tools:ignore="ContentDescription" />
+            <TextView style="@style/NowPlayingActionText" android:text="@string/share" />
+        </LinearLayout>
+
+        <View android:layout_width="1dp" android:layout_height="match_parent" android:layout_marginTop="10dp" android:layout_marginBottom="10dp" android:background="#33FFFFFF" />
+
+        <LinearLayout
+            android:id="@+id/btn_lyrics"
+            style="@style/NowPlayingAction"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView style="@style/NowPlayingActionIcon" android:src="@drawable/ic_lyrics" tools:ignore="ContentDescription" />
+            <TextView style="@style/NowPlayingActionText" android:text="@string/lyrics" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_shuffle"
+        android:shortcutId="shuffle_all"
+        android:shortcutShortLabel="@string/shuffle_all">
+        <intent
+            android:action="de.shakie.playernext.SHUFFLE_ALL"
+            android:targetClass="de.shakie.playernext.ui.MainActivity"
+            android:targetPackage="de.shakie.playernext" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_play"
+        android:shortcutId="now_playing"
+        android:shortcutShortLabel="@string/now_playing">
+        <intent
+            android:action="de.shakie.playernext.NOW_PLAYING"
+            android:targetClass="de.shakie.playernext.ui.MainActivity"
+            android:targetPackage="de.shakie.playernext" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_search"
+        android:shortcutId="search"
+        android:shortcutShortLabel="@string/browser_search">
+        <intent
+            android:action="de.shakie.playernext.SEARCH"
+            android:targetClass="de.shakie.playernext.ui.MainActivity"
+            android:targetPackage="de.shakie.playernext" />
+    </shortcut>
+</shortcuts>

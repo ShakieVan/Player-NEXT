@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tube NEXT surface family -->
+    <color name="pn_surface">#131316</color>
+    <color name="pn_surface_lowest">#0E0E11</color>
+    <color name="pn_surface_low">#1B1B1E</color>
+    <color name="pn_surface_high">#2A2A2D</color>
+    <color name="pn_surface_highest">#343438</color>
+    <color name="pn_on_surface">#E4E1E6</color>
+    <color name="pn_on_surface_dim">#A9A5AD</color>
+    <color name="pn_on_surface_faint">#77737B</color>
+    <color name="pn_on_surface_variant">#F1C1A8</color>
+    <color name="pn_outline">#B98C70</color>
+    <color name="pn_outline_variant">#63422F</color>
+    <color name="pn_divider">#24242A</color>
+    <color name="pn_scrim">#B3000000</color>
+    <color name="pn_overlay">#99000000</color>
+    <color name="pn_tile_label">#CC0E0E11</color>
+
+    <!-- Default skin: Tube NEXT orange with the red/orange logo gradient -->
+    <color name="pn_primary">#FFB36B</color>
+    <color name="pn_primary_strong">#FF7A3D</color>
+    <color name="pn_secondary">#FFD08A</color>
+    <color name="pn_on_primary">#321100</color>
+    <color name="pn_active_bg">#2B1A12</color>
+    <color name="pn_logo_red">#E8304A</color>
+    <color name="pn_logo_orange">#FF7A5C</color>
+
+    <!-- Alternative skins -->
+    <color name="pn_red_primary">#FF6B7A</color>
+    <color name="pn_red_strong">#E8304A</color>
+    <color name="pn_red_active_bg">#2E1418</color>
+    <color name="pn_green_primary">#8FDA4A</color>
+    <color name="pn_green_strong">#5DBB1E</color>
+    <color name="pn_green_active_bg">#18240F</color>
+    <color name="pn_blue_primary">#7CCBFF</color>
+    <color name="pn_blue_strong">#2F9BE8</color>
+    <color name="pn_blue_active_bg">#10202C</color>
+    <color name="pn_violet_primary">#C9A2FF</color>
+    <color name="pn_violet_strong">#9B5CF0</color>
+    <color name="pn_violet_active_bg">#1F1630</color>
+
+    <color name="pn_star_empty">#5A5660</color>
+    <color name="pn_error">#FF6B6B</color>
+</resources>

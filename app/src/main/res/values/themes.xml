@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.PlayerNext" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/pn_primary</item>
+        <item name="colorOnPrimary">@color/pn_on_primary</item>
+        <item name="colorPrimaryContainer">@color/pn_active_bg</item>
+        <item name="colorOnPrimaryContainer">@color/pn_primary</item>
+        <item name="colorSecondary">@color/pn_primary_strong</item>
+        <item name="colorOnSecondary">@color/pn_on_primary</item>
+        <item name="colorTertiary">@color/pn_secondary</item>
+        <item name="colorSurface">@color/pn_surface</item>
+        <item name="colorSurfaceContainer">@color/pn_surface_low</item>
+        <item name="colorSurfaceContainerHigh">@color/pn_surface_high</item>
+        <item name="colorSurfaceContainerHighest">@color/pn_surface_highest</item>
+        <item name="colorSurfaceContainerLow">@color/pn_surface_low</item>
+        <item name="colorOnSurface">@color/pn_on_surface</item>
+        <item name="colorOnSurfaceVariant">@color/pn_on_surface_dim</item>
+        <item name="colorOutline">@color/pn_outline</item>
+        <item name="colorOutlineVariant">@color/pn_outline_variant</item>
+        <item name="colorControlActivated">@color/pn_primary</item>
+        <item name="colorAccent">@color/pn_primary</item>
+        <item name="android:colorBackground">@color/pn_surface</item>
+        <item name="pnAccent">@color/pn_primary</item>
+        <item name="pnAccentStrong">@color/pn_primary_strong</item>
+        <item name="pnActiveBg">@color/pn_active_bg</item>
+        <item name="android:statusBarColor">@color/pn_surface_lowest</item>
+        <item name="android:navigationBarColor">@color/pn_surface_lowest</item>
+        <item name="android:windowBackground">@color/pn_surface</item>
+        <item name="android:windowSplashScreenBackground">@color/pn_surface_lowest</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/player_next_splash_icon</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/pn_surface_lowest</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.PlayerNext.PopupMenu</item>
+        <item name="popupMenuStyle">@style/Widget.PlayerNext.PopupMenu</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.PlayerNext.Dialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.PlayerNext.Dialog</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="toolbarStyle">@style/Widget.PlayerNext.Toolbar</item>
+        <item name="actionModeBackground">@color/pn_surface_high</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_close</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:textColorPrimary">@color/pn_on_surface</item>
+        <item name="android:textColorSecondary">@color/pn_on_surface_dim</item>
+    </style>
+
+    <!-- Widget configuration: the real wallpaper behind the preview shows how transparent the widget will look. -->
+    <style name="Theme.PlayerNext.WidgetConfig" parent="Theme.PlayerNext">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.PlayerNext.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/pn_surface_low</item>
+        <item name="titleTextColor">@color/pn_on_surface</item>
+    </style>
+
+    <style name="Widget.PlayerNext.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@drawable/popup_background</item>
+    </style>
+
+    <style name="ThemeOverlay.PlayerNext.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">?attr/pnAccent</item>
+        <item name="colorSurface">@color/pn_surface_high</item>
+        <item name="colorSurfaceContainerHigh">@color/pn_surface_high</item>
+        <item name="colorOnSurface">@color/pn_on_surface</item>
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+    </style>
+
+    <!-- Skins (accent overlays applied in BaseActivity) -->
+    <style name="ThemeOverlay.PlayerNext.Skin.Red" parent="">
+        <item name="colorPrimary">@color/pn_red_primary</item>
+        <item name="colorSecondary">@color/pn_red_strong</item>
+        <item name="colorControlActivated">@color/pn_red_primary</item>
+        <item name="colorAccent">@color/pn_red_primary</item>
+        <item name="colorPrimaryContainer">@color/pn_red_active_bg</item>
+        <item name="pnAccent">@color/pn_red_primary</item>
+        <item name="pnAccentStrong">@color/pn_red_strong</item>
+        <item name="pnActiveBg">@color/pn_red_active_bg</item>
+    </style>
+    <style name="ThemeOverlay.PlayerNext.Skin.Green" parent="">
+        <item name="colorPrimary">@color/pn_green_primary</item>
+        <item name="colorSecondary">@color/pn_green_strong</item>
+        <item name="colorControlActivated">@color/pn_green_primary</item>
+        <item name="colorAccent">@color/pn_green_primary</item>
+        <item name="colorPrimaryContainer">@color/pn_green_active_bg</item>
+        <item name="pnAccent">@color/pn_green_primary</item>
+        <item name="pnAccentStrong">@color/pn_green_strong</item>
+        <item name="pnActiveBg">@color/pn_green_active_bg</item>
+    </style>
+    <style name="ThemeOverlay.PlayerNext.Skin.Blue" parent="">
+        <item name="colorPrimary">@color/pn_blue_primary</item>
+        <item name="colorSecondary">@color/pn_blue_strong</item>
+        <item name="colorControlActivated">@color/pn_blue_primary</item>
+        <item name="colorAccent">@color/pn_blue_primary</item>
+        <item name="colorPrimaryContainer">@color/pn_blue_active_bg</item>
+        <item name="pnAccent">@color/pn_blue_primary</item>
+        <item name="pnAccentStrong">@color/pn_blue_strong</item>
+        <item name="pnActiveBg">@color/pn_blue_active_bg</item>
+    </style>
+    <style name="ThemeOverlay.PlayerNext.Skin.Violet" parent="">
+        <item name="colorPrimary">@color/pn_violet_primary</item>
+        <item name="colorSecondary">@color/pn_violet_strong</item>
+        <item name="colorControlActivated">@color/pn_violet_primary</item>
+        <item name="colorAccent">@color/pn_violet_primary</item>
+        <item name="colorPrimaryContainer">@color/pn_violet_active_bg</item>
+        <item name="pnAccent">@color/pn_violet_primary</item>
+        <item name="pnAccentStrong">@color/pn_violet_strong</item>
+        <item name="pnActiveBg">@color/pn_violet_active_bg</item>
+    </style>
+    <!-- Night skin: dims the accent for dark rooms. -->
+    <style name="ThemeOverlay.PlayerNext.Skin.Night" parent="">
+        <item name="colorPrimary">#B07A4C</item>
+        <item name="colorSecondary">#A05530</item>
+        <item name="colorControlActivated">#B07A4C</item>
+        <item name="colorAccent">#B07A4C</item>
+        <item name="pnAccent">#B07A4C</item>
+        <item name="pnAccentStrong">#A05530</item>
+        <item name="pnActiveBg">#1C130E</item>
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:colorBackground">#000000</item>
+    </style>
+
+    <style name="Theme.PlayerNext.Video" parent="Theme.PlayerNext">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:statusBarColor">@android:color/black</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="p">shortEdges</item>
+    </style>
+
+    <style name="Theme.PlayerNext.Lockscreen" parent="Theme.PlayerNext">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="TextAppearance.PlayerNext.ListTitle" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/pn_on_surface</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearance.PlayerNext.ListSubtitle" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/pn_on_surface_faint</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+</resources>
