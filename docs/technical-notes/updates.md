@@ -18,7 +18,7 @@ Wie in Mau-Mau Flip, in Kotlin: `update/Updater.kt` (Ablauf und Status),
    (≤ 256 MB) und `digest` (`sha256:…`) GitHub angibt und deren Adresse
    `https://github.com/ShakieVan/Player-NEXT/releases/download/vX.Y.Z/…` ist.
    Neuer heißt: numerisch höhere Version. Die App weist beim Start einmal per
-   Snackbar darauf hin.
+   Snackbar darauf hin. Im Beta-Kanal kommen Vorabversionen hinzu (unten).
 3. **Herunterladen** – nur auf Knopfdruck, nach `files/updates/<sha256>.apk.part`.
    Abbruch erst, wenn 30 s lang kein Byte ankommt (Lesezeitlimit), nicht nach
    einer Gesamtzeit. SHA-256 wird beim Laden berechnet; passt Größe oder
@@ -33,6 +33,32 @@ Wie in Mau-Mau Flip, in Kotlin: `update/Updater.kt` (Ablauf und Status),
 
 Alte Downloads werden beim Start entfernt; nur die APK des offenen Updates
 bleibt liegen.
+
+## Beta-Kanal (ab 1.1.1, wie Mau-Mau Flip)
+
+- **Quelle:** Testversionen liegen im eigenen öffentlichen Repository
+  `ShakieVan/Player-NEXT-Beta` (nur README und Releases, als Vorabversion
+  markiert, Titel „Player NEXT X.Y.Z (Beta)“). Der Quellcode bleibt in
+  `ShakieVan/Player-NEXT`; der Tag `vX.Y.Z` liegt auch dort.
+- **Schalter** „Testversionen (Beta-Kanal)“ unter Updates und unter
+  Einstellungen → Über. Solange niemand ihn umschaltet, folgt er der
+  installierten Version: an bei X.Y.Z mit Z ≠ 0 (Beta), aus bei X.Y.0. Wer eine
+  Beta installiert, bekommt also weiter Betas; mit dem nächsten Release steht
+  er wieder auf aus, sofern er nie umgeschaltet wurde.
+- **Prüfung im Beta-Kanal:** nacheinander
+  `…/Player-NEXT-Beta/releases?per_page=20` (höchste gültige Version der Liste)
+  und `…/Player-NEXT/releases/latest`; angeboten wird die höchste Version. Eine
+  neuere Version wird auch angeboten, wenn die andere Quelle nicht antwortet;
+  sonst zählt der Fehlschlag (GitHub-Limit hat Vorrang in der Meldung).
+- **Umschalten** verwirft das gemerkte Angebot und prüft sofort neu. Läuft
+  gerade eine Prüfung oder ein Download, startet die neue Prüfung danach.
+- Aus dem Beta-Repository wird nur eine APK mit genau der Adresse
+  `https://github.com/ShakieVan/Player-NEXT-Beta/releases/download/vX.Y.Z/Player-NEXT-X.Y.Z.apk`
+  angenommen; Signatur- und Versionsprüfung wie bei Releases.
+- **Nummern:** Releases X.Y.0, Betas X.Y.Z mit Z ≠ 0. Eine Beta mit .0 am Ende
+  würde den Beta-Kanal bei ihren Nutzern abschalten.
+- 1.1.0 kennt den Beta-Kanal noch nicht: Wer 1.1.0 hat, installiert die erste
+  Beta einmal von der Release-Seite des Beta-Repositorys.
 
 ## GitHub-Limit
 
@@ -51,14 +77,18 @@ zurück, bittet per `requestDismissKeyguard` ums Entsperren und startet den
 Dialog erst danach. `BaseActivity` legt die App danach nicht mehr über die
 Sperre.
 
-## Release veröffentlichen
+## Release oder Beta veröffentlichen
 
 1. Version in `app/build.gradle.kts` (`appVersion`) erhöhen; `versionCode`
    ergibt sich als X·1 000 000 + Y·1 000 + Z.
 2. `.\gradlew.bat :app:testDebugUnitTest :app:assembleRelease`
 3. APK als `release-artifacts/Player-NEXT-X.Y.Z.apk` ablegen.
 4. `docs/releases/vX.Y.Z.md` schreiben, committen, Tag `vX.Y.Z` pushen.
-5. `gh release create vX.Y.Z release-artifacts/Player-NEXT-X.Y.Z.apk --title "Player NEXT X.Y.Z" --notes-file docs/releases/vX.Y.Z.md`
+5. Release (X.Y.0): `gh release create vX.Y.Z release-artifacts/Player-NEXT-X.Y.Z.apk --title "Player NEXT X.Y.Z" --notes-file docs/releases/vX.Y.Z.md --latest --verify-tag`
+6. Beta (X.Y.Z, Z ≠ 0): `gh release create vX.Y.Z release-artifacts/Player-NEXT-X.Y.Z.apk -R ShakieVan/Player-NEXT-Beta --title "Player NEXT X.Y.Z (Beta)" --notes-file docs/releases/vX.Y.Z.md --prerelease`
+7. Nachprüfen wie der Updater: `gh api repos/<Repo>/releases/tags/vX.Y.Z` –
+   genau ein Asset mit diesem Namen, Größe, `digest` = SHA-256 der Datei,
+   exakte Download-Adresse, `draft` false, `prerelease` passend.
 
 Signiert wird mit dem Release-Schlüssel aus `key.properties` (nicht im
 Repository). **Ohne denselben Schlüssel lässt sich kein Update über eine

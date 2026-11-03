@@ -132,6 +132,10 @@ object Prefs {
     val replayGainPreamp get() = int("rg_preamp", 0).toFloat()
     val replayGainClipping get() = bool("rg_clipping", true)
 
+    // Shuffle (see playback/Shuffler.kt)
+    val shuffleOldestFirst get() = str("shuffle_mode", "even") == "oldest"
+    val shuffleWindow get() = str("shuffle_window", "4").toIntOrNull()?.takeIf { it in setOf(2, 4, 8) } ?: 4
+
     // Headset
     val useHeadset get() = bool("use_headset", true)
     val headsetLongPress get() = str("headset_long_press", "none")
@@ -144,6 +148,9 @@ object Prefs {
     var updateAutoCheck
         get() = bool("update_auto_check", true)
         set(value) = sp.edit().putBoolean("update_auto_check", value).apply()
+    /** Beta channel; until switched it follows the installed version (betas end in X.Y.Z with Z ≠ 0). */
+    fun updateBeta(default: Boolean) = bool("update_beta", default)
+    fun setUpdateBeta(on: Boolean) = sp.edit().putBoolean("update_beta", on).apply()
 
     // Shake
     val useShake get() = bool("use_shake", false)

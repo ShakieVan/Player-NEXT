@@ -26,6 +26,10 @@ import kotlin.math.ceil
  * ([UpdateInstaller]) and starts the system installer. The automatic check runs at most once a
  * day at app start. This is the only part of Player NEXT that uses the internet.
  *
+ * Beta channel as in Mau-Mau Flip: test versions come from a repository of their own
+ * ([UpdateRelease.BETA_REPOSITORY]); with the channel on both are asked and the highest version
+ * wins. Until switched, the channel follows the installed version (a beta keeps getting betas).
+ *
  * Remembered in its own preferences: last successful check (ms) and the raw JSON of the offered release.
  */
 object Updater {
@@ -54,6 +58,19 @@ object Updater {
 
     val currentVersion: String get() = BuildConfig.VERSION_NAME.substringBefore('-')
 
+    val beta: Boolean get() = Prefs.updateBeta(Versions.isBeta(currentVersion))
+
+    /** Channel switched: forget the offered release and look again right away. */
+    fun setBeta(on: Boolean) {
+        if (on == beta) return
+        Prefs.setUpdateBeta(on)
+        prefs().edit().remove("release").apply()
+        release = null
+        apkReady = false
+        // A check or download still running for the other channel starts the new check when it ends.
+        if (!busy) check()
+    }
+
     fun addListener(l: () -> Unit) = listeners.add(l)
     fun removeListener(l: () -> Unit) = listeners.remove(l)
 
@@ -68,12 +85,12 @@ object Updater {
         if (::app.isInitialized) return
         app = context.applicationContext
         status = app.getString(R.string.update_not_checked)
-        val cached = UpdateRelease.parse(prefs().getString("release", "").orEmpty())
+        val cached = UpdateRelease.parse(prefs().getString("release", "").orEmpty(), beta)
         val lastCheck = prefs().getLong("last_check", 0)
         if (cached != null && Versions.compare(cached.version, currentVersion) > 0) {
             release = cached
             apkReady = apkFile(cached).exists()
-            status = app.getString(R.string.update_available, cached.version)
+            status = availableText(cached)
         } else if (lastCheck > 0) {
             status = lastCheckedText(lastCheck)
         }
@@ -96,17 +113,31 @@ object Updater {
         busy = true
         percent = -1
         publish(app.getString(R.string.update_checking))
+        val allowBeta = beta
+        val sources = if (allowBeta) listOf(UpdateRelease.BETA_ENDPOINT, UpdateRelease.LATEST_ENDPOINT) else listOf(UpdateRelease.LATEST_ENDPOINT)
         executor.execute {
-            val outcome = fetchLatest()
-            main.post { finishCheck(outcome) }
+            // One after the other; a newer version is offered even if the other source failed.
+            val outcomes = sources.map { fetch(it, allowBeta) }
+            val best = outcomes.mapNotNull { it.found }.reduceOrNull { a, b -> if (Versions.compare(b.version, a.version) > 0) b else a }
+            // The GitHub limit explains a failure best: it hits every source from the same network.
+            val failures = outcomes.filter { it.failure != null }
+            val failure = (failures.firstOrNull { it.limited } ?: failures.firstOrNull())?.failure
+            main.post {
+                if (allowBeta == beta) {
+                    finishCheck(CheckOutcome(best, failure))
+                } else {
+                    busy = false
+                    check()
+                }
+            }
         }
     }
 
-    private class CheckOutcome(val found: UpdateRelease?, val failure: String?)
+    private class CheckOutcome(val found: UpdateRelease?, val failure: String?, val limited: Boolean = false)
 
-    private fun fetchLatest(): CheckOutcome {
+    private fun fetch(endpoint: String, allowBeta: Boolean): CheckOutcome {
         val connection = try {
-            URL(UpdateRelease.LATEST_ENDPOINT).openConnection() as HttpURLConnection
+            URL(endpoint).openConnection() as HttpURLConnection
         } catch (_: IOException) {
             return CheckOutcome(null, app.getString(R.string.update_no_connection))
         }
@@ -118,11 +149,11 @@ object Updater {
             connection.setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
             when (val code = connection.responseCode) {
                 200 -> {
-                    CheckOutcome(UpdateRelease.parse(readLimited(connection, 1024 * 1024)), null)
+                    CheckOutcome(UpdateRelease.parse(readLimited(connection, 1024 * 1024), allowBeta), null)
                 }
                 // No release published yet: a valid answer, not a failure.
                 404 -> CheckOutcome(null, null)
-                else -> CheckOutcome(null, failureText(code, connection))
+                else -> CheckOutcome(null, failureText(code, connection), code == 403 || code == 429)
             }
         } catch (_: IOException) {
             CheckOutcome(null, app.getString(R.string.update_no_connection))
@@ -175,7 +206,7 @@ object Updater {
             newer -> {
                 release = found
                 apkReady = apkFile(found!!).exists()
-                publish(app.getString(R.string.update_available, found.version))
+                publish(availableText(found))
             }
             failed -> publish(outcome.failure!!)
             found == null -> {
@@ -188,6 +219,9 @@ object Updater {
             }
         }
     }
+
+    private fun availableText(rel: UpdateRelease): String =
+        app.getString(if (rel.beta) R.string.update_available_beta else R.string.update_available, rel.version)
 
     private fun lastCheckedText(ms: Long): String =
         app.getString(R.string.update_last_checked, DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(ms)))
@@ -215,6 +249,10 @@ object Updater {
             main.post {
                 busy = false
                 percent = -1
+                if (release !== rel) {
+                    check()
+                    return@post
+                }
                 when (ok) {
                     true -> {
                         apkReady = true
@@ -305,7 +343,7 @@ object Updater {
 
     /** Way out without the updater: the release page, where the APK can be loaded in the browser. */
     fun openReleasePage(context: Context) {
-        val url = release?.pageUrl ?: UpdateRelease.RELEASES_PAGE
+        val url = release?.pageUrl ?: if (beta) UpdateRelease.BETA_RELEASES_PAGE else UpdateRelease.RELEASES_PAGE
         try {
             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (_: Exception) {

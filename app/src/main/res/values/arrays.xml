@@ -238,6 +238,26 @@
         <item>track</item>
     </string-array>
 
+    <string-array name="shuffle_mode_entries">
+        <item>Gleichmäßig</item>
+        <item>Lange nicht Gehörtes zuerst</item>
+    </string-array>
+    <string-array name="shuffle_mode_values">
+        <item>even</item>
+        <item>oldest</item>
+    </string-array>
+
+    <string-array name="shuffle_window_entries">
+        <item>der älteren Hälfte</item>
+        <item>dem ältesten Viertel</item>
+        <item>dem ältesten Achtel</item>
+    </string-array>
+    <string-array name="shuffle_window_values">
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+    </string-array>
+
     <string-array name="headset_long_entries">
         <item>Wiedergabe/Pause</item>
         <item>Nächsten Titel wiedergeben</item>

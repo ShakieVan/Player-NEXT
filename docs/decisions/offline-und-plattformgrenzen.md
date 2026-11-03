@@ -9,8 +9,9 @@ Chromecast, keine Scrobbler, keine Google-Drive-Sicherung.
 **Einzige Ausnahme (ab 1.1.0, Wunsch des Nutzers): die Update-Funktion** wie
 in Mau-Mau Flip. Nur `update/Updater.kt` nutzt das Internet: höchstens einmal
 am Tag beim Start (abschaltbar) eine Anfrage an
-`api.github.com/repos/ShakieVan/Player-NEXT/releases/latest` und, nur auf
-Wunsch, der Download der APK von GitHub. Dafür deklariert die App
+`api.github.com/repos/ShakieVan/Player-NEXT/releases/latest` (mit
+eingeschaltetem Beta-Kanal zusätzlich `…/Player-NEXT-Beta/releases`) und, nur
+auf Wunsch, der Download der APK von GitHub. Dafür deklariert die App
 `INTERNET` und `REQUEST_INSTALL_PACKAGES`. Es werden keine Daten über den
 Nutzer oder die Musik übertragen; GitHub sieht nur die Anfrage selbst
 (IP-Adresse, `User-Agent: Player-NEXT/<Version>`). Siehe

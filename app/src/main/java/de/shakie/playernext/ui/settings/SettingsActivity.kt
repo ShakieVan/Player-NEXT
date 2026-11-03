@@ -10,6 +10,8 @@ import android.widget.LinearLayout
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.CheckBoxPreference
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
@@ -31,6 +33,7 @@ import de.shakie.playernext.ui.BaseActivity
 import de.shakie.playernext.ui.common.ItemActions
 import de.shakie.playernext.ui.equalizer.EqualizerActivity
 import de.shakie.playernext.update.UpdateActivity
+import de.shakie.playernext.update.Updater
 import de.shakie.playernext.widget.WidgetConfigActivity
 import de.shakie.playernext.ui.playlists.PlaylistIO
 import kotlinx.coroutines.Dispatchers
@@ -112,6 +115,16 @@ class SettingsActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceSt
                 toast(R.string.eq_presets_reset)
             }
             click("updates") { startActivity(Intent(requireContext(), UpdateActivity::class.java)) }
+            findPreference<CheckBoxPreference>("update_beta")?.apply {
+                Updater.init(requireContext())
+                isChecked = Updater.beta
+                setOnPreferenceChangeListener { _, value -> Updater.setBeta(value as Boolean); true }
+            }
+            findPreference<ListPreference>("shuffle_mode")?.let { mode ->
+                val window = findPreference<Preference>("shuffle_window")
+                window?.isEnabled = mode.value == "oldest"
+                mode.setOnPreferenceChangeListener { _, value -> window?.isEnabled = value == "oldest"; true }
+            }
             click("widget_settings") { startActivity(Intent(requireContext(), WidgetConfigActivity::class.java)) }
             click("export_settings") { exportSettings() }
             click("restore_settings") { restoreSettings() }

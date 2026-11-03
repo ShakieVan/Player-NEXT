@@ -1,5 +1,6 @@
 package de.shakie.playernext.update
 
+import org.json.JSONArray
 import org.json.JSONObject
 
 /** A release offered for installation: only complete ones with exactly one matching APK, size and SHA-256. */
@@ -9,6 +10,8 @@ data class UpdateRelease(
     val size: Long,
     val sha256: String,
     val url: String,
+    /** Test version (from the beta repository or marked as pre-release). */
+    val beta: Boolean,
     val raw: String,
 ) {
     /** GitHub page of this release; also the fallback when the in-app update fails. */
@@ -19,24 +22,35 @@ data class UpdateRelease(
         const val REPOSITORY = "ShakieVan/Player-NEXT"
         const val LATEST_ENDPOINT = "https://api.github.com/repos/$REPOSITORY/releases/latest"
         const val RELEASES_PAGE = "https://github.com/$REPOSITORY/releases/latest"
+        // Beta channel like Mau-Mau Flip: test versions live in their own repository. With the
+        // channel on, both sources are asked and the highest version wins.
+        const val BETA_REPOSITORY = "ShakieVan/Player-NEXT-Beta"
+        const val BETA_ENDPOINT = "https://api.github.com/repos/$BETA_REPOSITORY/releases?per_page=20"
+        const val BETA_RELEASES_PAGE = "https://github.com/$BETA_REPOSITORY/releases"
         private const val MAX_APK_BYTES = 256L * 1024 * 1024
 
         fun assetName(version: String) = "Player-NEXT-$version.apk"
 
         /**
-         * Same rules as Mau-Mau Flip: tag "vX.Y.Z", no draft or pre-release, exactly one asset
-         * named Player-NEXT-X.Y.Z.apk with size and "sha256:" digest, download URL on this
-         * repository's release. Anything else yields null.
+         * Same rules as Mau-Mau Flip: tag "vX.Y.Z", no draft, exactly one asset named
+         * Player-NEXT-X.Y.Z.apk with size and "sha256:" digest, download URL on the release of
+         * this repository. Pre-releases and anything from the beta repository only with
+         * [allowBeta]. A list (beta channel) yields its highest version. Anything else yields null.
          */
-        fun parse(json: String): UpdateRelease? = try {
-            val data = JSONObject(json)
-            parse(data)
+        fun parse(json: String, allowBeta: Boolean = false): UpdateRelease? = try {
+            if (json.trimStart().startsWith("[")) {
+                val list = JSONArray(json)
+                (0 until list.length()).mapNotNull { list.optJSONObject(it)?.let { o -> parse(o, allowBeta) } }
+                    .reduceOrNull { a, b -> if (Versions.compare(b.version, a.version) > 0) b else a }
+            } else {
+                parse(JSONObject(json), allowBeta)
+            }
         } catch (_: Exception) {
             null
         }
 
-        private fun parse(data: JSONObject): UpdateRelease? {
-            if (data.optBoolean("draft", true) || data.optBoolean("prerelease", true)) return null
+        private fun parse(data: JSONObject, allowBeta: Boolean): UpdateRelease? {
+            if (data.optBoolean("draft", true) || (data.optBoolean("prerelease", true) && !allowBeta)) return null
             val tag = data.optString("tag_name")
             if (!tag.startsWith("v") || !Versions.isValid(tag.substring(1))) return null
             val version = tag.substring(1)
@@ -51,13 +65,18 @@ data class UpdateRelease(
             if (size <= 0 || size > MAX_APK_BYTES || !digest.startsWith("sha256:") || hex.length != 64 ||
                 !hex.all { it in '0'..'9' || it in 'a'..'f' || it in 'A'..'F' }
             ) return null
-            if (url != "https://github.com/$REPOSITORY/releases/download/$tag/$name") return null
-            return UpdateRelease(version, data.optString("body").take(6000), size, hex.lowercase(), url, data.toString())
+            val fromBeta = url == "https://github.com/$BETA_REPOSITORY/releases/download/$tag/$name"
+            if (url != "https://github.com/$REPOSITORY/releases/download/$tag/$name" && !(fromBeta && allowBeta)) return null
+            val beta = fromBeta || data.optBoolean("prerelease", false)
+            return UpdateRelease(version, data.optString("body").take(6000), size, hex.lowercase(), url, beta, data.toString())
         }
     }
 }
 
 object Versions {
+    /** Regular releases end in .0; X.Y.Z with Z ≠ 0 is a beta (then the beta channel is on by default). */
+    fun isBeta(version: String): Boolean = isValid(version) && version.substringAfterLast('.').toInt() != 0
+
     fun isValid(text: String): Boolean {
         val parts = text.split('.')
         return parts.size == 3 && parts.all { p -> p.isNotEmpty() && p.length <= 6 && p.all(Char::isDigit) }

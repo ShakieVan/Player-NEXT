@@ -46,13 +46,16 @@ class QueuePlayer(private val exo: ExoPlayer, private val hooks: Hooks) : Forwar
 
     private fun items(): List<MediaItem> = (0 until exo.mediaItemCount).map { exo.getMediaItemAt(it) }
 
+    /** Random order of [items] in the mode chosen in the settings ([Shuffler]). */
+    private fun shuffled(items: List<MediaItem>): List<MediaItem> = Shuffler.shuffle(items, { QueueItems.songOf(it)?.path })
+
     private fun shuffleInPlace() {
         val count = exo.mediaItemCount
         val all = items()
         originalOrder = all.map { it.mediaId }.toMutableList()
         if (count < 2) return
         val cur = exo.currentMediaItemIndex.coerceIn(0, count - 1)
-        val rest = all.filterIndexed { i, _ -> i != cur }.shuffled()
+        val rest = shuffled(all.filterIndexed { i, _ -> i != cur })
         if (cur + 1 < count) exo.removeMediaItems(cur + 1, count)
         if (cur > 0) exo.removeMediaItems(0, cur)
         exo.addMediaItems(rest)
@@ -78,17 +81,21 @@ class QueuePlayer(private val exo: ExoPlayer, private val hooks: Hooks) : Forwar
     /**
      * Start of a new round with shuffle and "repeat all": while the last song plays, everything
      * before it gets a fresh order, so the next round is new and still has every song once.
-     * The songs heard last don't come right at the start of the new round.
+     * The songs heard last don't come right at the start of the new round ("long unheard first"
+     * puts them at the end anyway).
      */
     fun reshuffleBeforeLast() {
         val count = exo.mediaItemCount
         val cur = exo.currentMediaItemIndex
         if (count < 3 || cur != count - 1) return
         val before = (0 until cur).map { exo.getMediaItemAt(it) }
-        val keepAway = minOf(20, before.size / 2)
-        val recent = before.takeLast(keepAway)
-        val fresh = before.dropLast(keepAway).shuffled().toMutableList()
-        recent.forEach { fresh.add(Random.nextInt(minOf(keepAway, fresh.size), fresh.size + 1), it) }
+        val fresh = if (Shuffler.divisor != 0) shuffled(before) else {
+            val keepAway = minOf(20, before.size / 2)
+            val recent = before.takeLast(keepAway)
+            before.dropLast(keepAway).shuffled().toMutableList().also { list ->
+                recent.forEach { list.add(Random.nextInt(minOf(keepAway, list.size), list.size + 1), it) }
+            }
+        }
         // Add first, then remove the old copies: the current index never points past the list.
         exo.addMediaItems(0, fresh)
         exo.removeMediaItems(fresh.size, fresh.size + cur)
@@ -137,7 +144,7 @@ class QueuePlayer(private val exo: ExoPlayer, private val hooks: Hooks) : Forwar
     private fun setShuffled(items: List<MediaItem>, startIndex: Int, startPositionMs: Long) {
         val start = startIndex.coerceIn(0, items.size - 1)
         originalOrder = items.map { it.mediaId }.toMutableList()
-        val ordered = listOf(items[start]) + items.filterIndexed { i, _ -> i != start }.shuffled()
+        val ordered = listOf(items[start]) + shuffled(items.filterIndexed { i, _ -> i != start })
         super.setMediaItems(ordered, 0, if (startPositionMs == androidx.media3.common.C.TIME_UNSET) 0 else startPositionMs)
     }
 

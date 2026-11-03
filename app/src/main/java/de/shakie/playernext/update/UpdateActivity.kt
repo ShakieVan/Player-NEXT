@@ -21,7 +21,8 @@ class UpdateActivity : BaseActivity() {
         Updater.init(this)
         setContentView(R.layout.activity_update)
         findViewById<MaterialToolbar>(R.id.toolbar).setNavigationOnClickListener { finish() }
-        findViewById<TextView>(R.id.installed).text = getString(R.string.update_installed, Updater.currentVersion)
+        findViewById<TextView>(R.id.installed).text =
+            getString(if (Versions.isBeta(Updater.currentVersion)) R.string.update_installed_beta else R.string.update_installed, Updater.currentVersion)
         findViewById<View>(R.id.btn_check).setOnClickListener { Updater.check() }
         findViewById<View>(R.id.btn_download).setOnClickListener { Updater.download() }
         findViewById<View>(R.id.btn_install).setOnClickListener { Updater.install(this) }
@@ -29,6 +30,10 @@ class UpdateActivity : BaseActivity() {
         findViewById<MaterialSwitch>(R.id.auto_check).apply {
             isChecked = Prefs.updateAutoCheck
             setOnCheckedChangeListener { _, checked -> Prefs.updateAutoCheck = checked }
+        }
+        findViewById<MaterialSwitch>(R.id.beta).apply {
+            isChecked = Updater.beta
+            setOnCheckedChangeListener { _, checked -> Updater.setBeta(checked) }
         }
     }
 
@@ -59,7 +64,7 @@ class UpdateActivity : BaseActivity() {
         val notes = rel?.notes?.trim().orEmpty()
         findViewById<TextView>(R.id.notes_title).apply {
             visibility = if (notes.isNotEmpty()) View.VISIBLE else View.GONE
-            text = rel?.let { getString(R.string.update_notes, it.version) }
+            text = rel?.let { getString(if (it.beta) R.string.update_notes_beta else R.string.update_notes, it.version) }
         }
         findViewById<TextView>(R.id.notes).apply {
             visibility = if (notes.isNotEmpty()) View.VISIBLE else View.GONE

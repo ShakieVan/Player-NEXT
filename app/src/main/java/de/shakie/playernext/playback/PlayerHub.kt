@@ -13,7 +13,6 @@ import com.google.common.util.concurrent.ListenableFuture
 import de.shakie.playernext.data.PlaylistStore
 import de.shakie.playernext.data.Song
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.random.Random
 
 /** UI side access to the playback service through a MediaController. */
 object PlayerHub {
@@ -108,7 +107,7 @@ object PlayerHub {
                 c.clearMediaItems()
                 c.shuffleModeEnabled = true
             }
-            c.setMediaItems(items, if (shuffle) Random.nextInt(songs.size) else startIndex.coerceIn(0, songs.size - 1), 0)
+            c.setMediaItems(items, if (shuffle) Shuffler.pickStart(songs) { it.path } else startIndex.coerceIn(0, songs.size - 1), 0)
             c.prepare()
             c.play()
         }

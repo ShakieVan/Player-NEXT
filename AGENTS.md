@@ -83,7 +83,11 @@ Vor Änderungen an Wiedergabe, Energie oder Tags die Notizen in
 ## Veröffentlichen
 
 - Repository: github.com/ShakieVan/Player-NEXT (öffentlich, damit der
-  Updater Releases ohne Anmeldung findet).
+  Updater Releases ohne Anmeldung findet). Testversionen wie bei Mau-Mau Flip
+  in github.com/ShakieVan/Player-NEXT-Beta (öffentlich, nur README und
+  Vorabversionen).
+- Nummern: Releases X.Y.0, Betas X.Y.Z mit Z ≠ 0. Danach richtet sich der
+  Beta-Kanal der App, solange niemand ihn umschaltet.
 - Release-Ablauf und Regeln für die APK (Name, Tag, Signatur) in
   [`docs/technical-notes/updates.md`](docs/technical-notes/updates.md);
   Release-Notizen unter `docs/releases/`.

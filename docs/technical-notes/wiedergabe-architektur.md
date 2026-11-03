@@ -49,6 +49,40 @@ wiederholt.
   Die Reihenfolge übersteht Neustarts. Unit-Tests (`BagOrderTest`) prüfen das
   mit 30 000 Titeln.
 
+## Zufallsmodus „Lange nicht Gehörtes zuerst“ (ab 1.1.1)
+
+Einstellungen → Audio → Zufallswiedergabe: „Gleichmäßig“ (Standard) oder
+„Lange nicht Gehörtes zuerst“ mit „Auswahl aus der älteren Hälfte / dem
+ältesten Viertel (Standard) / dem ältesten Achtel“. Alle Stellen, an denen
+gemischt wird, holen die Reihenfolge aus `Shuffler`: Mischen einer
+Warteschlange, „Alle zufällig“ (auch der erste Titel), die neue Runde mit
+„Alle wiederholen“ und der Partymix-Beutel.
+
+- **Alter** eines Titels = späterer Zeitpunkt aus „zuletzt gespielt“ und
+  „zuletzt übersprungen“ (`StatsStore`); nie gehört = am ältesten. Ein
+  übersprungener Titel gilt also auch als gerade gehört.
+- **Ablauf** (`AgeOrder.order`): Titel nach Alter sortieren (gleiche Zeit in
+  zufälliger Reihenfolge), dann wird jeder nächste Titel zufällig aus den
+  `w` ältesten noch übrigen gezogen, `w` = Anteil der Liste, mindestens 5
+  (kleine Listen bleiben zufällig). Das ist eine Permutation: Jeder Titel kommt
+  genau einmal, die Garantie von oben gilt weiter.
+- **Warum ein Fenster:** Streng „Ältestes zuerst“ würde nach einer Runde genau
+  dieselbe Reihenfolge noch einmal spielen (das zuerst Gehörte ist dann das
+  Älteste). Mit dem Fenster ist jede Runde neu gemischt; ein Titel mit
+  Altersrang r kommt frühestens an Position r − w + 1. Nie Gehörtes kommt vor
+  allem anderen. Kleineres Fenster = strenger nach Alter.
+- **Partymix:** Der Beutel ordnet jede neue Runde nach Alter und speichert den
+  Modus (`mode` in den Beutel-Einstellungen). Wechselt der Modus, wird der noch
+  nicht gespielte Rest neu geordnet. Innerhalb einer Runde zählt das Alter zu
+  ihrem Beginn; ein Titel, der zwischendurch außerhalb des Partymix lief,
+  rückt in dieser Runde nicht nach hinten.
+- **Aufwand:** einmal Sortieren je Mischen (30 000 Titel: wenige ms), kein
+  Hintergrundtakt.
+
+`AgeOrderTest` prüft mit 30 000 Titeln: jede Position genau einmal,
+Fenstergrenze, nie Gehörtes zuerst, die zweite Runde wiederholt die erste
+nicht, kleine Listen bleiben zufällig, Moduswechsel im Beutel.
+
 ## Große Warteschlangen (Lasttest mit 30 020 Titeln)
 
 Gemessen im Emulator (4 GB RAM) mit 30 000 erzeugten Titeln:

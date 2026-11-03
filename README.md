@@ -55,6 +55,9 @@ bildet die gewohnte Bedienung nach und setzt auf einen sparsamen Unterbau:
   gemischt und beim Ausschalten wiederhergestellt – und anders als dort
   wiederholt sich auch bei zehntausenden Titeln keiner, bevor alle einmal
   liefen (auch im Partymix und in jeder neuen Runde mit „Alle wiederholen“).
+  Wahlweise **„Lange nicht Gehörtes zuerst“**: Jeder nächste Titel kommt
+  zufällig aus der Hälfte, dem Viertel oder dem Achtel, das am längsten nicht
+  lief.
 - **Equalizer:** 10 Bänder (±12 dB), Preamp, 27 Presets plus eigene, Hall,
   Bass- und Virtualizer-Drehknopf, Lautstärke.
 - **Audio:** Gapless, automatisches und manuelles Crossfading, ReplayGain
@@ -80,8 +83,10 @@ bildet die gewohnte Bedienung nach und setzt auf einen sparsamen Unterbau:
   Album, ⏪ ▶ ⏩) mit einstellbarer Transparenz; ein Tipp außerhalb der Tasten
   öffnet den Player.
 - **Updates** wie bei Mau-Mau Flip: einmal täglich nachsehen (abschaltbar),
-  Download nur auf Wunsch, Prüfung von SHA-256 und Signatur. Das ist die
-  einzige Internetnutzung der App.
+  Download nur auf Wunsch, Prüfung von SHA-256 und Signatur; Testversionen
+  über den Schalter „Beta-Kanal“ aus
+  [Player-NEXT-Beta](https://github.com/ShakieVan/Player-NEXT-Beta/releases).
+  Das ist die einzige Internetnutzung der App.
 - **Sichern/Wiederherstellen** von Einstellungen und Musikstatistiken,
   M3U-Import/-Export.
 

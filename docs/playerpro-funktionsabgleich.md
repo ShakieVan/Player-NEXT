@@ -32,7 +32,7 @@ Legende: ✅ umgesetzt · ➖ bewusst weggelassen (online oder nicht mehr mögli
 | Jetzt läuft: Cover wischen, Übergangseffekte, Bewertungsleiste, Lautstärke, Hinzufügen/Teilen/Liedtexte | ✅ |
 | Info-Menü (Alle Album-/Interpreten-/Ordnertitel, Details, Albuminfos, Cover, Tags, Klingelton, Löschen) | ✅ |
 | Warteschlange mit Drag & Drop | ✅ zusätzlich Wischen zum Entfernen |
-| Zufallswiedergabe mischt die sichtbare Warteschlange | ✅ (`QueuePlayer`); zusätzlich garantiert ohne Wiederholung, bis alle Titel einmal liefen – auch bei zehntausenden (PlayerPro-Fehler „immer dieselben ~100 Titel“) |
+| Zufallswiedergabe mischt die sichtbare Warteschlange | ✅ (`QueuePlayer`); zusätzlich garantiert ohne Wiederholung, bis alle Titel einmal liefen – auch bei zehntausenden (PlayerPro-Fehler „immer dieselben ~100 Titel“); zusätzlich Modus „Lange nicht Gehörtes zuerst“ (ab 1.1.1) |
 | Halten von ⏪/⏩ zum Spulen | ✅ |
 | Partymix, Einschlaf-Timer (mit Ausblenden) | ✅ Partymix über einen gespeicherten Mischbeutel; Timer zusätzlich „Titel zu Ende spielen“ |
 | Gapless, Crossfading auto/manuell, ReplayGain, Pause zwischen Titeln | ✅ |

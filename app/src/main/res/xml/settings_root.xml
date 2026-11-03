@@ -218,6 +218,12 @@
                 <CheckBoxPreference android:defaultValue="true" android:key="skip_unsupported_audio" android:title="Nicht unterstützte Dateien überspringen" android:summary="Defekte oder nicht abspielbare Dateien automatisch überspringen" app:iconSpaceReserved="false" />
             </PreferenceCategory>
 
+            <PreferenceCategory android:title="Zufallswiedergabe" app:iconSpaceReserved="false">
+                <ListPreference android:defaultValue="even" android:entries="@array/shuffle_mode_entries" android:entryValues="@array/shuffle_mode_values" android:key="shuffle_mode" android:title="Zufallsmodus" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <ListPreference android:defaultValue="4" android:entries="@array/shuffle_window_entries" android:entryValues="@array/shuffle_window_values" android:key="shuffle_window" android:title="Auswahl aus" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <Preference android:selectable="false" android:summary="Jeder Titel kommt genau einmal, bevor sich einer wiederholt. „Lange nicht Gehörtes zuerst“ zieht jeden nächsten Titel zufällig aus den Titeln, die am längsten nicht gespielt oder übersprungen wurden – je kleiner der Anteil, desto strenger. Gilt für Mischen, „Alle zufällig“ und den Partymix." app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
             <PreferenceCategory android:title="Audiofokus" app:iconSpaceReserved="false">
                 <CheckBoxPreference android:defaultValue="true" android:key="audio_focus_loss" android:title="Dauerhafter Audiofokusverlust" android:summary="Wiedergabe pausieren, wenn eine andere App dauerhaft Audio übernimmt" app:iconSpaceReserved="false" />
                 <CheckBoxPreference android:defaultValue="true" android:key="audio_focus_transient_loss" android:title="Vorübergehender Audiofokusverlust" android:summary="Wiedergabe pausieren bei Anrufen, Navigation usw. und danach fortsetzen" app:iconSpaceReserved="false" />
@@ -286,6 +292,8 @@
                 <Preference android:key="ppo_version" android:title="Version" app:iconSpaceReserved="false" />
                 <Preference android:key="updates" android:title="Updates" android:summary="Neue Versionen von GitHub laden und installieren" app:iconSpaceReserved="false" />
                 <CheckBoxPreference android:defaultValue="true" android:key="update_auto_check" android:title="Automatisch nach Updates suchen" android:summary="Einmal täglich beim Start bei GitHub nachsehen" app:iconSpaceReserved="false" />
+                <!-- Not persisted here: until switched, the channel follows the installed version (Updater.beta). -->
+                <CheckBoxPreference android:key="update_beta" android:persistent="false" android:title="Testversionen (Beta-Kanal)" android:summary="Auch Vorabversionen anbieten; sie können Fehler enthalten" app:iconSpaceReserved="false" />
                 <Preference android:key="ppo_licenses" android:title="Lizenzen" android:summary="Verwendete Open-Source-Projekte" app:iconSpaceReserved="false" />
             </PreferenceCategory>
         </PreferenceScreen>
