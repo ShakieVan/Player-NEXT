@@ -68,7 +68,8 @@ class UpdateActivity : BaseActivity() {
         }
         findViewById<TextView>(R.id.notes).apply {
             visibility = if (notes.isNotEmpty()) View.VISIBLE else View.GONE
-            text = notes
+            val density = resources.displayMetrics.density
+            text = ReleaseNotes.format(notes, gap = (10 * density).toInt(), radius = (3 * density).toInt(), color = currentTextColor)
         }
     }
 }

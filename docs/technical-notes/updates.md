@@ -84,9 +84,12 @@ Sperre.
 2. `.\gradlew.bat :app:testDebugUnitTest :app:assembleRelease`
 3. APK als `release-artifacts/Player-NEXT-X.Y.Z.apk` ablegen.
 4. `docs/releases/vX.Y.Z.md` schreiben, committen, Tag `vX.Y.Z` pushen.
-   Die App zeigt die Notizen als reinen Text: ohne Überschriften-Markdown und
-   ohne harte Zeilenumbrüche (ein Absatz bzw. Punkt je Zeile), sonst bricht der
-   Text in der App mitten im Satz um (so noch bei 1.1.0).
+   Die Notizen zeigt die *installierte* Version an. Ab 1.1.2 stellt sie
+   einfaches Markdown dar (`update/ReleaseNotes.kt`: Überschriften und
+   `**fett**` fett, `-`/`*`/`+` als Aufzählung, harte Umbrüche in Absätzen
+   werden zusammengezogen, Links zeigen ihren Text). 1.1.0 und 1.1.1 zeigen
+   Rohtext – solange jemand diese hat, Notizen ohne `##`/`**` und ohne harte
+   Umbrüche schreiben (ein Absatz bzw. Punkt je Zeile).
 5. Release (X.Y.0): `gh release create vX.Y.Z release-artifacts/Player-NEXT-X.Y.Z.apk --title "Player NEXT X.Y.Z" --notes-file docs/releases/vX.Y.Z.md --latest --verify-tag`
 6. Beta (X.Y.Z, Z ≠ 0): `gh release create vX.Y.Z release-artifacts/Player-NEXT-X.Y.Z.apk -R ShakieVan/Player-NEXT-Beta --title "Player NEXT X.Y.Z (Beta)" --notes-file docs/releases/vX.Y.Z.md --prerelease`
 7. Nachprüfen wie der Updater: `gh api repos/<Repo>/releases/tags/vX.Y.Z` –
