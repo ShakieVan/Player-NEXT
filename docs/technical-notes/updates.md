@@ -65,4 +65,19 @@ Repository). **Ohne denselben Schlüssel lässt sich kein Update über eine
 installierte Version installieren** – den Schlüssel sichern.
 
 Zum Ausprobieren gegen das neueste Release eine ältere Version bauen:
-`.\gradlew.bat :app:assembleRelease -PpnVersion=1.0.99`.
+`.\gradlew.bat :app:assembleRelease "-PpnVersion=1.0.99"` – in PowerShell mit
+Anführungszeichen, sonst zerlegt PowerShell das Argument am Punkt und es
+entsteht still die normale Version.
+
+## Geprüft
+
+03.11.2026 im Emulator (Android 16) gegen das echte Release v1.1.0: 1.0.99
+findet beim Start 1.1.0, lädt 7,0 MB, Prüfsumme passt, die Einstellung
+„Unbekannte Apps installieren“ öffnet sich, danach Paket-/Signaturprüfung und
+Android-Installer → „App wurde installiert.“ Auf dem S21 (Android 15) mit dem
+Debug-Bau: Prüfung erreicht GitHub („Noch kein passendes Release
+veröffentlicht.“ vor dem ersten Release).
+
+Hinweis für Tests: Nach „Aktualisieren“ prüft Play Protect die APK einige
+Sekunden. Wird in dieser Zeit das Installationsrecht der App geändert, beendet
+Android die App samt Installer – die Installation bricht dann ab.
