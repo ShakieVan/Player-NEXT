@@ -122,6 +122,13 @@ Download 7,0 MB, Prüfungen und Android-Installer → „App wurde installiert.�
 Danach zeigt 1.1.1 „Installiert: Player NEXT 1.1.1 (Beta)“, Schalter an. Ein
 Bau 1.1.1 ohne gespeicherte Wahl hat den Schalter von selbst an.
 
+03.11.2026 Beta 1.1.2 im Emulator: Eine 1.0.99 mit neuem Code zeigt die
+Markdown-Notizen von 1.1.0 lesbar (fette Überschriften und Hervorhebungen,
+Aufzählungspunkte, keine Umbrüche mitten im Satz). Die echte 1.1.1 findet
+1.1.2 im Beta-Kanal und installiert sie („App wurde installiert.“); 1.1.2
+meldet danach „Du hast die neueste Version.“ Eine einmal getroffene Wahl des
+Beta-Schalters bleibt über Updates erhalten.
+
 Play Protect zeigte dabei „App-Scan empfohlen“ (unbekannte App). Den Link
 „Ohne Scan installieren“ nimmt der Dialog über `adb shell input` nicht an;
 „App scannen“ → „Diese App ist anscheinend sicher“ → „Installieren“. Nutzer
