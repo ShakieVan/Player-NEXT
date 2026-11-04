@@ -62,6 +62,8 @@ import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.math.abs
 
+private const val PAYLOAD_RATING = "rating"
+
 class NowPlayingActivity : BaseActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var pager: ViewPager2
@@ -123,6 +125,8 @@ class NowPlayingActivity : BaseActivity() {
         overlayVisible = Prefs.playerVisibleRatings
         applyOverlayVisibility()
         refreshAll()
+        // Ratings (or the setting to show them) may have changed while another screen was open.
+        queueAdapter.refreshRatings()
     }
 
     override fun onPause() {
@@ -152,7 +156,10 @@ class NowPlayingActivity : BaseActivity() {
     // --- state --------------------------------------------------------------------------------
 
     private val playerListener: () -> Unit = { refreshAll() }
-    private val statsListener: () -> Unit = { PlayerHub.currentSong()?.let { rating.rating = StatsStore[it.path].rating } }
+    private val statsListener: () -> Unit = {
+        PlayerHub.currentSong()?.let { rating.rating = StatsStore[it.path].rating }
+        queueAdapter.refreshRatings()
+    }
 
     private fun refreshAll() {
         val c = PlayerHub.controller
@@ -687,10 +694,21 @@ class NowPlayingActivity : BaseActivity() {
 
         override fun getItemCount() = queueItems.size
 
+        /** Ratings changed: redraw only the stars of the rows on screen. */
+        fun refreshRatings() = notifyItemRangeChanged(0, itemCount, PAYLOAD_RATING)
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             Holder(LayoutInflater.from(parent.context).inflate(R.layout.item_song, parent, false))
 
         override fun onBindViewHolder(holder: Holder, position: Int) = holder.bind(position)
+
+        override fun onBindViewHolder(holder: Holder, position: Int, payloads: MutableList<Any>) {
+            if (payloads.isNotEmpty() && payloads.all { it == PAYLOAD_RATING }) {
+                holder.bindRating(QueueItems.songOf(queueItems[position]))
+            } else {
+                super.onBindViewHolder(holder, position, payloads)
+            }
+        }
 
         inner class Holder(view: View) : RecyclerView.ViewHolder(view) {
             private val title = view.findViewById<TextView>(R.id.title)
@@ -699,6 +717,14 @@ class NowPlayingActivity : BaseActivity() {
             private val playing = view.findViewById<ImageView>(R.id.playing)
             private val drag = view.findViewById<ImageView>(R.id.drag)
             private val art = view.findViewById<ImageView>(R.id.art)
+            private val stars = view.findViewById<RatingView>(R.id.rating)
+
+            /** Stars only for rated songs, like the library lists. */
+            fun bindRating(song: Song?) {
+                val r = if (song != null && Prefs.ratingsInLists) StatsStore[song.path].rating else 0
+                stars.rating = r
+                stars.visibility = if (r > 0) View.VISIBLE else View.GONE
+            }
 
             @SuppressLint("ClickableViewAccessibility")
             fun bind(position: Int) {
@@ -707,6 +733,7 @@ class NowPlayingActivity : BaseActivity() {
                 title.text = song?.title ?: item.mediaMetadata.title
                 subtitle.text = song?.let { "${it.artist} · ${it.album}" } ?: ""
                 duration.text = song?.let { Format.duration(it.duration) } ?: ""
+                bindRating(song)
                 drag.visibility = View.VISIBLE
                 art.visibility = View.VISIBLE
                 ArtLoader.load(art, song?.let { ArtKey.Album(it.albumId) }, dp(44))

@@ -70,9 +70,10 @@ bildet die gewohnte Bedienung nach und setzt auf einen sparsamen Unterbau:
   Schwelle und Ausgangspegel, im Equalizer mit Pegelanzeige für Eingang,
   Reduktion und Ausgang), Tonhöhe, Geschwindigkeit, Pause zwischen
   Titeln, einstellbarer Audiofokus.
-- **Bewertungen** in allen Titellisten, automatisch aus den Dateien gelesen
-  (POPM wie Windows Media Player/MediaMonkey, foobar2000, FLAC/Ogg, M4A), im
-  Tag-Editor sichtbar und änderbar, in Android Auto per Taste.
+- **Bewertungen** in allen Titellisten und in der Warteschlange, automatisch
+  aus den Dateien gelesen (POPM wie Windows Media Player/MediaMonkey,
+  foobar2000, FLAC/Ogg, M4A), im Tag-Editor sichtbar und änderbar, in Android
+  Auto per Taste.
 - **Statistiken und smarte Playlists:** Bewertungen (auch halbe Sterne),
   Wiedergabe-/Überspringzähler, zuletzt gespielt; Kürzlich hinzugefügt, Am
   besten bewertet, Am häufigsten/seltensten, Kürzlich wiedergegeben, Podcasts

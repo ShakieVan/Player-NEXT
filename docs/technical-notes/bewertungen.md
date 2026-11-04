@@ -44,9 +44,22 @@ zu 0 Sternen um; es gab keinen Fortschritt.
 
 ## Anzeige und Bearbeitung
 
-- Listen: kleine Sterne vor der Dauer in allen Titelzeilen (Titel, Ordner,
-  Alben, Interpreten, Playlists, Suche), abschaltbar („Bewertungen in Listen
-  anzeigen“). Änderungen zeichnen nur die Sterne neu (`RowAdapter.refreshState`).
+- Listen: kleine Sterne in allen Titelzeilen (Titel, Ordner, Alben,
+  Interpreten, Playlists, Suche) und ab 1.1.5 auch in der Warteschlange
+  („Aktuelle Playlist“), abschaltbar („Bewertungen in Listen anzeigen“), nur
+  bei bewerteten Titeln. Änderungen zeichnen nur die Sterne neu
+  (`RowAdapter.refreshState`, in der Warteschlange `QueueAdapter.refreshRatings`
+  mit Payload).
+- Zeilenaufbau (`item_song.xml`, ab 1.1.5): Dauer rechts neben dem Titel
+  (gleiche Grundlinie), Sterne rechts darunter neben „Interpret · Album“ –
+  eine rechte Spalte. Vorher standen Sterne und Dauer beide in der unteren
+  Zeile; in der Warteschlange (Griff, Cover, Menü) blieben für „Interpret ·
+  Album“ auf 411 dp nur rund 150 dp, auf 360 dp knapp 100 dp. Jetzt verliert
+  der Titel die Breite der Dauer und die untere Zeile nur noch die Differenz
+  Sterne − Dauer (≈ 27 dp). Erwogen und verworfen: Sterne auf dem Cover
+  (bei 44 dp höchstens 7 dp je Stern, halbe Sterne kaum lesbar), Balken
+  (Wert nicht ablesbar), blasse Sterne hinter dem Text (stört das Lesen),
+  eigene dritte Zeile (längere Liste).
 - Tag-Editor: „Bewertung (in der Datei)“ zeigt den Dateiwert, darunter den
   Wert von Player NEXT, wenn er abweicht. Speichern schreibt die Datei und
   setzt Player NEXT auf denselben Wert.
@@ -63,3 +76,11 @@ foobar `TXXX:RATING=4` → 4 Sterne, FLAC `RATING=60` → 3, Ogg
 Ordnerliste; im Tag-Editor 4 → 5 Sterne gespeichert: Datei danach `POPM`
 „Windows Media Player 9 Series“ = 255 und `TXXX:RATING` = „5“. Taste in der
 Sitzung: „Bewertung: 3 Sterne“ nach Bewerten im Player.
+
+## Geprüft (Emulator, 04.11.2026)
+
+Warteschlange aus acht MP3s mit `TXXX:RATING` 1–5 und halben Sternen, dazu
+zwei unbewertete: Sterne nur bei bewerteten Titeln, ½-Sterne richtig, auf
+411 dp passt „Die Testband · Erste Schritte“ neben die Sterne (vorher
+„Erste Schr…“), auf 360 dp eng, aber lesbar. Im Player 5 → 3 Sterne
+gesetzt: Zeile in der Warteschlange zeigt sofort 3.
