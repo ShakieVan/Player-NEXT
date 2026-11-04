@@ -129,6 +129,14 @@ Aufzählungspunkte, keine Umbrüche mitten im Satz). Die echte 1.1.1 findet
 meldet danach „Du hast die neueste Version.“ Eine einmal getroffene Wahl des
 Beta-Schalters bleibt über Updates erhalten.
 
+04.11.2026 Beta 1.1.3 im Emulator: Die installierte 1.1.2 (Release-Bau)
+findet nach „Jetzt prüfen“ „Neue Testversion 1.1.3 verfügbar.“ (7,1 MB),
+lädt, prüft und aktualisiert über den Android-Installer („App wurde
+installiert.“, diesmal ohne Play-Protect-Dialog). Vorher in 1.1.2 gesetzte
+Daten bleiben über die Datenbank-Umstellung (Version 2, Tabelle
+`file_ratings`) erhalten: 4 Sterne erscheinen jetzt in der Titelliste, der
+Favorit und die Warteschlange sind noch da.
+
 Play Protect zeigte dabei „App-Scan empfohlen“ (unbekannte App). Den Link
 „Ohne Scan installieren“ nimmt der Dialog über `adb shell input` nicht an;
 „App scannen“ → „Diese App ist anscheinend sicher“ → „Installieren“. Nutzer
