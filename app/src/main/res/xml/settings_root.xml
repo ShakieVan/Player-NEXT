@@ -225,9 +225,9 @@
             </PreferenceCategory>
 
             <PreferenceCategory android:title="Lautheit" app:iconSpaceReserved="false">
-                <CheckBoxPreference android:defaultValue="false" android:key="loudmax" android:title="Lautheits-Maximierer" android:summary="Look-ahead-Limiter wie LoudMax: macht leise Aufnahmen lauter und fängt Spitzen ab, bevor sie übersteuern. Schaltet die stromsparende Hardware-Wiedergabe ab." app:iconSpaceReserved="false" />
-                <SeekBarPreference android:defaultValue="-6" android:dependency="loudmax" android:key="loudmax_threshold" android:max="0" android:title="Schwelle (dB)" android:summary="Je tiefer, desto lauter und dichter (−6 dB = 6 dB lauter)" app:iconSpaceReserved="false" app:min="-30" app:showSeekBarValue="true" />
-                <SeekBarPreference android:defaultValue="-1" android:dependency="loudmax" android:key="loudmax_output" android:max="0" android:title="Ausgangspegel (dB)" android:summary="Höchster Pegel, den keine Spitze überschreitet" app:iconSpaceReserved="false" app:min="-12" app:showSeekBarValue="true" />
+                <CheckBoxPreference android:defaultValue="false" android:key="loudmax" android:title="Lautheits-Maximierer" android:summary="Look-ahead-Limiter wie LoudMax: macht leise Aufnahmen lauter und fängt Spitzen ab, bevor sie übersteuern. Auch im Equalizer einstellbar, dort mit Pegelanzeige. Schaltet die stromsparende Hardware-Wiedergabe ab." app:iconSpaceReserved="false" />
+                <SeekBarPreference android:defaultValue="-6" android:dependency="loudmax" android:key="loudmax_threshold" android:max="0" android:title="Schwelle (dB)" android:summary="Spitzen darüber werden abgefangen. Je tiefer, desto lauter und dichter." app:iconSpaceReserved="false" app:min="-30" app:showSeekBarValue="true" />
+                <SeekBarPreference android:defaultValue="-1" android:dependency="loudmax" android:key="loudmax_output" android:max="0" android:title="Ausgangspegel (dB)" android:summary="Höchster Pegel am Ausgang. Leise Stellen werden um den Abstand zur Schwelle lauter (Schwelle −6, Ausgang −1: 5 dB)." app:iconSpaceReserved="false" app:min="-12" app:showSeekBarValue="true" />
             </PreferenceCategory>
 
             <PreferenceCategory android:title="Wiedergabe" app:iconSpaceReserved="false">

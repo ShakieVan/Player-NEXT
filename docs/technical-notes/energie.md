@@ -21,7 +21,8 @@ Messwerte:
 | Update-Prüfung | Höchstens eine kleine HTTPS-Anfrage am Tag beim Start (abschaltbar), kein Hintergrund-Job. |
 | Bewertungen aus Dateien | Jede Datei wird einmal gelesen, danach nur, wenn MediaStore eine Änderung meldet; Thread mit niedrigster Priorität, nur nach einer Bibliotheksänderung, kein Timer. Der erste Durchlauf bei großen Bibliotheken dauert einige Minuten. |
 | Kapitel | Einmal je Datei beim Titelwechsel, nur MP4-Familie, nur die Atom-Köpfe. |
-| Lautheits-Maximierer | Nur wenn eingeschaltet; dann läuft der DSP und die Hardware-Wiedergabe (Offload) ist aus. |
+| Lautheits-Maximierer | Nur wenn eingeschaltet; dann läuft der DSP und die Hardware-Wiedergabe (Offload) ist aus. Die Gain-Reduktion wird nicht mehr je Frame in dB umgerechnet (ein `log10` je Frame weniger). |
+| Pegelanzeige im Equalizer | Gemessen wird nur, solange der Equalizer im Vordergrund ist; gezeichnet höchstens 30 Bilder/s und nur beim Abspielen und Ausklingen, in der Pause 0 (gemessen). Ausnahme von „1/s“, weil eine Pegelanzeige mit 1/s nutzlos wäre; sie läuft nur, solange man hinsieht. |
 
 | Bedarfsgesteuerte Wiedergabe-Schleife | `experimentalSetDynamicSchedulingEnabled(true)`: ExoPlayers Schleife wacht nicht mehr alle 10 ms auf. Emulator: Wiedergabe-Thread 119 → 38 Ticks pro 30 s. |
 | Größerer AudioTrack-Puffer | 0,5–1 s PCM-Puffer, weniger Nachfüllvorgänge. Effektänderungen werden nach höchstens ~1 s hörbar. |

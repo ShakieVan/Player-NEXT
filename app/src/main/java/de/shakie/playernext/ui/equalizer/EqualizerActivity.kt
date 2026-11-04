@@ -12,9 +12,12 @@ import android.widget.TextView
 import android.widget.ToggleButton
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import de.shakie.playernext.Prefs
 import de.shakie.playernext.R
 import de.shakie.playernext.data.EqPresetStore
+import de.shakie.playernext.playback.PlayerHub
 import de.shakie.playernext.playback.dsp.AudioEffects
+import de.shakie.playernext.playback.dsp.LevelMeter
 import de.shakie.playernext.playback.dsp.EqPresets
 import de.shakie.playernext.ui.BaseActivity
 import de.shakie.playernext.ui.common.ItemActions
@@ -23,8 +26,10 @@ import de.shakie.playernext.util.themeColor
 import java.util.Locale
 
 /**
- * 10-band equalizer with preamp, reverb, bass and virtualizer knobs and the media volume.
- * Values go straight into [AudioEffects]; the DSP in the playback service picks them up.
+ * 10-band equalizer with preamp, reverb, bass and virtualizer knobs, the loudness maximizer
+ * with its meters and the media volume. Values go straight into [AudioEffects] (maximizer:
+ * [Prefs], mirrored by the service); the DSP in the playback service picks them up. The meters
+ * run only while this screen is in the foreground.
  */
 class EqualizerActivity : BaseActivity() {
     private val sliders = ArrayList<VerticalSlider>()
@@ -33,6 +38,13 @@ class EqualizerActivity : BaseActivity() {
     private lateinit var preamp: SeekBar
     private lateinit var preampValue: TextView
     private lateinit var audioManager: AudioManager
+    private lateinit var meter: LevelMeterView
+    private lateinit var loudThreshold: SeekBar
+    private lateinit var loudOutput: SeekBar
+    private lateinit var loudThresholdValue: TextView
+    private lateinit var loudOutputValue: TextView
+    private lateinit var loudSummary: TextView
+    private val playerListener: () -> Unit = { meter.wake() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,10 +97,74 @@ class EqualizerActivity : BaseActivity() {
                 override fun onStopTrackingTouch(s: SeekBar?) = Unit
             })
         }
+        setupLoudness()
         refresh()
     }
 
+    override fun onResume() {
+        super.onResume()
+        LevelMeter.enabled = true
+        PlayerHub.addListener(playerListener)
+        meter.start()
+    }
+
+    override fun onPause() {
+        meter.stop()
+        PlayerHub.removeListener(playerListener)
+        LevelMeter.enabled = false
+        super.onPause()
+    }
+
     private fun dbText(db: Float) = String.format(Locale.GERMANY, "%+.1f dB", db)
+
+    private fun wholeDb(db: Int) = if (db < 0) "−${-db} dB" else if (db > 0) "+$db dB" else "0 dB"
+
+    private fun setupLoudness() {
+        meter = findViewById(R.id.level_meter)
+        loudThreshold = findViewById(R.id.loud_threshold)
+        loudOutput = findViewById(R.id.loud_output)
+        loudThresholdValue = findViewById(R.id.loud_threshold_value)
+        loudOutputValue = findViewById(R.id.loud_output_value)
+        loudSummary = findViewById(R.id.loud_summary)
+        findViewById<ToggleButton>(R.id.loud_toggle).apply {
+            isChecked = Prefs.loudness
+            setOnCheckedChangeListener { _, checked ->
+                Prefs.loudness = checked
+                refreshLoudness()
+            }
+        }
+        // Threshold −30 … 0 dB, output ceiling −12 … 0 dB, whole dB like the settings.
+        loudThreshold.progress = Prefs.loudnessThresholdDb.toInt() + 30
+        loudOutput.progress = Prefs.loudnessOutputDb.toInt() + 12
+        loudThreshold.setOnSeekBarChangeListener(loudListener { Prefs.loudnessThresholdDb = (it - 30).toFloat() })
+        loudOutput.setOnSeekBarChangeListener(loudListener { Prefs.loudnessOutputDb = (it - 12).toFloat() })
+        refreshLoudness()
+    }
+
+    private fun loudListener(write: (Int) -> Unit) = object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(s: SeekBar?, p: Int, fromUser: Boolean) {
+            if (fromUser) write(p)
+            refreshLoudness()
+        }
+        override fun onStartTrackingTouch(s: SeekBar?) = Unit
+        override fun onStopTrackingTouch(s: SeekBar?) = Unit
+    }
+
+    private fun refreshLoudness() {
+        val on = Prefs.loudness
+        val threshold = loudThreshold.progress - 30
+        val output = loudOutput.progress - 12
+        loudThresholdValue.text = wholeDb(threshold)
+        loudOutputValue.text = wholeDb(output)
+        loudThreshold.alpha = if (on) 1f else 0.5f
+        loudOutput.alpha = if (on) 1f else 0.5f
+        loudSummary.text = if (on) {
+            getString(R.string.eq_loud_summary_on, wholeDb(output - threshold), wholeDb(threshold), wholeDb(output))
+        } else {
+            getString(R.string.eq_loud_summary_off)
+        }
+        meter.setLoudness(on, threshold.toFloat(), output.toFloat())
+    }
 
     private fun buildBands() {
         val container = findViewById<LinearLayout>(R.id.bands)

@@ -67,7 +67,8 @@ bildet die gewohnte Bedienung nach und setzt auf einen sparsamen Unterbau:
 - **Audio:** Gapless, automatisches und manuelles Crossfading, ReplayGain
   (Titel/Album, Vorverstärkung, Übersteuerungsschutz), Balance, Mono,
   Begrenzer, **Lautheits-Maximierer wie LoudMax** (Look-ahead-Limiter mit
-  Schwelle und Ausgangspegel), Tonhöhe, Geschwindigkeit, Pause zwischen
+  Schwelle und Ausgangspegel, im Equalizer mit Pegelanzeige für Eingang,
+  Reduktion und Ausgang), Tonhöhe, Geschwindigkeit, Pause zwischen
   Titeln, einstellbarer Audiofokus.
 - **Bewertungen** in allen Titellisten, automatisch aus den Dateien gelesen
   (POPM wie Windows Media Player/MediaMonkey, foobar2000, FLAC/Ogg, M4A), im

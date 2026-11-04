@@ -2,13 +2,16 @@ package de.shakie.playernext.playback.dsp
 
 import kotlin.math.abs
 import kotlin.math.exp
+import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
 /**
- * Loudness maximizer in the manner of LoudMax: a look-ahead brickwall limiter. The input is
- * raised by -[thresholdDb] and no output peak ever exceeds [ceilingDb]. The gain needed for a
+ * Loudness maximizer in the manner of LoudMax: a look-ahead brickwall limiter. Input peaks
+ * above the threshold are limited; a peak at the threshold leaves at the ceiling, so quieter
+ * passages are raised by ceiling − threshold and no output peak ever exceeds the ceiling. The
+ * gain needed for a
  * peak is known 1.5 ms before the peak arrives (the audio is delayed by that much), so it can
  * fade in instead of clipping; afterwards it recovers smoothly. Both channels share one gain,
  * so the stereo image stays put.
@@ -43,13 +46,18 @@ class LoudnessMaximizer(private val channels: Int, sampleRate: Int, releaseMs: F
     private var avgPos = 0
     private var avgSum = window.toDouble()
 
-    /** Gain reduction of the last frame in dB (≤ 0), for display. */
-    var reductionDb = 0f
+    /** Limiting gain applied to the last frame (1 = none), for the meters. */
+    var gain = 1f
         private set
 
+    /** Gain reduction of the last frame in dB (≤ 0). */
+    val reductionDb get() = if (gain < 1f) 20f * log10(gain) else 0f
+
     fun setParams(thresholdDb: Float, ceilingDb: Float) {
-        drive = 10f.pow(-thresholdDb.coerceIn(-30f, 0f) / 20f)
-        ceiling = 10f.pow(ceilingDb.coerceIn(-12f, 0f) / 20f)
+        val t = thresholdDb.coerceIn(-30f, 0f)
+        val c = ceilingDb.coerceIn(-12f, 0f)
+        drive = 10f.pow((c - t) / 20f)
+        ceiling = 10f.pow(c / 20f)
     }
 
     fun reset() {
@@ -62,7 +70,7 @@ class LoudnessMaximizer(private val channels: Int, sampleRate: Int, releaseMs: F
         avg.fill(1f)
         avgPos = 0
         avgSum = window.toDouble()
-        reductionDb = 0f
+        gain = 1f
     }
 
     /** Processes one frame (one sample per channel) in place. */
@@ -94,7 +102,7 @@ class LoudnessMaximizer(private val channels: Int, sampleRate: Int, releaseMs: F
         avg[avgPos] = released
         avgPos = (avgPos + 1) % window
         val gain = (avgSum / window).toFloat().coerceAtMost(1f)
-        reductionDb = if (gain < 1f) 20f * kotlin.math.log10(gain) else 0f
+        this.gain = gain
 
         for (ch in 0 until channels) {
             val delayed: Float

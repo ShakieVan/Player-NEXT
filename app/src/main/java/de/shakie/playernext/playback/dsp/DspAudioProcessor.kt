@@ -12,9 +12,10 @@ import kotlin.math.pow
 /**
  * Equalizer, preamp, bass shelf, stereo widening, mono, balance, ReplayGain and a peak
  * limiter (or the loudness maximizer instead) in one pass. With neutral settings it copies
- * the buffer unchanged.
+ * the buffer unchanged. The main player's instance ([metered]) also feeds [LevelMeter] while
+ * the equalizer shows its meters.
  */
-class DspAudioProcessor : BaseAudioProcessor() {
+class DspAudioProcessor(private val metered: Boolean = false) : BaseAudioProcessor() {
     private var channels = 2
     private var sampleRate = 44100
     private var isFloat = false
@@ -34,6 +35,7 @@ class DspAudioProcessor : BaseAudioProcessor() {
     private var neutral = true
     private var limiterGain = 1f
     private var releaseCoef = 0.9995f
+    private var meter = MeterBlock(44100)
 
     override fun onConfigure(inputAudioFormat: AudioProcessor.AudioFormat): AudioProcessor.AudioFormat {
         val enc = inputAudioFormat.encoding
@@ -46,6 +48,7 @@ class DspAudioProcessor : BaseAudioProcessor() {
         eqFilters = Array(AudioEffects.BANDS) { Biquad(channels) }
         bassFilter = Biquad(channels)
         maximizer = LoudnessMaximizer(channels, sampleRate)
+        meter = MeterBlock(sampleRate)
         releaseCoef = exp(-1.0 / (0.15 * sampleRate)).toFloat()
         appliedVersion = -1
         return inputAudioFormat
@@ -86,8 +89,12 @@ class DspAudioProcessor : BaseAudioProcessor() {
         val remaining = inputBuffer.remaining()
         if (remaining == 0) return
         refreshParams()
+        val measure = metered && LevelMeter.enabled
+        if (measure) meter.sync(LevelMeter.bufferTimeUs) else meter.reset()
+        val measuring = measure && meter.ready
         val out = replaceOutputBuffer(remaining)
         if (neutral) {
+            if (measuring) measureUnchanged(inputBuffer)
             out.put(inputBuffer)
             out.flip()
             return
@@ -124,15 +131,21 @@ class DspAudioProcessor : BaseAudioProcessor() {
                 frame[0] = l * balL
                 frame[1] = r * balR
             }
+            val inL = frame[0]
+            val inR = if (channels > 1) frame[1] else inL
+            var stageGain = 1f
             if (loudness) {
                 maximizer.process(frame)
+                stageGain = maximizer.gain
             } else if (limiter) {
                 var peak = 0f
                 for (ch in 0 until channels) peak = maxOf(peak, abs(frame[ch]))
                 val needed = if (peak * limiterGain > 0.98f) 0.98f / peak else 1f
                 limiterGain = if (needed < limiterGain) needed else 1f - (1f - limiterGain) * releaseCoef
                 if (limiterGain < 1f) for (ch in 0 until channels) frame[ch] *= limiterGain
+                stageGain = limiterGain
             }
+            if (measuring) meter.add(inL, inR, frame[0], if (channels > 1) frame[1] else frame[0], stageGain)
             for (ch in 0 until channels) {
                 val y = frame[ch]
                 if (isFloat) out.putFloat(y) else out.putShort((y.coerceIn(-1f, 0.99997f) * 32768f).toInt().toShort())
@@ -143,7 +156,25 @@ class DspAudioProcessor : BaseAudioProcessor() {
         out.flip()
     }
 
+    /** Meter data for a buffer that passes unchanged (input = output, no limiting). */
+    private fun measureUnchanged(buffer: ByteBuffer) {
+        val b = buffer.duplicate().order(ByteOrder.nativeOrder())
+        val bytesPerSample = if (isFloat) 4 else 2
+        val frames = b.remaining() / (bytesPerSample * channels)
+        for (f in 0 until frames) {
+            var l = 0f
+            var r = 0f
+            for (ch in 0 until channels) {
+                val x = if (isFloat) b.float else b.short / 32768f
+                if (ch == 0) l = x else if (ch == 1) r = x
+            }
+            if (channels == 1) r = l
+            meter.add(l, r, l, r, 1f)
+        }
+    }
+
     override fun onFlush(streamMetadata: AudioProcessor.StreamMetadata) {
+        meter.reset()
         eqFilters.forEach { it.reset() }
         bassFilter.reset()
         limiterGain = 1f

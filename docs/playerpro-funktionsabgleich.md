@@ -69,7 +69,7 @@ Legende: ✅ umgesetzt · ➖ bewusst weggelassen (online oder nicht mehr mögli
 | Schüttelsteuerung, Umdrehen zum Pausieren | ✅ |
 | Android Auto | ✅ Alben, Interpreten, Playlists, Titel, Suche; Taste „Bewerten“ (1–5 Sterne) |
 | Hörbücher | ➕ eigene Kategorie (fehlt in PlayerPro): M4B-Kapitel, kapitelweise ⏮/⏭, Position je Buch |
-| Lautheit | ➕ Lautheits-Maximierer wie LoudMax (Look-ahead-Limiter) |
+| Lautheit | ➕ Lautheits-Maximierer wie LoudMax (Look-ahead-Limiter), im Equalizer mit Pegelanzeige (Eingang L/R, Reduktion, Ausgang L/R) |
 | Skins, Nacht-Skin mit Zeitraum | ✅ fünf Akzentfarben, Nacht-Skin |
 | Startbildschirm, Ausrichtung sperren | ✅ |
 | Sprachsuche/Google Assistant (MEDIA_PLAY_FROM_SEARCH) | ✅ |

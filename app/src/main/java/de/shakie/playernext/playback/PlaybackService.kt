@@ -151,7 +151,7 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
                 enableFloatOutput: Boolean,
                 enableAudioTrackPlaybackParams: Boolean,
             ): AudioSink = DefaultAudioSink.Builder(context)
-                .setAudioProcessors(arrayOf(DspAudioProcessor()))
+                .setAudioProcessors(arrayOf(DspAudioProcessor(metered = main)))
                 // Larger PCM buffer: fewer refills and wakeups. Effect changes become audible
                 // after at most this delay, which is fine for a music player.
                 .setAudioTrackBufferSizeProvider(
@@ -161,6 +161,7 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
                         .build()
                 )
                 .build()
+                .let { if (main) MeteringAudioSink(it) else it }
         }
         return ExoPlayer.Builder(this, renderers)
             // The playback loop otherwise wakes every 10 ms; dynamic scheduling only wakes

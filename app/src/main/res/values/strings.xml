@@ -215,6 +215,16 @@
     <!-- Equalizer -->
     <string name="eq_preset">Preset</string>
     <string name="eq_preamp">PREAMP</string>
+    <string name="eq_loudness">Lautheits-Maximierer</string>
+    <string name="eq_loud_threshold">SCHWELLE</string>
+    <string name="eq_loud_output">AUSGANG</string>
+    <string name="eq_loud_summary_on">Pegel %1$s, Spitzen über %2$s werden auf %3$s begrenzt.</string>
+    <string name="eq_loud_summary_off">Aus. Die Anzeige zeigt die Pegel ohne Maximierer (Reduktion = einfacher Begrenzer).</string>
+    <string name="meter_input">Eingang</string>
+    <string name="meter_reduction">Reduktion</string>
+    <string name="meter_output">Ausgang</string>
+    <string name="meter_no_signal_title">Keine Pegel</string>
+    <string name="meter_no_signal_text">Ohne Effekte spielt die Hardware direkt ab.</string>
     <string name="eq_reverb">Hall</string>
     <string name="eq_bass">Bass</string>
     <string name="eq_virtualizer">Virtualizer</string>

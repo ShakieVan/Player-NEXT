@@ -21,7 +21,7 @@ Tube NEXT. Was übernommen, angepasst oder weggelassen wurde, steht in
 - Wiedergabe ausschließlich über Media3 (`PlaybackService` als
   `MediaLibraryService`). Die UI spricht über `PlayerHub` (MediaController) mit
   dem Dienst; zusätzliche In-Prozess-Zugriffe nur für DSP-Parameter
-  (`AudioEffects`) und den Einschlaf-Timer.
+  (`AudioEffects`), die Pegelanzeige (`LevelMeter`) und den Einschlaf-Timer.
 
 Bei Konflikten gilt: 1. Stabilität, 2. Daten des Nutzers (Tags, Statistiken,
 Playlists) nie verlieren, 3. Akku, 4. Nähe zu PlayerPro, 5. Komfort.
@@ -68,7 +68,9 @@ Vor Änderungen an Wiedergabe, Energie oder Tags die Notizen in
 ## Energie-Regeln
 
 - Keine periodischen Timer im Hintergrund. UI-Takte (Fortschritt) nur im
-  Vordergrund und höchstens 1/s, auf Sekundenwechsel ausgerichtet.
+  Vordergrund und höchstens 1/s, auf Sekundenwechsel ausgerichtet. Einzige
+  Ausnahme: die Pegelanzeige im Equalizer (höchstens 30/s, nur sichtbar und
+  beim Abspielen).
 - `MediaSession` sendet keine periodischen Positionsmeldungen
   (`setPeriodicPositionUpdateEnabled(false)`).
 - Der DSP reicht bei neutralen Einstellungen unverändert durch; Audio-Offload

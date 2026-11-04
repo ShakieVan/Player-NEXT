@@ -62,17 +62,57 @@ wenn der Modus in den Einstellungen geändert wird.
 ## Lautheits-Maximierer (ab 1.1.3)
 
 Wie das Plugin LoudMax: ein Look-ahead-Brickwall-Limiter
-(`dsp/LoudnessMaximizer`), Einstellungen → Audio → Lautheit. „Schwelle“
-(0 bis −30 dB) hebt den Pegel um denselben Betrag an, „Ausgangspegel“
-(0 bis −12 dB, Standard −1 dB) überschreitet keine Spitze. Verstärkungsweg je
+(`dsp/LoudnessMaximizer`), im Equalizer (mit Pegelanzeige, unten) und unter
+Einstellungen → Audio → Lautheit. Eingangsspitzen über der „Schwelle“
+(0 bis −30 dB) werden begrenzt; eine Spitze genau auf der Schwelle kommt beim
+„Ausgangspegel“ (0 bis −12 dB, Standard −1 dB) an, den keine Spitze
+überschreitet. Leise Stellen werden also um Ausgang − Schwelle angehoben
+(Standard −1 − (−6) = 5 dB). Bis zur Pegelanzeige hob die Schwelle allein an
+(Begrenzung ab Schwelle + Ausgang); geändert, damit die Schwellenmarke auf der
+Eingangsanzeige stimmt. Verstärkungsweg je
 Frame: benötigte Verstärkung → Minimum über 1,5 ms → sofortiger Angriff,
 120 ms Rückkehr → gleitender Mittelwert über 1,5 ms; das Audio läuft 1,5 ms
 verzögert. Minimum und Mittelwert gleicher Länge garantieren, dass an der
 verzögerten Spitze nie mehr Verstärkung anliegt als nötig (Beweisskizze im
 Code). Beide Kanäle teilen eine Verstärkung. Ersetzt bei Einschalten den
 einfachen Begrenzer; Offload ist dann aus. `LoudnessMaximizerTest`: nie über
-dem Ausgangspegel, leise Signale nur lauter und verzögert, Erholung nach
-Spitzen.
+dem Ausgangspegel, leise Signale nur lauter und verzögert, Begrenzung ab der
+Schwelle, Erholung nach Spitzen.
+
+### Pegelanzeige im Equalizer (ab 1.1.4)
+
+Wie bei LoudMax: Eingang L/R vor dem Maximierer (nach EQ, Balance usw.),
+Reduktion (seine Verstärkung; ohne Maximierer die des einfachen Begrenzers)
+und Ausgang L/R danach. Die Werte kommen direkt aus dem DSP
+(`DspAudioProcessor` des Hauptplayers → `dsp/LevelMeter`), aber nicht als
+„aktueller Wert“: Der DSP rechnet dem Hörbaren um den Audiopuffer voraus
+(0,5–1 s, siehe Energie). Deshalb:
+
+- Der DSP misst nur, solange der Equalizer im Vordergrund ist
+  (`LevelMeter.enabled`), Blöcke von 10 ms (Spitzen je Kanal, kleinste
+  Verstärkung) mit ihrer Medienzeit in einen Ringpuffer (5 s).
+- `MeteringAudioSink` (um den `DefaultAudioSink` des Hauptplayers) liefert die
+  Medienzeit jedes Puffers, bevor der DSP ihn sieht, und die Abspielposition
+  des Sinks. Die Blockuhr zählt Frames und gleicht sich nur bei Sprüngen
+  > 200 ms neu ab (Gapless-Trimmen verzögert um einige ms).
+- `LevelMeterView` holt je Bild alle Blöcke zwischen der letzten und der jetzt
+  hörbaren Position (Sinkposition + verstrichene Zeit × Tempo). Media3 1.10
+  gibt Prozessoren selbst keine Zeit (`StreamMetadata` bleibt leer), daher der
+  Sink-Wrapper.
+- Darstellung −60 … +3 dBFS, die oberen 20 dB über zwei Drittel der Breite;
+  die Reduktion wächst von der 0-dB-Marke nach links auf derselben Skala.
+  Marken: Schwelle auf dem Eingang, Ausgangspegel auf dem Ausgang; Eingang
+  über der Schwelle im kräftigen Akzent, über 0 dBFS rot. Spitzenmarke hält
+  1,5 s, Balken fallen 20 dB/s.
+- Bei Hardware-Wiedergabe (Offload, nur ohne jeden Effekt) läuft kein DSP:
+  Die Anzeige meldet „Keine Pegel“.
+
+Geprüft (Emulator, 04.11.2026) mit einer Testdatei (links −12, rechts
+−24 dBFS; dann −2 dBFS; dann Stille, je 4 s): Anzeige −12,3/−24,3 → Ausgang
+−7,3/−19,3; laut −2,3 → Reduktion 3,7 dB → Ausgang −1,0. Die Wechsel kamen bei
+der Abspielposition 4,06 / 8,10 / 12,06 s an (60–100 ms nach dem Hörbaren),
+ohne Abgleich wären sie 0,5–1 s zu früh. 30 Bilder/s beim Abspielen, 0 in der
+Pause (`dumpsys gfxinfo`, je 5 s).
 
 ## Zufallsmodus „Lange nicht Gehörtes zuerst“ (ab 1.1.1)
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import de.shakie.playernext.data.BrowserType
+import kotlin.math.roundToInt
 
 /**
  * Typed access to the default SharedPreferences. The settings screens write the
@@ -114,9 +115,15 @@ object Prefs {
     val balance get() = int("audio_balance", 0) / 100f
     val monoOutput get() = bool("mono_output", false)
     val useLimiter get() = bool("use_limiter", true)
-    val loudness get() = bool("loudmax", false)
-    val loudnessThresholdDb get() = int("loudmax_threshold", -6).toFloat()
-    val loudnessOutputDb get() = int("loudmax_output", -1).toFloat()
+    var loudness
+        get() = bool("loudmax", false)
+        set(value) = sp.edit().putBoolean("loudmax", value).apply()
+    var loudnessThresholdDb
+        get() = int("loudmax_threshold", -6).toFloat()
+        set(value) = sp.edit().putInt("loudmax_threshold", value.roundToInt()).apply()
+    var loudnessOutputDb
+        get() = int("loudmax_output", -1).toFloat()
+        set(value) = sp.edit().putInt("loudmax_output", value.roundToInt()).apply()
     val pauseBetweenSongs get() = bool("pause_between_songs", false)
     val pitch get() = int("audio_pitch", 100) / 100f
     val speed get() = int("audio_speed", 100) / 100f
