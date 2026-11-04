@@ -12,8 +12,13 @@ import de.shakie.playernext.R
 import de.shakie.playernext.util.dp
 import de.shakie.playernext.util.themeColor
 
-/** Five tappable stars; value in half-star units (0..10). Tapping the current value clears it. */
-class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
+/**
+ * Five tappable stars; value in half-star units (0..10). Tapping the current value clears it.
+ * With [compact] it is a small, read-only display for list rows.
+ */
+open class RatingView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, private val compact: Boolean = false,
+) : View(context, attrs) {
     var rating: Int = 0
         set(value) {
             field = value.coerceIn(0, 10)
@@ -24,8 +29,15 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private val full: Drawable = tinted(R.drawable.ic_star, context.themeColor(R.attr.pnAccent))
     private val half: Drawable = tinted(R.drawable.ic_star_half, context.themeColor(R.attr.pnAccent))
     private val empty: Drawable = tinted(R.drawable.ic_star_border, context.getColor(R.color.pn_star_empty))
-    private val starSize = context.dp(30)
-    private val gap = context.dp(8)
+    private val starSize = context.dp(if (compact) 11 else 30)
+    private val gap = context.dp(if (compact) 1 else 8)
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        setMeasuredDimension(
+            resolveSize(starSize * 5 + gap * 4 + paddingLeft + paddingRight, widthMeasureSpec),
+            resolveSize(starSize + paddingTop + paddingBottom, heightMeasureSpec),
+        )
+    }
 
     private fun tinted(res: Int, color: Int): Drawable =
         ContextCompat.getDrawable(context, res)!!.mutate().apply { setTint(color) }
@@ -47,6 +59,7 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (compact || !isEnabled) return false
         if (event.action == MotionEvent.ACTION_DOWN) return true
         if (event.action != MotionEvent.ACTION_UP) return super.onTouchEvent(event)
         val total = starSize * 5 + gap * 4
@@ -64,3 +77,6 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     override fun performClick(): Boolean = super.performClick()
 }
+
+/** Small read-only stars for list rows. */
+class CompactRatingView(context: Context, attrs: AttributeSet? = null) : RatingView(context, attrs, compact = true)

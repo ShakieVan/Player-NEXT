@@ -26,8 +26,11 @@ Stapelbearbeitung: Felder mit unterschiedlichen Werten zeigen
 
 - jaudiotagger läuft im Android-Modus (`TagOptionSingleton.isAndroid = true`),
   damit Cover ohne `java.awt` verarbeitet werden.
-- Bewertungen können optional als POPM (MP3, Skala 0–255 wie Windows Media
-  Player) bzw. `RATING` (0–100) geschrieben werden.
+- Die Bewertung der Datei ist im Editor sichtbar und änderbar (ab 1.1.3);
+  Formate, Skalen und Abgleich in [`bewertungen.md`](bewertungen.md).
+- Der Zurück-Pfeil braucht seinen Klick-Handler nach `setSupportActionBar`,
+  das ihn sonst ersetzt (bis 1.1.2 im Tag- und im Smart-Playlist-Editor ohne
+  Funktion).
 - Liedtexte: eingebettet (`LYRICS`/USLT) oder `.lrc` neben der Datei; die
   Zeitstempel einer `.lrc` werden für die Anzeige entfernt.
 - Auf gesperrten Testhandys erscheint der Freigabedialog nicht über der

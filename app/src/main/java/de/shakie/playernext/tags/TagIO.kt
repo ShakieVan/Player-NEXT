@@ -28,7 +28,8 @@ object TagIO {
         GROUPING(FieldKey.GROUPING), COMMENT(FieldKey.COMMENT), BPM(FieldKey.BPM), LYRICS(FieldKey.LYRICS),
     }
 
-    class Tags(val values: Map<Field, String>, val artwork: ByteArray?, val header: String)
+    /** [rating] in half stars as stored in the file (0 = none). */
+    class Tags(val values: Map<Field, String>, val artwork: ByteArray?, val header: String, val rating: Int)
 
     sealed class ArtworkChange {
         object Keep : ArtworkChange()
@@ -43,8 +44,8 @@ object TagIO {
 
     private fun extension(song: Song) = song.path.substringAfterLast('.', "mp3").lowercase()
 
-    /** Opens the file directly when readable, otherwise through a private copy. */
-    private fun <T> withReadableFile(context: Context, song: Song, block: (File) -> T): T {
+    /** Opens the file directly when readable, otherwise through a private copy (unless [copy] is false). */
+    private fun <T> withReadableFile(context: Context, song: Song, copy: Boolean = true, block: (File) -> T): T {
         val direct = File(song.path)
         if (direct.canRead()) {
             try {
@@ -53,6 +54,7 @@ object TagIO {
                 if (e !is java.io.FileNotFoundException && e !is SecurityException) throw e
             }
         }
+        if (!copy) throw java.io.FileNotFoundException(song.path)
         val tmp = File(context.cacheDir, "tagread.${extension(song)}")
         context.contentResolver.openInputStream(song.uri)!!.use { input -> tmp.outputStream().use { input.copyTo(it) } }
         try {
@@ -81,7 +83,7 @@ object TagIO {
             append(", ").append(h.bitRate).append(" kBps")
             append(", ").append(h.channels)
         }
-        Tags(values, tag?.firstArtwork?.binaryData, header)
+        Tags(values, tag?.firstArtwork?.binaryData, header, try { RatingTags.read(tag) } catch (_: Exception) { 0 })
     }
 
     fun readLyrics(context: Context, song: Song, preferEmbedded: Boolean): String? {
@@ -101,15 +103,9 @@ object TagIO {
         .joinToString("\n") { it.replace(Regex("\\[\\d{1,2}:\\d{2}(?:[.:]\\d{1,3})?]"), "").trim() }
         .trim()
 
-    /** Rating in half stars (0..10) from the file, if it carries one. */
-    fun readRating(context: Context, song: Song): Int? = try {
-        withReadableFile(context, song) { file ->
-            val raw = AudioFileIO.read(file).tag?.getFirst(FieldKey.RATING)?.toIntOrNull() ?: return@withReadableFile null
-            if (raw <= 0) null
-            else if (extension(song) == "mp3") when {
-                raw >= 224 -> 10; raw >= 160 -> 8; raw >= 96 -> 6; raw >= 32 -> 4; else -> 2
-            } else (raw.coerceAtMost(100) / 10)
-        }
+    /** Rating in half stars (0..10) stored in the file, 0 if none; null if the file can't be read. */
+    fun readRating(context: Context, song: Song, copy: Boolean = true): Int? = try {
+        withReadableFile(context, song, copy) { file -> RatingTags.readFile(file, extension(song)) }
     } catch (_: Exception) {
         null
     }
@@ -154,11 +150,7 @@ object TagIO {
                         tag.setField(art)
                     }
                 }
-                if (rating != null) {
-                    val value = if (extension(song) == "mp3") intArrayOf(0, 1, 1, 64, 64, 128, 128, 196, 196, 255, 255)[rating.coerceIn(0, 10)]
-                    else rating * 10
-                    if (value == 0) tag.deleteField(FieldKey.RATING) else tag.setField(FieldKey.RATING, value.toString())
-                }
+                if (rating != null) RatingTags.write(tag, rating)
                 af.commit()
                 context.contentResolver.openOutputStream(song.uri, "wt")!!.use { out -> tmp.inputStream().use { it.copyTo(out) } }
                 done++

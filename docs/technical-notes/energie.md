@@ -19,6 +19,9 @@ Messwerte:
 | Widgets gebündelt | Ereignisse innerhalb von 120 ms ergeben ein Widget-Update; das Cover des laufenden Titels wird nur einmal dekodiert. ⏪/⏩ ohne laufenden Dienst verschieben nur den gespeicherten Titel und starten nichts. |
 | Warteschlange speichern | Die Liste (bei 30 000 Titeln einige MB) wird nur bei Änderungen geschrieben, der kleine Zustand bei Titelwechseln – beides auf einem Hintergrund-Thread. Vorher wurde bei jedem Titelwechsel die ganze Liste als JSON auf dem Haupt-Thread geschrieben. |
 | Update-Prüfung | Höchstens eine kleine HTTPS-Anfrage am Tag beim Start (abschaltbar), kein Hintergrund-Job. |
+| Bewertungen aus Dateien | Jede Datei wird einmal gelesen, danach nur, wenn MediaStore eine Änderung meldet; Thread mit niedrigster Priorität, nur nach einer Bibliotheksänderung, kein Timer. Der erste Durchlauf bei großen Bibliotheken dauert einige Minuten. |
+| Kapitel | Einmal je Datei beim Titelwechsel, nur MP4-Familie, nur die Atom-Köpfe. |
+| Lautheits-Maximierer | Nur wenn eingeschaltet; dann läuft der DSP und die Hardware-Wiedergabe (Offload) ist aus. |
 
 | Bedarfsgesteuerte Wiedergabe-Schleife | `experimentalSetDynamicSchedulingEnabled(true)`: ExoPlayers Schleife wacht nicht mehr alle 10 ms auf. Emulator: Wiedergabe-Thread 119 → 38 Ticks pro 30 s. |
 | Größerer AudioTrack-Puffer | 0,5–1 s PCM-Puffer, weniger Nachfüllvorgänge. Effektänderungen werden nach höchstens ~1 s hörbar. |

@@ -23,7 +23,7 @@ Legende: ✅ umgesetzt · ➖ bewusst weggelassen (online oder nicht mehr mögli
 | Kontextmenü (⋮) je Element | ✅ gleiche Einträge und Reihenfolge |
 | Interpreten-/Komponisten-/Genrebilder aus dem Internet | 🔁 Cover des Interpreten bzw. Collage der Alben; eigenes Bild aus der Galerie wählbar |
 | Albumcover laden aus dem Internet | ➖ online; eingebettete Cover und eigene Bilder aus der Galerie |
-| Musikordner festlegen, Medien aktualisieren | ✅ mehrere Ordner wählbar |
+| Musikordner festlegen, Medien aktualisieren | ✅ mehrere Ordner wählbar, als Ordnerbrowser; gilt auch für Videos; „Scannen“ je Ordner im Kontextmenü |
 
 ## Wiedergabe
 
@@ -47,7 +47,7 @@ Legende: ✅ umgesetzt · ➖ bewusst weggelassen (online oder nicht mehr mögli
 
 | PlayerPro | Player NEXT |
 | --- | --- |
-| Bewertungen, Halbsterne, Wiedergabe-/Überspringzähler | ✅ optional zusätzlich in die Datei schreiben |
+| Bewertungen, Halbsterne, Wiedergabe-/Überspringzähler | ✅ optional zusätzlich in die Datei schreiben; zusätzlich automatisch aus den Dateien lesen, Sterne in allen Listen, im Tag-Editor bearbeitbar |
 | Smarte Playlists (5 + Podcasts) und Editor | ✅ ohne Gruppierung/Kommentar/BPM als Kriterium (nicht in MediaStore) |
 | Playlists: eigene, M3U Import/Export | ✅ eigene Datenbank, M3U |
 | Statistiken exportieren/wiederherstellen | ✅ als Datei |
@@ -67,7 +67,9 @@ Legende: ✅ umgesetzt · ➖ bewusst weggelassen (online oder nicht mehr mögli
 | Updates über den Play Store | 🔁 Update-Funktion über GitHub-Releases wie Mau-Mau Flip (einzige Internetnutzung) |
 | Headset: Langdruck, Mehrfachdruck, Start bei Verbindung, Stopp bei Trennung | ✅ Start nur solange Player NEXT läuft (Android verbietet Hintergrundstarts) |
 | Schüttelsteuerung, Umdrehen zum Pausieren | ✅ |
-| Android Auto | ✅ Alben, Interpreten, Playlists, Titel, Suche |
+| Android Auto | ✅ Alben, Interpreten, Playlists, Titel, Suche; Taste „Bewerten“ (1–5 Sterne) |
+| Hörbücher | ➕ eigene Kategorie (fehlt in PlayerPro): M4B-Kapitel, kapitelweise ⏮/⏭, Position je Buch |
+| Lautheit | ➕ Lautheits-Maximierer wie LoudMax (Look-ahead-Limiter) |
 | Skins, Nacht-Skin mit Zeitraum | ✅ fünf Akzentfarben, Nacht-Skin |
 | Startbildschirm, Ausrichtung sperren | ✅ |
 | Sprachsuche/Google Assistant (MEDIA_PLAY_FROM_SEARCH) | ✅ |

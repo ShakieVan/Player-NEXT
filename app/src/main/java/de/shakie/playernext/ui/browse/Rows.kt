@@ -11,13 +11,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import de.shakie.playernext.Prefs
 import de.shakie.playernext.R
 import de.shakie.playernext.art.ArtKey
 import de.shakie.playernext.art.ArtLoader
 import de.shakie.playernext.data.Folder
 import de.shakie.playernext.data.ItemType
 import de.shakie.playernext.data.Song
+import de.shakie.playernext.data.StatsStore
 import de.shakie.playernext.data.Video
+import de.shakie.playernext.ui.common.RatingView
 import de.shakie.playernext.util.Format
 import de.shakie.playernext.util.dp
 import de.shakie.playernext.util.themeColor
@@ -62,6 +65,9 @@ class RowAdapter(private val callbacks: RowCallbacks) : ListAdapter<Row, RowAdap
             field = value
             notifyItemRangeChanged(0, itemCount, PAYLOAD_STATE)
         }
+    /** Ratings changed: redraw the stars without rebuilding the rows. */
+    fun refreshState() = notifyItemRangeChanged(0, itemCount, PAYLOAD_STATE)
+
     var playingSongId: Long = -1
         set(value) {
             if (field == value) return
@@ -129,6 +135,7 @@ class RowAdapter(private val callbacks: RowCallbacks) : ListAdapter<Row, RowAdap
         private val menu: ImageButton? = view.findViewById(R.id.menu)
         private val check: ImageView? = view.findViewById(R.id.check)
         private val drag: ImageView? = view.findViewById(R.id.drag)
+        private val rating: RatingView? = view.findViewById(R.id.rating)
         private val accent = view.context.themeColor(R.attr.pnAccent)
         private val normal = view.context.getColor(R.color.pn_on_surface)
 
@@ -212,6 +219,11 @@ class RowAdapter(private val callbacks: RowCallbacks) : ListAdapter<Row, RowAdap
                 else -> false
             }
             playing?.visibility = if (isPlaying) View.VISIBLE else View.GONE
+            if (row is Row.SongRow && rating != null) {
+                val r = if (Prefs.ratingsInLists) StatsStore[row.song.path].rating else 0
+                rating.rating = r
+                rating.visibility = if (r > 0) View.VISIBLE else View.GONE
+            }
             if (row is Row.SongRow || row is Row.FolderRow || (row is Row.Tile && viewType == TYPE_TILE_LIST)) {
                 title?.setTextColor(if (isPlaying) accent else normal)
             }

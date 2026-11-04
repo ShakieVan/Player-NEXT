@@ -17,11 +17,15 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.LinearProgressIndicator
+import android.widget.TextView
+import de.shakie.playernext.util.dp
 import de.shakie.playernext.BuildConfig
 import de.shakie.playernext.Prefs
 import de.shakie.playernext.R
 import de.shakie.playernext.art.ArtLoader
 import de.shakie.playernext.data.EqPresetStore
+import de.shakie.playernext.data.FileRatings
 import de.shakie.playernext.data.Library
 import de.shakie.playernext.data.PlaylistStore
 import de.shakie.playernext.data.SongStats
@@ -115,6 +119,10 @@ class SettingsActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceSt
                 toast(R.string.eq_presets_reset)
             }
             click("updates") { startActivity(Intent(requireContext(), UpdateActivity::class.java)) }
+            findPreference<Preference>("ratings_read_files")?.setOnPreferenceChangeListener { _, on ->
+                if (on == true) view?.post { FileRatings.schedule() }
+                true
+            }
             findPreference<CheckBoxPreference>("update_beta")?.apply {
                 Updater.init(requireContext())
                 isChecked = Updater.beta
@@ -151,42 +159,26 @@ class SettingsActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceSt
                 if (folders.isEmpty()) getString(R.string.music_folders_all) else folders.joinToString("\n")
         }
 
-        /** Offers every folder that contains audio (and its parents) for restricting the library. */
+        /** Folder browser over every folder that contains audio, for restricting the library. */
         private fun chooseMusicFolders() {
             viewLifecycleOwner.lifecycleScope.launch {
-                val candidates = withContext(Dispatchers.IO) {
-                    val dirs = HashSet<String>()
-                    requireContext().contentResolver.query(
+                val ctx = requireContext()
+                val tree = withContext(Dispatchers.IO) {
+                    val files = ArrayList<String>()
+                    ctx.contentResolver.query(
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Media.DATA), null, null, null
-                    )?.use { c ->
-                        while (c.moveToNext()) {
-                            var p = c.getString(0)?.substringBeforeLast('/') ?: continue
-                            while (p.count { it == '/' } >= 4) {
-                                dirs += p
-                                p = p.substringBeforeLast('/')
-                            }
-                        }
+                    )?.use { c -> while (c.moveToNext()) c.getString(0)?.let(files::add) }
+                    FolderTree.build(files) { root ->
+                        if (root.startsWith("/storage/emulated/")) getString(R.string.folder_picker_internal)
+                        else getString(R.string.folder_picker_sd, root.substringAfterLast('/'))
                     }
-                    dirs.sorted()
                 }
-                if (candidates.isEmpty()) return@launch
-                val current = Prefs.musicFolders
-                val checked = BooleanArray(candidates.size) { candidates[it] in current }
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.music_folders_title)
-                    .setMultiChoiceItems(candidates.toTypedArray(), checked) { _, i, on -> checked[i] = on }
-                    .setPositiveButton(R.string.ok) { _, _ ->
-                        Prefs.setMusicFolders(candidates.filterIndexed { i, _ -> checked[i] }.toSet())
-                        updateFolderSummary()
-                        Library.refresh()
-                    }
-                    .setNeutralButton(R.string.music_folders_all) { _, _ ->
-                        Prefs.setMusicFolders(emptySet())
-                        updateFolderSummary()
-                        Library.refresh()
-                    }
-                    .setNegativeButton(R.string.cancel, null)
-                    .show()
+                if (tree.roots.isEmpty() || !isAdded) return@launch
+                FolderPicker(ctx, tree, Prefs.musicFolders) { folders ->
+                    Prefs.setMusicFolders(folders)
+                    updateFolderSummary()
+                    Library.refresh()
+                }.show()
             }
         }
 
@@ -197,21 +189,45 @@ class SettingsActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceSt
             view?.postDelayed({ Library.refresh() }, 4000)
         }
 
+        /** Reads every file's rating again, with progress; ratings set in Player NEXT stay (FileRatings.decide). */
         private fun importRatings() {
-            val ctx = requireContext().applicationContext
+            val songs = Library.snapshot.songs
+            if (songs.isEmpty()) return
+            val ctx = requireContext()
+            val text = TextView(ctx).apply { setPadding(0, 0, 0, ctx.dp(8)) }
+            val bar = LinearProgressIndicator(ctx).apply { max = songs.size }
+            val box = LinearLayout(ctx).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(ctx.dp(24), ctx.dp(8), ctx.dp(24), 0)
+                addView(text)
+                addView(bar)
+            }
+            var cancelled = false
+            val dialog = MaterialAlertDialogBuilder(ctx)
+                .setTitle(R.string.ratings_import_title)
+                .setView(box)
+                .setNegativeButton(R.string.cancel) { _, _ -> cancelled = true }
+                .setCancelable(false)
+                .show()
+            var shown = -1
             viewLifecycleOwner.lifecycleScope.launch {
-                val count = withContext(Dispatchers.IO) {
-                    var n = 0
-                    for (s in Library.snapshot.songs) {
-                        val r = TagIO.readRating(ctx, s) ?: continue
-                        if (StatsStore[s.path].rating == 0) {
-                            StatsStore.setRating(s.path, r)
-                            n++
+                val result = withContext(Dispatchers.IO) {
+                    FileRatings.importAll(songs, { cancelled || !isAdded }) { done, total ->
+                        if (done - shown >= 20 || done == total) {
+                            shown = done
+                            bar.post {
+                                bar.setProgressCompat(done, false)
+                                text.text = getString(R.string.ratings_import_progress, done, total)
+                            }
                         }
                     }
-                    n
                 }
-                ItemActions.toast(base, getString(R.string.stats_imported, count))
+                dialog.dismiss()
+                MaterialAlertDialogBuilder(ctx)
+                    .setTitle(R.string.ratings_import_title)
+                    .setMessage(getString(R.string.ratings_import_done, result.taken, result.read))
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
             }
         }
 

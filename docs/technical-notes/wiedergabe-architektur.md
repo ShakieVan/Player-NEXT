@@ -49,6 +49,31 @@ wiederholt.
   Die Reihenfolge übersteht Neustarts. Unit-Tests (`BagOrderTest`) prüfen das
   mit 30 000 Titeln.
 
+## Zufallsknopf mit drei Zuständen (ab 1.1.3)
+
+Player, Widget, Benachrichtigung und Android Auto schalten über
+`PlaybackService.cycleShuffle`: Aus → Zufall (gleichmäßig) → „Lange nicht
+Gehörtes zuerst“ (Symbol `ic_shuffle_history`, Zufallspfeile mit Uhr) → Aus.
+Der Wechsel zwischen den beiden Zufallsarten ändert nur `shuffle_mode`; der
+Dienst ordnet dann den noch kommenden Teil der Warteschlange neu
+(`QueuePlayer.reshuffleUpcoming`), Gespieltes bleibt davor. Dasselbe gilt,
+wenn der Modus in den Einstellungen geändert wird.
+
+## Lautheits-Maximierer (ab 1.1.3)
+
+Wie das Plugin LoudMax: ein Look-ahead-Brickwall-Limiter
+(`dsp/LoudnessMaximizer`), Einstellungen → Audio → Lautheit. „Schwelle“
+(0 bis −30 dB) hebt den Pegel um denselben Betrag an, „Ausgangspegel“
+(0 bis −12 dB, Standard −1 dB) überschreitet keine Spitze. Verstärkungsweg je
+Frame: benötigte Verstärkung → Minimum über 1,5 ms → sofortiger Angriff,
+120 ms Rückkehr → gleitender Mittelwert über 1,5 ms; das Audio läuft 1,5 ms
+verzögert. Minimum und Mittelwert gleicher Länge garantieren, dass an der
+verzögerten Spitze nie mehr Verstärkung anliegt als nötig (Beweisskizze im
+Code). Beide Kanäle teilen eine Verstärkung. Ersetzt bei Einschalten den
+einfachen Begrenzer; Offload ist dann aus. `LoudnessMaximizerTest`: nie über
+dem Ausgangspegel, leise Signale nur lauter und verzögert, Erholung nach
+Spitzen.
+
 ## Zufallsmodus „Lange nicht Gehörtes zuerst“ (ab 1.1.1)
 
 Einstellungen → Audio → Zufallswiedergabe: „Gleichmäßig“ (Standard) oder

@@ -9,7 +9,7 @@ import android.os.Looper
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 
-class AppDatabase(context: Context) : SQLiteOpenHelper(context, "playernext.db", null, 1) {
+class AppDatabase(context: Context) : SQLiteOpenHelper(context, "playernext.db", null, 2) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
@@ -29,9 +29,20 @@ class AppDatabase(context: Context) : SQLiteOpenHelper(context, "playernext.db",
                 "item_key TEXT NOT NULL, title TEXT NOT NULL, position INTEGER NOT NULL)"
         )
         db.execSQL("CREATE TABLE eq_presets (name TEXT PRIMARY KEY, bands TEXT NOT NULL, preamp REAL NOT NULL)")
+        createFileRatings(db)
     }
 
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) = Unit
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        if (oldVersion < 2) createFileRatings(db)
+    }
+
+    /** What the files said about ratings when last read (FileRatings); only a cache, never user data. */
+    private fun createFileRatings(db: SQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS file_ratings (path TEXT PRIMARY KEY, modified INTEGER NOT NULL, " +
+                "size INTEGER NOT NULL, rating INTEGER NOT NULL)"
+        )
+    }
 
     companion object {
         @Volatile
@@ -84,6 +95,25 @@ object StatsStore : ChangeNotifier() {
 
     /** Rating in half-star units (0..10). */
     fun setRating(path: String, rating: Int) = update(path) { it.copy(rating = rating.coerceIn(0, 10)) }
+
+    /** Several ratings at once (import from files): one write and one change notification. */
+    fun setRatings(ratings: Map<String, Int>) {
+        if (ratings.isEmpty()) return
+        val rows = synchronized(cache) {
+            ratings.map { (path, r) -> path to (cache[path] ?: SongStats()).copy(rating = r.coerceIn(0, 10)).also { cache[path] = it } }
+        }
+        AppDatabase.write {
+            val w = db.writableDatabase
+            w.beginTransaction()
+            try {
+                rows.forEach { (p, s) -> w.insertWithOnConflict("stats", null, values(p, s), SQLiteDatabase.CONFLICT_REPLACE) }
+                w.setTransactionSuccessful()
+            } finally {
+                w.endTransaction()
+            }
+        }
+        notifyChanged()
+    }
 
     fun recordPlay(path: String) = update(path) { it.copy(playCount = it.playCount + 1, lastPlayed = System.currentTimeMillis()) }
 

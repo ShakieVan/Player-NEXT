@@ -76,6 +76,7 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
         const val FOLDERS = "folders"
         const val SONGS = "songs"
         const val VIDEOS = "videos"
+        const val AUDIOBOOKS = "audiobooks"
         const val SEARCH = "search"
         const val TRACKS_ALBUM = "tracks_album"
         const val TRACKS_ARTIST = "tracks_artist"
@@ -98,6 +99,7 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
                 BrowserType.FOLDERS -> FOLDERS
                 BrowserType.SONGS -> SONGS
                 BrowserType.VIDEOS -> VIDEOS
+                BrowserType.AUDIOBOOKS -> AUDIOBOOKS
             }
         )
 
@@ -111,6 +113,7 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
             BrowserType.FOLDERS -> R.drawable.ic_folder
             BrowserType.SONGS -> R.drawable.ic_music_note
             BrowserType.VIDEOS -> R.drawable.ic_video
+            BrowserType.AUDIOBOOKS -> R.drawable.ic_audiobook
         }
 
         fun titleFor(type: BrowserType) = when (type) {
@@ -123,6 +126,7 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
             BrowserType.FOLDERS -> R.string.browser_folders
             BrowserType.SONGS -> R.string.browser_songs
             BrowserType.VIDEOS -> R.string.browser_videos
+            BrowserType.AUDIOBOOKS -> R.string.browser_audiobooks
         }
     }
 
@@ -157,12 +161,13 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
             FOLDERS -> BrowserType.FOLDERS
             SONGS -> BrowserType.SONGS
             VIDEOS -> BrowserType.VIDEOS
+            AUDIOBOOKS -> BrowserType.AUDIOBOOKS
             else -> BrowserType.SEARCH
         }
 
     private fun rootTypeOfKey() = if (kind == ALBUMS_OF_ARTIST) BrowserType.ARTISTS else BrowserType.GENRES
 
-    val isRoot: Boolean get() = key == null && kind in setOf(ALBUMS, ARTISTS, COMPOSERS, GENRES, PLAYLISTS, FOLDERS, SONGS, VIDEOS, SEARCH)
+    val isRoot: Boolean get() = key == null && kind in setOf(ALBUMS, ARTISTS, COMPOSERS, GENRES, PLAYLISTS, FOLDERS, SONGS, VIDEOS, AUDIOBOOKS, SEARCH)
 
     val iconRes: Int get() = iconFor(browserType)
 
@@ -192,6 +197,8 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
     // --- lifecycle --------------------------------------------------------------------------
 
     private val libraryListener: () -> Unit = { reload() }
+    // Rows compare equal after a rating change, so the stars are redrawn separately.
+    private val statsListener: () -> Unit = { reload(); adapter.refreshState() }
     private val playerListener: () -> Unit = { updatePlaying() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -212,7 +219,7 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
         if (kind == TRACKS_PLAYLIST) setupDrag()
 
         Library.addListener(libraryListener)
-        StatsStore.addListener(libraryListener)
+        StatsStore.addListener(statsListener)
         PlaylistStore.addListener(libraryListener)
         SmartPlaylistStore.addListener(libraryListener)
         PlayerHub.addListener(playerListener)
@@ -228,7 +235,7 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
 
     override fun onDestroyView() {
         Library.removeListener(libraryListener)
-        StatsStore.removeListener(libraryListener)
+        StatsStore.removeListener(statsListener)
         PlaylistStore.removeListener(libraryListener)
         SmartPlaylistStore.removeListener(libraryListener)
         PlayerHub.removeListener(playerListener)
@@ -288,6 +295,7 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
             !Library.loaded -> getString(R.string.loading)
             kind == SEARCH && searchField.text.isNullOrBlank() -> ""
             kind == SEARCH -> getString(R.string.empty_search)
+            kind == AUDIOBOOKS -> getString(R.string.audiobooks_empty)
             Library.snapshot.songs.isEmpty() && kind != VIDEOS -> getString(R.string.empty_library)
             else -> getString(R.string.empty_list)
         }
@@ -361,6 +369,10 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
             SONGS -> {
                 val songs = sortSongs(lib.songs, "songs", "title")
                 songRows(songs, artistAlbum) to songs
+            }
+            AUDIOBOOKS -> {
+                val books = sortSongs(lib.songs.filter { it.isAudiobook }, "audiobooks", "title")
+                songRows(books, ::audiobookSubtitle, art = true) to books
             }
             VIDEOS -> sortVideos(lib.videos).map { v ->
                 Row.VideoRow(if (Prefs.videoShowTitleTag) v else v.copy(title = v.displayName))
@@ -563,6 +575,7 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
         TRACKS_PLAYLIST, TRACKS_SMART -> "playlist_tracks"
         FOLDERS -> "folders"
         VIDEOS -> "videos"
+        AUDIOBOOKS -> "audiobooks"
         else -> null
     }
 
@@ -579,6 +592,8 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
             "album" to R.string.sort_album, "duration" to R.string.sort_duration)
         "folders" -> listOf("track" to R.string.sort_track, "filename" to R.string.sort_filename, "title" to R.string.sort_title)
         "videos" -> listOf("date_added" to R.string.sort_date_added, "title" to R.string.sort_title, "duration" to R.string.sort_duration)
+        "audiobooks" -> listOf("title" to R.string.sort_title, "artist" to R.string.sort_artist, "date_added" to R.string.sort_date_added,
+            "duration" to R.string.sort_duration)
         else -> emptyList()
     }
 
@@ -640,11 +655,26 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
             .show()
     }
 
+    /** "Autor · 45 % gehört" for the audiobook list. */
+    private fun audiobookSubtitle(song: Song): String {
+        val pos = de.shakie.playernext.playback.AudiobookPositions.get(requireContext(), song.path) ?: 0
+        val percent = if (song.duration > 0) (pos * 100 / song.duration).toInt() else 0
+        val chapters = de.shakie.playernext.playback.ChapterStore.cached(song.path)?.size ?: 0
+        return listOfNotNull(
+            song.artist,
+            if (percent > 0) getString(R.string.audiobooks_progress, percent) else null,
+            if (chapters > 1) getString(R.string.audiobooks_chapters, chapters) else null,
+        ).joinToString(" · ")
+    }
+
     // --- menus -------------------------------------------------------------------------------
 
     private val menuProvider = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            if (kind == SEARCH || kind == PLAYLISTS || kind == VIDEOS) {
+            if (kind == AUDIOBOOKS) {
+                menu.add(Menu.NONE, R.id.menu_audiobook_scan, 1, R.string.audiobooks_scan)
+                menu.add(Menu.NONE, R.id.menu_audiobook_add, 2, R.string.audiobooks_add_file)
+            } else if (kind == SEARCH || kind == PLAYLISTS || kind == VIDEOS) {
                 if (kind == PLAYLISTS) {
                     menu.add(Menu.NONE, R.id.menu_new_smart, 1, R.string.new_smart_playlist)
                     menu.add(Menu.NONE, R.id.menu_import_playlist, 2, R.string.import_playlist)
@@ -667,6 +697,8 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
                 R.id.menu_layout -> showLayoutDialog()
                 R.id.menu_new_smart -> SmartPlaylistEditorActivity.start(requireActivity(), 0)
                 R.id.menu_import_playlist -> PlaylistIO.import(base)
+                R.id.menu_audiobook_scan -> AudiobookLibrary.scan(base)
+                R.id.menu_audiobook_add -> AudiobookLibrary.pickFiles(base)
                 else -> return onSortItem(item.itemId)
             }
             return true
@@ -760,6 +792,9 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
                 val p = PlaylistStore.byId(pid) ?: return@Extra
                 PlaylistStore.setItems(pid, p.songPaths.filterIndexed { i, _ -> i != row.position })
             }
+        }
+        if (row is Row.SongRow && kind == AUDIOBOOKS && row.song.path in Prefs.audiobookFiles) {
+            extras += ItemActions.Extra(getString(R.string.audiobooks_remove)) { AudiobookLibrary.remove(row.song.path) }
         }
         if (row is Row.SongRow) {
             extras += ItemActions.Extra(getString(R.string.action_show_album)) { host?.open(create(TRACKS_ALBUM, row.song.albumId.toString())) }

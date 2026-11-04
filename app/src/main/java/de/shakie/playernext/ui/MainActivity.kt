@@ -375,6 +375,7 @@ class MainActivity : BaseActivity(), BrowserHost {
                 BrowserType.FOLDERS -> lib.folderCount
                 BrowserType.SONGS -> lib.songs.size
                 BrowserType.VIDEOS -> lib.videos.size
+                BrowserType.AUDIOBOOKS -> lib.songs.count { it.isAudiobook }
             }
             DrawerItem.Browser(t, count, Prefs.browserEnabled(t))
         }

@@ -13,7 +13,7 @@ val keyProperties = Properties().apply {
 }
 // X.Y.Z → X·1 000 000 + Y·1 000 + Z (as in Mau-Mau Flip). `-PpnVersion=1.0.99` builds an older
 // version, e.g. to try the update function against the latest GitHub release.
-val appVersion = (findProperty("pnVersion") as String?) ?: "1.1.2"
+val appVersion = (findProperty("pnVersion") as String?) ?: "1.1.3"
 val appVersionCode = appVersion.split(".").map { it.toInt() }.let { (x, y, z) -> x * 1_000_000 + y * 1_000 + z }
 
 val hasProductionReleaseSigning = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")

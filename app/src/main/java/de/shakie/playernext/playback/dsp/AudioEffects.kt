@@ -42,6 +42,13 @@ object AudioEffects {
         private set
     @Volatile var limiter = true
         private set
+    /** Loudness maximizer (LoudnessMaximizer): on, threshold and output ceiling in dB. */
+    @Volatile var loudness = false
+        private set
+    @Volatile var loudnessThresholdDb = -6f
+        private set
+    @Volatile var loudnessOutputDb = -1f
+        private set
 
     /** Set per track by the service from ReplayGain metadata. */
     @Volatile var replayGainDb = 0f
@@ -118,6 +125,9 @@ object AudioEffects {
         balance = Prefs.balance
         mono = Prefs.monoOutput
         limiter = Prefs.useLimiter
+        loudness = Prefs.loudness
+        loudnessThresholdDb = Prefs.loudnessThresholdDb
+        loudnessOutputDb = Prefs.loudnessOutputDb
         version++
         listeners.forEach { it() }
     }
@@ -125,7 +135,7 @@ object AudioEffects {
     /** True when the software DSP changes the signal; offload is only possible otherwise. */
     fun dspNeeded(): Boolean =
         (eqEnabled && (preampDb != 0f || bands.any { it != 0f })) || bassStrength > 0 || virtualizerStrength > 0 ||
-            balance != 0f || mono || (Prefs.replayGain && (replayGainDb != 0f || Prefs.replayGainDefault != 0f || Prefs.replayGainPreamp != 0f))
+            balance != 0f || mono || loudness || (Prefs.replayGain && (replayGainDb != 0f || Prefs.replayGainDefault != 0f || Prefs.replayGainPreamp != 0f))
 
     private fun commit() {
         version++

@@ -117,6 +117,8 @@ class NowPlayingActivity : BaseActivity() {
         super.onResume()
         PlayerHub.addListener(playerListener)
         StatsStore.addListener(statsListener)
+        Prefs.sp.registerOnSharedPreferenceChangeListener(shuffleModeListener)
+        de.shakie.playernext.playback.ChapterStore.addListener(chapterListener)
         Prefs.lastScreenWasPlayer = true
         overlayVisible = Prefs.playerVisibleRatings
         applyOverlayVisibility()
@@ -126,8 +128,15 @@ class NowPlayingActivity : BaseActivity() {
     override fun onPause() {
         PlayerHub.removeListener(playerListener)
         StatsStore.removeListener(statsListener)
+        Prefs.sp.unregisterOnSharedPreferenceChangeListener(shuffleModeListener)
+        de.shakie.playernext.playback.ChapterStore.removeListener(chapterListener)
         handler.removeCallbacksAndMessages(null)
         super.onPause()
+    }
+
+    // Switching between the two random modes changes no player state, only this setting.
+    private val shuffleModeListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == "shuffle_mode") refreshAll()
     }
 
     private fun applyWindowPrefs() {
@@ -189,8 +198,10 @@ class NowPlayingActivity : BaseActivity() {
         val dim = getColor(R.color.pn_on_surface_faint)
         findViewById<ImageButton>(R.id.btn_shuffle).apply {
             val on = c?.shuffleModeEnabled == true
+            val oldest = on && Prefs.shuffleOldestFirst
+            setImageResource(if (oldest) R.drawable.ic_shuffle_history else R.drawable.ic_shuffle)
             imageTintList = android.content.res.ColorStateList.valueOf(if (on) accent else dim)
-            contentDescription = getString(if (on) R.string.shuffle_on else R.string.shuffle_off)
+            contentDescription = getString(if (oldest) R.string.shuffle_oldest else if (on) R.string.shuffle_on else R.string.shuffle_off)
         }
         findViewById<ImageButton>(R.id.btn_repeat).apply {
             val mode = c?.repeatMode ?: Player.REPEAT_MODE_OFF
@@ -226,6 +237,42 @@ class NowPlayingActivity : BaseActivity() {
 
     private val progressTick = Runnable { updateProgress() }
 
+    /** "Kapitel 3/12: …" under the controls of an audiobook; tapping it opens the chapter list. */
+    private fun updateChapter(positionMs: Long) {
+        val view = findViewById<TextView>(R.id.chapter)
+        val chapters = PlayerHub.currentChapters()
+        if (chapters.size < 2) {
+            view.visibility = View.GONE
+            return
+        }
+        val i = de.shakie.playernext.playback.ChapterNav.indexAt(chapters, positionMs)
+        val text = getString(R.string.chapter_current, i + 1, chapters.size, chapters[i].title)
+        if (view.text != text) view.text = text
+        view.visibility = View.VISIBLE
+    }
+
+    private fun showChapters() {
+        val chapters = PlayerHub.currentChapters()
+        if (chapters.isEmpty()) return
+        val current = de.shakie.playernext.playback.ChapterNav.indexAt(chapters, PlayerHub.controller?.currentPosition ?: 0)
+        val names = chapters.map { "${Format.duration(it.startMs)}   ${it.title}" }.toTypedArray()
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.chapters)
+            .setSingleChoiceItems(names, current) { d, which ->
+                PlayerHub.seekTo(chapters[which].startMs)
+                d.dismiss()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private val chapterListener: (String) -> Unit = { path ->
+        if (PlayerHub.currentSong()?.path == path) {
+            updateChapter(PlayerHub.controller?.currentPosition ?: 0)
+            invalidateOptionsMenu()
+        }
+    }
+
     /** Updates time and seek bar, then waits for the next full second of the song (1 frame/s). */
     private fun updateProgress() {
         handler.removeCallbacks(progressTick)
@@ -234,6 +281,7 @@ class NowPlayingActivity : BaseActivity() {
         val pos = c.currentPosition
         if (!userSeeking) seek.progress = if (dur > 0) (pos * 1000 / dur).toInt() else 0
         elapsed.text = Format.duration(pos)
+        updateChapter(pos)
         total.text = if (Prefs.displayRemaining) "-" + Format.duration((dur - pos).coerceAtLeast(0)) else Format.duration(dur)
         if (c.isPlaying) {
             val speed = c.playbackParameters.speed.coerceAtLeast(0.1f)
@@ -389,7 +437,10 @@ class NowPlayingActivity : BaseActivity() {
         lifecycleScope.launch {
             if (!TagIO.requestWriteAccess(this@NowPlayingActivity, listOf(song))) return@launch
             withContext(Dispatchers.IO) {
-                try { TagIO.write(this@NowPlayingActivity, listOf(song), emptyMap(), TagIO.ArtworkChange.Keep, rating = value) } catch (_: Exception) { }
+                try {
+                    TagIO.write(this@NowPlayingActivity, listOf(song), emptyMap(), TagIO.ArtworkChange.Keep, rating = value)
+                    de.shakie.playernext.data.FileRatings.wrote(song, value)
+                } catch (_: Exception) { }
             }
         }
     }
@@ -418,11 +469,21 @@ class NowPlayingActivity : BaseActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun setupControls() {
         findViewById<View>(R.id.btn_play).setOnClickListener { PlayerHub.togglePlayPause() }
-        findViewById<View>(R.id.btn_shuffle).setOnClickListener { PlayerHub.toggleShuffle() }
+        findViewById<View>(R.id.btn_shuffle).setOnClickListener {
+            // Says which of the three states comes next; the icons alone are close.
+            val next = when {
+                PlayerHub.controller?.shuffleModeEnabled != true -> R.string.shuffle_on
+                !Prefs.shuffleOldestFirst -> R.string.shuffle_oldest
+                else -> R.string.shuffle_off
+            }
+            PlayerHub.toggleShuffle()
+            ItemActions.toast(this, getString(next))
+        }
         findViewById<View>(R.id.btn_repeat).setOnClickListener { PlayerHub.cycleRepeat() }
         findViewById<View>(R.id.btn_queue).setOnClickListener { toggleQueue() }
         findViewById<View>(R.id.title_box).setOnClickListener { toggleQueue() }
         findViewById<View>(R.id.btn_info).setOnClickListener { showInfoMenu(it) }
+        findViewById<View>(R.id.chapter).setOnClickListener { showChapters() }
         total.setOnClickListener {
             Prefs.displayRemaining = !Prefs.displayRemaining
             updateProgress()
@@ -543,6 +604,7 @@ class NowPlayingActivity : BaseActivity() {
             setIcon(R.drawable.ic_equalizer)
             setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
+        if (PlayerHub.currentChapters().size > 1) menu.add(Menu.NONE, R.id.menu_chapters, 1, R.string.chapters)
         menu.add(Menu.NONE, R.id.menu_settings, 1, R.string.settings)
         menu.add(Menu.NONE, R.id.menu_save_queue, 2, R.string.save_queue)
         menu.add(Menu.NONE, R.id.menu_clear_queue, 3, R.string.clear_queue)
@@ -556,6 +618,7 @@ class NowPlayingActivity : BaseActivity() {
         when (item.itemId) {
             R.id.menu_equalizer -> startActivity(Intent(this, EqualizerActivity::class.java))
             R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+            R.id.menu_chapters -> showChapters()
             R.id.menu_save_queue -> ItemActions.prompt(this, R.string.save_queue, "") { name ->
                 PlayerHub.saveQueueAsPlaylist(name)
                 ItemActions.toast(this, getString(R.string.queue_saved, name))

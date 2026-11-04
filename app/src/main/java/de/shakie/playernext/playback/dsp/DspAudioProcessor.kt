@@ -11,7 +11,8 @@ import kotlin.math.pow
 
 /**
  * Equalizer, preamp, bass shelf, stereo widening, mono, balance, ReplayGain and a peak
- * limiter in one pass. With neutral settings it copies the buffer unchanged.
+ * limiter (or the loudness maximizer instead) in one pass. With neutral settings it copies
+ * the buffer unchanged.
  */
 class DspAudioProcessor : BaseAudioProcessor() {
     private var channels = 2
@@ -28,6 +29,8 @@ class DspAudioProcessor : BaseAudioProcessor() {
     private var balL = 1f
     private var balR = 1f
     private var limiter = true
+    private var loudness = false
+    private var maximizer = LoudnessMaximizer(2, 44100)
     private var neutral = true
     private var limiterGain = 1f
     private var releaseCoef = 0.9995f
@@ -42,6 +45,7 @@ class DspAudioProcessor : BaseAudioProcessor() {
         isFloat = enc == C.ENCODING_PCM_FLOAT
         eqFilters = Array(AudioEffects.BANDS) { Biquad(channels) }
         bassFilter = Biquad(channels)
+        maximizer = LoudnessMaximizer(channels, sampleRate)
         releaseCoef = exp(-1.0 / (0.15 * sampleRate)).toFloat()
         appliedVersion = -1
         return inputAudioFormat
@@ -64,6 +68,9 @@ class DspAudioProcessor : BaseAudioProcessor() {
         balL = if (b > 0) 1f - b else 1f
         balR = if (b < 0) 1f + b else 1f
         limiter = AudioEffects.limiter
+        if (AudioEffects.loudness && !loudness) maximizer.reset()
+        loudness = AudioEffects.loudness
+        maximizer.setParams(AudioEffects.loudnessThresholdDb, AudioEffects.loudnessOutputDb)
         var db = (if (eqOn) AudioEffects.preampDb else 0f) + AudioEffects.replayGainDb
         if (AudioEffects.replayGainDb != 0f && de.shakie.playernext.Prefs.replayGainClipping) {
             // Never amplify the track peak above full scale.
@@ -72,7 +79,7 @@ class DspAudioProcessor : BaseAudioProcessor() {
         }
         targetGain = 10f.pow(db / 20f)
         neutral = activeEq.none { it } && bassFilter.bypass && width == 0f && !mono && balL == 1f && balR == 1f &&
-            targetGain == 1f && gain == 1f
+            targetGain == 1f && gain == 1f && !loudness
     }
 
     override fun queueInput(inputBuffer: ByteBuffer) {
@@ -117,7 +124,9 @@ class DspAudioProcessor : BaseAudioProcessor() {
                 frame[0] = l * balL
                 frame[1] = r * balR
             }
-            if (limiter) {
+            if (loudness) {
+                maximizer.process(frame)
+            } else if (limiter) {
                 var peak = 0f
                 for (ch in 0 until channels) peak = maxOf(peak, abs(frame[ch]))
                 val needed = if (peak * limiterGain > 0.98f) 0.98f / peak else 1f
@@ -138,6 +147,7 @@ class DspAudioProcessor : BaseAudioProcessor() {
         eqFilters.forEach { it.reset() }
         bassFilter.reset()
         limiterGain = 1f
+        maximizer.reset()
         gain = targetGain
     }
 

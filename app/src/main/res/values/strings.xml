@@ -158,6 +158,31 @@
     <string name="volume">Lautstärke</string>
     <string name="shuffle_on">Zufallswiedergabe an</string>
     <string name="shuffle_off">Zufallswiedergabe aus</string>
+    <string name="chapters">Kapitel</string>
+    <plurals name="rate_stars">
+        <item quantity="one">Bewertung: %d Stern</item>
+        <item quantity="other">Bewertung: %d Sterne</item>
+    </plurals>
+    <string name="browser_audiobooks">Hörbücher</string>
+    <string name="audiobooks_scan">Hörbücher suchen</string>
+    <string name="audiobooks_add_file">Datei hinzufügen</string>
+    <string name="audiobooks_add">Hinzufügen</string>
+    <string name="audiobooks_remove">Aus Hörbüchern entfernen</string>
+    <plurals name="audiobooks_found">
+        <item quantity="one">%d Hörbuch gefunden</item>
+        <item quantity="other">%d Hörbücher gefunden</item>
+    </plurals>
+    <string name="audiobooks_none_new">Keine neuen Hörbücher gefunden (%d auf dem Gerät, alle schon in der Bibliothek).</string>
+    <string name="audiobooks_not_resolved">Datei nicht gefunden – liegt sie im Gerätespeicher oder auf der SD-Karte?</string>
+    <string name="audiobooks_empty">Noch keine Hörbücher. Über ⋮ → „Hörbücher suchen“ findest du alle auf dem Gerät, über „Datei hinzufügen“ einzelne.</string>
+    <string name="audiobooks_progress">%d %% gehört</string>
+    <string name="audiobooks_chapters">%d Kapitel</string>
+    <plurals name="audiobooks_added">
+        <item quantity="one">%d Hörbuch hinzugefügt</item>
+        <item quantity="other">%d Hörbücher hinzugefügt</item>
+    </plurals>
+    <string name="chapter_current">%1$d/%2$d · %3$s</string>
+    <string name="shuffle_oldest">Zufall: Lange nicht Gehörtes zuerst</string>
     <string name="repeat_off">Wiederholen aus</string>
     <string name="repeat_all">Alle wiederholen</string>
     <string name="repeat_one">Titel wiederholen</string>
@@ -279,6 +304,10 @@
     <string name="tag_artwork_remove">Cover entfernen</string>
     <string name="tag_batch_hint">Felder mit &lt;verschiedene&gt; bleiben unverändert, solange du sie nicht änderst.</string>
     <string name="tag_multiple">&lt;verschiedene&gt;</string>
+    <string name="tag_rating_file">Bewertung (in der Datei)</string>
+    <string name="tag_rating_none">Keine Bewertung in der Datei</string>
+    <string name="tag_rating_app">In Player NEXT: %s</string>
+    <string name="tag_rating_will_write">Wird beim Speichern in die Datei und in Player NEXT übernommen</string>
     <string name="tag_saved">Tags gespeichert</string>
     <string name="tag_failed">Tags konnten nicht gespeichert werden: %1$s</string>
     <string name="tag_loading">Tags werden gelesen …</string>
@@ -377,7 +406,19 @@
     <string name="settings_restored">Einstellungen wiederhergestellt</string>
     <string name="stats_exported">Musikstatistiken exportiert</string>
     <string name="stats_restored">%d Statistik-Einträge wiederhergestellt</string>
+    <string name="action_scan_folder">Scannen</string>
+    <string name="folder_scan_started">„%s“ wird gescannt …</string>
+    <string name="folder_scan_done">„%s“ gescannt</string>
+    <string name="folder_picker_volumes">Speicher</string>
+    <string name="folder_picker_internal">Interner Speicher</string>
+    <string name="folder_picker_sd">SD-Karte (%s)</string>
+    <string name="folder_picker_up">Übergeordneter Ordner</string>
+    <string name="folder_picker_selected">Ausgewählt: %s</string>
+    <string name="folder_picker_partly">%s · teilweise ausgewählt</string>
     <string name="stats_imported">%d Bewertungen aus Dateien übernommen</string>
+    <string name="ratings_import_title">Bewertungen aus Dateien</string>
+    <string name="ratings_import_progress">%1$d von %2$d Dateien gelesen</string>
+    <string name="ratings_import_done">%1$d Bewertungen übernommen, %2$d Dateien gelesen. Bewertungen, die du in Player NEXT gesetzt hast, bleiben erhalten.</string>
     <string name="eq_presets_reset">Equalizer-Presets zurückgesetzt</string>
     <string name="art_deleted">Eigene Bilder gelöscht</string>
     <string name="failed">Fehlgeschlagen: %1$s</string>

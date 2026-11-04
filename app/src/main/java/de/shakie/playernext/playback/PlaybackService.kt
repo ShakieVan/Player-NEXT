@@ -45,6 +45,7 @@ import de.shakie.playernext.R
 import de.shakie.playernext.data.FavoritesStore
 import de.shakie.playernext.data.ItemType
 import de.shakie.playernext.data.Library
+import de.shakie.playernext.data.Song
 import de.shakie.playernext.data.StatsStore
 import de.shakie.playernext.playback.dsp.AudioEffects
 import de.shakie.playernext.playback.dsp.DspAudioProcessor
@@ -60,6 +61,7 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
     companion object {
         /** Larger queues are not handed to the system, see [beforeQueueGrows]. */
         const val SYSTEM_QUEUE_LIMIT = 500
+        private const val RATE_ACTION = "custom_action_rate"
         @Volatile
         var instance: PlaybackService? = null
             private set
@@ -133,6 +135,8 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         exo.addListener(playerListener)
         SleepTimer.executor = this
         AudioEffects.addListener(effectsListener)
+        ChapterStore.addListener(chaptersListener)
+        StatsStore.addListener(ratingListener)
         Prefs.sp.registerOnSharedPreferenceChangeListener(prefListener)
         FavoritesStore.addListener(favoritesListener)
         getSystemService(AudioManager::class.java).registerAudioDeviceCallback(deviceCallback, handler)
@@ -202,6 +206,8 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         SleepTimer.executor = null
         handler.removeCallbacksAndMessages(null)
         AudioEffects.removeListener(effectsListener)
+        ChapterStore.removeListener(chaptersListener)
+        StatsStore.removeListener(ratingListener)
         Prefs.sp.unregisterOnSharedPreferenceChangeListener(prefListener)
         FavoritesStore.removeListener(favoritesListener)
         getSystemService(AudioManager::class.java).unregisterAudioDeviceCallback(deviceCallback)
@@ -238,6 +244,7 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
+            if (!isPlaying) rememberAudiobook(exo.currentMediaItem, exo.currentPosition)
             stats.onPlayingChanged(isPlaying)
             handler.removeCallbacks(statsTick)
             if (isPlaying) handler.postDelayed(statsTick, 30_000)
@@ -252,6 +259,8 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
             pendingManualSkip = false
             val song = QueueItems.songOf(mediaItem)
             stats.startItem(song?.path ?: mediaItem?.mediaMetadata?.extras?.getString(QueueItems.EXTRA_PATH), song?.duration ?: 0)
+            ChapterStore.request(song?.path)
+            resumeAudiobook(mediaItem, song, reason)
             AudioEffects.setReplayGain(if (Prefs.replayGain) Prefs.replayGainDefault + Prefs.replayGainPreamp else 0f, 1f)
             crossfader.reschedule()
             // Queue edits wait until this event round is over: changed inside it, the session would get a
@@ -288,6 +297,8 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         }
 
         override fun onPositionDiscontinuity(old: Player.PositionInfo, new: Player.PositionInfo, reason: Int) {
+            // Leaving an audiobook (next song, other queue, end of the book): remember where.
+            if (old.mediaItem != null && old.mediaItem?.mediaId != new.mediaItem?.mediaId) rememberAudiobook(old.mediaItem, old.positionMs)
             crossfader.reschedule()
         }
 
@@ -402,11 +413,16 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
 
     private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            "audio_balance", "mono_output", "use_limiter" -> AudioEffects.reloadAudioPrefs()
-            "statusbar_custom_action_1", "statusbar_custom_action_2" -> refreshButtons()
+            "audio_balance", "mono_output", "use_limiter", "loudmax", "loudmax_threshold", "loudmax_output" -> AudioEffects.reloadAudioPrefs()
+            "statusbar_custom_action_1", "statusbar_custom_action_2", "auto_rate_button" -> refreshButtons()
             "statusbar_use_prev" -> refreshNotificationCommands()
             "use_shake", "shake_sensitivity", "shake_pause_upsidedown" -> { shake.stop(); updateShake() }
             "auto_cfade", "auto_cfade_time", "auto_cfade_shuffle" -> crossfader.reschedule()
+            "shuffle_mode", "shuffle_window" -> {
+                if (!partyShuffle) player.reshuffleUpcoming()
+                refreshButtons()
+                Widgets.update(this)
+            }
         }
         applyAudioSettings()
     }
@@ -461,11 +477,15 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         if (::session.isInitialized) session.setMediaButtonPreferences(buildButtons())
     }
 
-    /** Only the two configurable extra buttons; previous/play/next come from Media3 itself. */
+    /**
+     * The two configurable extra buttons, plus "rate" for Android Auto (it shows the buttons of the
+     * platform session, which are the notification's); previous/play/next come from Media3 itself.
+     */
     private fun buildButtons(): List<CommandButton> {
         val list = ArrayList<CommandButton>()
         customButton(Prefs.notifCustomLeft)?.let { list += it }
         customButton(Prefs.notifCustomRight)?.let { list += it }
+        if (Prefs.rateButton && RATE_ACTION != Prefs.notifCustomLeft && RATE_ACTION != Prefs.notifCustomRight) customButton(RATE_ACTION)?.let { list += it }
         return list
     }
 
@@ -487,11 +507,23 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         }
     }
 
+    private val ratingIcons = intArrayOf(
+        R.drawable.ic_rating_0, R.drawable.ic_rating_1, R.drawable.ic_rating_2,
+        R.drawable.ic_rating_3, R.drawable.ic_rating_4, R.drawable.ic_rating_5,
+    )
+
+    // Ratings set elsewhere (player, lists, tag editor) update the stars on the button.
+    private val ratingListener: () -> Unit = { refreshButtons() }
+
     private fun customButton(action: String): CommandButton? {
         val song = if (::exo.isInitialized) QueueItems.songOf(exo.currentMediaItem) else null
         val (icon, command, name) = when (action) {
             "custom_action_shuffle" -> Triple(
-                if (::exo.isInitialized && exo.shuffleModeEnabled) CommandButton.ICON_SHUFFLE_ON else CommandButton.ICON_SHUFFLE_OFF,
+                when {
+                    !::exo.isInitialized || !exo.shuffleModeEnabled -> CommandButton.ICON_SHUFFLE_OFF
+                    Prefs.shuffleOldestFirst -> CommandButton.ICON_UNDEFINED
+                    else -> CommandButton.ICON_SHUFFLE_ON
+                },
                 SessionCommands.command(SessionCommands.SHUFFLE), R.string.shuffle
             )
             "custom_action_repeat" -> Triple(
@@ -502,10 +534,8 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
                 },
                 SessionCommands.command(SessionCommands.REPEAT), R.string.repeat
             )
-            "custom_action_rate" -> Triple(
-                if (song != null && StatsStore[song.path].rating > 0) CommandButton.ICON_STAR_FILLED else CommandButton.ICON_STAR_UNFILLED,
-                SessionCommands.command(SessionCommands.RATE), R.string.rate
-            )
+            // One tap = one star more, after five none; the icon shows the current number of stars.
+            RATE_ACTION -> Triple(CommandButton.ICON_UNDEFINED, SessionCommands.command(SessionCommands.RATE), R.string.rate)
             "custom_action_favorite" -> Triple(
                 if (song != null && FavoritesStore.contains(ItemType.SONG, song.path)) CommandButton.ICON_HEART_FILLED
                 else CommandButton.ICON_HEART_UNFILLED,
@@ -520,9 +550,15 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
             "custom_action_skip_30" -> Triple(CommandButton.ICON_SKIP_FORWARD_30, SessionCommands.seek(SessionCommands.SKIP, 30), R.string.fast_forward)
             else -> return null
         }
+        val stars = if (action == RATE_ACTION && song != null) (StatsStore[song.path].rating + 1) / 2 else 0
         return CommandButton.Builder(icon)
+            .apply {
+                if (icon == CommandButton.ICON_UNDEFINED) {
+                    setCustomIconResId(if (action == RATE_ACTION) ratingIcons[stars] else R.drawable.ic_shuffle_history)
+                }
+            }
             .setSessionCommand(command)
-            .setDisplayName(getString(name))
+            .setDisplayName(if (action == RATE_ACTION) resources.getQuantityString(R.plurals.rate_stars, stars, stars) else getString(name))
             .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
     }
@@ -539,7 +575,7 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
                 StatsStore.setRating(it.path, if (r >= 10) 0 else (r / 2 + 1) * 2)
                 refreshButtons()
             }
-            SessionCommands.SHUFFLE -> player.shuffleModeEnabled = !player.shuffleModeEnabled
+            SessionCommands.SHUFFLE -> cycleShuffle()
             SessionCommands.REPEAT -> player.repeatMode = (player.repeatMode + 1) % 3
             SessionCommands.REWIND -> exo.seekTo((exo.currentPosition - args.getInt(SessionCommands.EXTRA_SECONDS, 10) * 1000L).coerceAtLeast(0))
             SessionCommands.SKIP -> exo.seekTo(exo.currentPosition + args.getInt(SessionCommands.EXTRA_SECONDS, 10) * 1000L)
@@ -564,6 +600,41 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         player.clearMediaItems()
         saveQueue()
         notifyState()
+    }
+
+    // Chapters known: the notification buttons (⏮/⏭ availability) are rebuilt.
+    private val chaptersListener: (String) -> Unit = { path ->
+        if (QueueItems.songOf(exo.currentMediaItem)?.path == path) refreshButtons()
+    }
+
+    private fun rememberAudiobook(item: MediaItem?, positionMs: Long) {
+        val song = QueueItems.songOf(item) ?: return
+        if (song.isAudiobook && Prefs.audiobookResume) AudiobookPositions.save(this, song.path, positionMs, song.duration)
+    }
+
+    /** An audiobook continues where it was left, unless it starts somewhere on purpose. */
+    private fun resumeAudiobook(item: MediaItem?, song: Song?, reason: Int) {
+        if (song == null || !song.isAudiobook || !Prefs.audiobookResume || reason == Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT) return
+        val saved = AudiobookPositions.get(this, song.path) ?: return
+        handler.post {
+            if (exo.currentMediaItem === item && exo.currentPosition < 3000) exo.seekTo(saved)
+        }
+    }
+
+    /**
+     * The shuffle button (player, widget, notification): off, evenly random, "long unheard
+     * first", off again. Switching between the two random modes reorders what is still to come
+     * (prefListener).
+     */
+    fun cycleShuffle() {
+        when {
+            !player.shuffleModeEnabled -> {
+                Prefs.shuffleOldestFirst = false
+                player.shuffleModeEnabled = true
+            }
+            !Prefs.shuffleOldestFirst -> Prefs.shuffleOldestFirst = true
+            else -> player.shuffleModeEnabled = false
+        }
     }
 
     // --- party shuffle ---------------------------------------------------------------------

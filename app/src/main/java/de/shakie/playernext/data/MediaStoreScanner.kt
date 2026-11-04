@@ -29,6 +29,7 @@ object MediaStoreScanner {
         MediaStore.Audio.Media.MIME_TYPE,
         MediaStore.Audio.Media.BITRATE,
         MediaStore.Audio.Media.IS_PODCAST,
+        MediaStore.Audio.Media.IS_AUDIOBOOK,
     )
 
     fun scanSongs(context: Context): List<Song> {
@@ -38,6 +39,7 @@ object MediaStoreScanner {
             "(${MediaStore.Audio.Media.IS_MUSIC} != 0 OR ${MediaStore.Audio.Media.IS_PODCAST} != 0 OR ${MediaStore.Audio.Media.IS_AUDIOBOOK} != 0)"
         }
         val folders = Prefs.musicFolders.map { it.trimEnd('/') + "/" }
+        val books = Prefs.audiobookFiles
         val minDuration = Prefs.minDurationSec * 1000L
         val result = ArrayList<Song>(2048)
         context.contentResolver.query(
@@ -46,7 +48,8 @@ object MediaStoreScanner {
             val idx = audioProjection.associateWith { c.getColumnIndexOrThrow(it) }
             while (c.moveToNext()) {
                 val path = c.str(idx[MediaStore.Audio.Media.DATA]!!)
-                if (folders.isNotEmpty() && folders.none { path.startsWith(it) }) continue
+                val added = path in books
+                if (!added && folders.isNotEmpty() && folders.none { path.startsWith(it) }) continue
                 val duration = c.getLong(idx[MediaStore.Audio.Media.DURATION]!!)
                 if (duration < minDuration) continue
                 val displayName = c.str(idx[MediaStore.Audio.Media.DISPLAY_NAME]!!)
@@ -75,6 +78,7 @@ object MediaStoreScanner {
                     mimeType = c.str(idx[MediaStore.Audio.Media.MIME_TYPE]!!),
                     bitrate = c.getInt(idx[MediaStore.Audio.Media.BITRATE]!!),
                     isPodcast = c.getInt(idx[MediaStore.Audio.Media.IS_PODCAST]!!) != 0,
+                    isAudiobook = added || c.getInt(idx[MediaStore.Audio.Media.IS_AUDIOBOOK]!!) != 0 || path.endsWith(".m4b", ignoreCase = true),
                 )
             }
         }
@@ -93,12 +97,15 @@ object MediaStoreScanner {
             MediaStore.Video.Media.SIZE,
             MediaStore.Video.Media.DATE_ADDED,
         )
+        // The music folders restrict videos too (otherwise Download, WhatsApp … show up in the library).
+        val folders = Prefs.musicFolders.map { it.trimEnd('/') + "/" }
         val result = ArrayList<Video>()
         context.contentResolver.query(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projection, null, null,
             "${MediaStore.Video.Media.DATE_ADDED} DESC"
         )?.use { c ->
             while (c.moveToNext()) {
+                if (folders.isNotEmpty() && folders.none { c.str(1).startsWith(it) }) continue
                 val displayName = c.str(3)
                 result += Video(
                     id = c.getLong(0),

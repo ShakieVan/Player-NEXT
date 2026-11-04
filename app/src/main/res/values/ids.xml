@@ -10,6 +10,9 @@
     <item name="menu_search" type="id" />
     <item name="menu_equalizer" type="id" />
     <item name="menu_settings" type="id" />
+    <item name="menu_chapters" type="id" />
+    <item name="menu_audiobook_scan" type="id" />
+    <item name="menu_audiobook_add" type="id" />
     <item name="menu_save_queue" type="id" />
     <item name="menu_clear_queue" type="id" />
     <item name="menu_party" type="id" />

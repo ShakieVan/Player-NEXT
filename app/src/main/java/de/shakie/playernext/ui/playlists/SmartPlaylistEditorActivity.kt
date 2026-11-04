@@ -128,9 +128,10 @@ class SmartPlaylistEditorActivity : BaseActivity() {
             setNavigationIconTint(getColor(R.color.pn_on_surface))
             setTitleTextColor(getColor(R.color.pn_on_surface))
             setTitle(R.string.spl_title)
-            setNavigationOnClickListener { finish() }
         }
         setSupportActionBar(toolbar)
+        // After setSupportActionBar, which replaces the navigation click listener with its own.
+        toolbar.setNavigationOnClickListener { finish() }
         root.addView(toolbar, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(56)))
         val form = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(8), dp(16), dp(24)) }
         form.addView(label(getString(R.string.spl_name)))

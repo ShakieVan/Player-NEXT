@@ -4,6 +4,7 @@ import android.app.Application
 import de.shakie.playernext.art.ArtLoader
 import de.shakie.playernext.data.EqPresetStore
 import de.shakie.playernext.data.FavoritesStore
+import de.shakie.playernext.data.FileRatings
 import de.shakie.playernext.data.Library
 import de.shakie.playernext.data.PlaylistStore
 import de.shakie.playernext.data.SmartPlaylistStore
@@ -18,6 +19,7 @@ class PlayerNextApp : Application() {
         ArtLoader.init(this)
         AudioEffects.init(this)
         StatsStore.init(this)
+        FileRatings.init(this)
         PlaylistStore.init(this)
         FavoritesStore.init(this)
         SmartPlaylistStore.init(this)

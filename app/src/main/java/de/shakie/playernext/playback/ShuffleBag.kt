@@ -34,7 +34,8 @@ object ShuffleBag {
         val lib = Library.snapshot
         if (lib.songs.isEmpty()) return emptyList()
         load()
-        val ids = lib.songs.map { it.id }
+        // A ten-hour audiobook is no party song.
+        val ids = lib.songs.filter { !it.isAudiobook }.map { it.id }
         var orderChanged = false
         val mode = Shuffler.modeKey
         bag.arrange = if (Shuffler.divisor == 0) null else { list -> Shuffler.shuffle(list, { lib.songsById[it]?.path }) }
@@ -47,7 +48,7 @@ object ShuffleBag {
             bag.rearrangeRest()
             orderChanged = true
         }
-        val drawn = bag.draw(count, ids, { it in lib.songsById }, skip)
+        val drawn = bag.draw(count, ids, { id -> lib.songsById[id]?.isAudiobook == false }, skip)
         if (orderChanged || bag.takeNewRound()) saveOrder() else saveCursor()
         return drawn.mapNotNull { lib.songsById[it] }
     }

@@ -16,6 +16,7 @@ import android.widget.RemoteViews
 import androidx.core.app.TaskStackBuilder
 import androidx.media3.common.Player
 import androidx.core.content.ContextCompat
+import de.shakie.playernext.Prefs
 import de.shakie.playernext.R
 import de.shakie.playernext.art.ArtKey
 import de.shakie.playernext.art.ArtLoader
@@ -35,7 +36,7 @@ open class BaseWidget(private val layout: Int, private val artSize: Int, val cov
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
-            Widgets.ACTION_SHUFFLE -> PlaybackService.instance?.player?.let { it.shuffleModeEnabled = !it.shuffleModeEnabled }
+            Widgets.ACTION_SHUFFLE -> PlaybackService.instance?.cycleShuffle()
             Widgets.ACTION_REPEAT -> PlaybackService.instance?.player?.let { it.repeatMode = (it.repeatMode + 1) % 3 }
             Widgets.ACTION_PLAY_PAUSE -> Widgets.playPause(context)
             Widgets.ACTION_NEXT -> Widgets.skip(context, 1)
@@ -73,6 +74,7 @@ open class BaseWidget(private val layout: Int, private val artSize: Int, val cov
             if (layout == R.layout.widget_medium || layout == R.layout.widget_large) {
                 setOnClickPendingIntent(R.id.w_shuffle, Widgets.own(context, provider, Widgets.ACTION_SHUFFLE))
                 setOnClickPendingIntent(R.id.w_repeat, Widgets.own(context, provider, Widgets.ACTION_REPEAT))
+                setImageViewResource(R.id.w_shuffle, if (state.shuffle && Prefs.shuffleOldestFirst) R.drawable.ic_shuffle_history else R.drawable.ic_shuffle)
                 setInt(R.id.w_shuffle, "setColorFilter", if (state.shuffle) 0xFFFFB36B.toInt() else 0xFF77737B.toInt())
                 setImageViewResource(R.id.w_repeat, if (state.repeat == Player.REPEAT_MODE_ONE) R.drawable.ic_repeat_one else R.drawable.ic_repeat)
                 setInt(R.id.w_repeat, "setColorFilter", if (state.repeat != Player.REPEAT_MODE_OFF) 0xFFFFB36B.toInt() else 0xFF77737B.toInt())

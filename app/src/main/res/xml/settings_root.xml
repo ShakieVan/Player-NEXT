@@ -52,10 +52,22 @@
                     android:title="Bewertungen in Dateien schreiben"
                     android:summary="Bewertungen zusätzlich als Tag (POPM/RATING) in der Musikdatei speichern"
                     app:iconSpaceReserved="false" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="ratings_read_files"
+                    android:title="Bewertungen automatisch aus Dateien lesen"
+                    android:summary="Bewertungen aus den Tags neuer und geänderter Dateien übernehmen (im Hintergrund, einmal je Datei). In Player NEXT gesetzte Bewertungen bleiben erhalten."
+                    app:iconSpaceReserved="false" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="ratings_in_lists"
+                    android:title="Bewertungen in Listen anzeigen"
+                    android:summary="Sterne bei bewerteten Titeln in den Titellisten zeigen"
+                    app:iconSpaceReserved="false" />
                 <Preference
                     android:key="import_metadata"
                     android:title="Bewertungen aus Dateien importieren"
-                    android:summary="In Musikdateien gespeicherte Bewertungen übernehmen"
+                    android:summary="Alle Dateien jetzt neu lesen und dort gespeicherte Bewertungen (POPM, RATING, FMPS) übernehmen, wo Player NEXT noch keine hat"
                     app:iconSpaceReserved="false" />
                 <Preference
                     android:key="music_stats_export"
@@ -138,6 +150,7 @@
             </PreferenceCategory>
 
             <PreferenceCategory android:title="Videoübersicht" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="use_audiobooks_browser" android:title="Hörbuchansicht nutzen" android:summary="Hörbücher (M4B, Ordner „Audiobooks“, selbst hinzugefügte) mit Fortschritt und Kapiteln" app:iconSpaceReserved="false" />
                 <CheckBoxPreference android:defaultValue="true" android:key="use_videos_browser" android:title="Videoansicht nutzen" android:summary="Videos durchsuchen" app:iconSpaceReserved="false" />
                 <CheckBoxPreference android:defaultValue="true" android:dependency="use_videos_browser" android:key="display_title_vid_tag" android:title="Videotitel anzeigen" android:summary="Videotitel anstatt des Dateinamens anzeigen" app:iconSpaceReserved="false" />
                 <CheckBoxPreference android:defaultValue="true" android:dependency="use_videos_browser" android:key="play_next_video" android:title="Wiedergabe fortführen" android:summary="Nächstes Video wiedergeben, nachdem das aktuelle beendet wurde" app:iconSpaceReserved="false" />
@@ -179,6 +192,7 @@
                 <CheckBoxPreference android:defaultValue="false" android:key="statusbar_remove_pause" android:title="Beim Pausieren ausblenden" android:summary="Benachrichtigung entfernen, solange die Wiedergabe pausiert ist" app:iconSpaceReserved="false" />
                 <ListPreference android:defaultValue="custom_action_favorite" android:entries="@array/custom_action_entries" android:entryValues="@array/custom_action_values" android:key="statusbar_custom_action_1" android:title="Benutzerdefinierte Taste links" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
                 <ListPreference android:defaultValue="custom_action_stop" android:entries="@array/custom_action_entries" android:entryValues="@array/custom_action_values" android:key="statusbar_custom_action_2" android:title="Benutzerdefinierte Taste rechts" app:iconSpaceReserved="false" app:useSimpleSummaryProvider="true" />
+                <CheckBoxPreference android:defaultValue="true" android:key="auto_rate_button" android:title="Bewerten in Android Auto" android:summary="Zusätzliche Taste „Bewerten“ in Android Auto (und in der erweiterten Benachrichtigung): jedes Tippen ein Stern mehr, nach fünf keiner. Das Symbol zeigt die aktuellen Sterne." app:iconSpaceReserved="false" />
                 <CheckBoxPreference android:defaultValue="true" android:key="statusbar_use_prev" android:title="Zurück-Taste" android:summary="Taste für vorherigen Titel in der Benachrichtigung anzeigen" app:iconSpaceReserved="false" />
             </PreferenceCategory>
 
@@ -210,12 +224,24 @@
                 <CheckBoxPreference android:defaultValue="true" android:key="use_limiter" android:title="Begrenzer" android:summary="Ausgabe begrenzen, um Verzerrungen durch Anhebungen zu vermeiden" app:iconSpaceReserved="false" />
             </PreferenceCategory>
 
+            <PreferenceCategory android:title="Lautheit" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="false" android:key="loudmax" android:title="Lautheits-Maximierer" android:summary="Look-ahead-Limiter wie LoudMax: macht leise Aufnahmen lauter und fängt Spitzen ab, bevor sie übersteuern. Schaltet die stromsparende Hardware-Wiedergabe ab." app:iconSpaceReserved="false" />
+                <SeekBarPreference android:defaultValue="-6" android:dependency="loudmax" android:key="loudmax_threshold" android:max="0" android:title="Schwelle (dB)" android:summary="Je tiefer, desto lauter und dichter (−6 dB = 6 dB lauter)" app:iconSpaceReserved="false" app:min="-30" app:showSeekBarValue="true" />
+                <SeekBarPreference android:defaultValue="-1" android:dependency="loudmax" android:key="loudmax_output" android:max="0" android:title="Ausgangspegel (dB)" android:summary="Höchster Pegel, den keine Spitze überschreitet" app:iconSpaceReserved="false" app:min="-12" app:showSeekBarValue="true" />
+            </PreferenceCategory>
+
             <PreferenceCategory android:title="Wiedergabe" app:iconSpaceReserved="false">
                 <Preference android:selectable="false" android:title="Gapless Playback" android:summary="Lückenlose Titelwechsel sind immer aktiv" app:iconSpaceReserved="false" />
                 <SeekBarPreference android:defaultValue="100" android:key="audio_pitch" android:max="200" android:title="Tonhöhe (%)" android:summary="Tonhöhe der Wiedergabe" app:iconSpaceReserved="false" app:min="50" app:showSeekBarValue="true" />
                 <SeekBarPreference android:defaultValue="100" android:key="audio_speed" android:max="200" android:title="Audio-Geschwindigkeit (%)" android:summary="Wiedergabe-Geschwindigkeit" app:iconSpaceReserved="false" app:min="50" app:showSeekBarValue="true" />
                 <CheckBoxPreference android:defaultValue="false" android:key="pause_between_songs" android:title="Pause zwischen den Titeln" android:summary="Nach jedem Titel pausieren (nützlich für Musiker, Lehrer usw.)" app:iconSpaceReserved="false" />
                 <CheckBoxPreference android:defaultValue="true" android:key="skip_unsupported_audio" android:title="Nicht unterstützte Dateien überspringen" android:summary="Defekte oder nicht abspielbare Dateien automatisch überspringen" app:iconSpaceReserved="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="Hörbücher" app:iconSpaceReserved="false">
+                <CheckBoxPreference android:defaultValue="true" android:key="audiobook_chapter_skip" android:title="⏮/⏭ springen zwischen Kapiteln" android:summary="In Hörbüchern mit Kapiteln (M4B) wechseln Zurück und Weiter das Kapitel statt den Titel – auch über Benachrichtigung, Kopfhörer und Auto" app:iconSpaceReserved="false" />
+                <CheckBoxPreference android:defaultValue="true" android:key="audiobook_resume" android:title="Position merken" android:summary="Ein Hörbuch geht dort weiter, wo du es zuletzt verlassen hast – auch wenn zwischendurch Musik lief" app:iconSpaceReserved="false" />
+                <Preference android:selectable="false" android:summary="Hörbücher (M4B-Dateien und alles im Ordner „Audiobooks“) bleiben beim Partymix und beim Mischen von Musik außen vor." app:iconSpaceReserved="false" />
             </PreferenceCategory>
 
             <PreferenceCategory android:title="Zufallswiedergabe" app:iconSpaceReserved="false">

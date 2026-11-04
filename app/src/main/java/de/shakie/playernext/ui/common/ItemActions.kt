@@ -71,6 +71,7 @@ object ItemActions {
     private const val EXPORT = 17
     private const val EDIT_SMART = 18
     private const val PLAY_VIDEO = 19
+    private const val SCAN = 20
     const val EXTRA_BASE = 100
 
     class Extra(val title: String, val action: () -> Unit)
@@ -120,6 +121,7 @@ object ItemActions {
                     add(DELETE, R.string.action_delete)
                 }
                 ItemType.FOLDER -> {
+                    add(SCAN, R.string.action_scan_folder)
                     add(EDIT_TAGS, R.string.action_edit_tags)
                     add(DELETE, R.string.action_delete)
                 }
@@ -183,6 +185,19 @@ object ItemActions {
             EXPORT -> PlaylistIO.export(activity, target.title, target.songs())
             EDIT_SMART -> target.key.toLongOrNull()?.let { SmartPlaylistEditorActivity.start(activity, it) }
             PLAY_VIDEO -> target.video?.let { VideoPlayerActivity.start(activity, it) }
+            SCAN -> scanFolder(activity, target.key, target.title)
+        }
+    }
+
+    /** Media scanner over the folder and everything below it: new, changed and removed files. */
+    fun scanFolder(activity: BaseActivity, path: String, name: String) {
+        val app = activity.applicationContext
+        toast(activity, activity.getString(R.string.folder_scan_started, name))
+        android.media.MediaScannerConnection.scanFile(app, arrayOf(path), null) { _, _ ->
+            android.os.Handler(android.os.Looper.getMainLooper()).post {
+                Library.refresh()
+                Toast.makeText(app, app.getString(R.string.folder_scan_done, name), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

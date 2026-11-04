@@ -49,9 +49,18 @@ Playlists) nie verlieren, 3. Akku, 4. Nähe zu PlayerPro, 5. Komfort.
   Provider, Aktualisierung nur bei Zustandswechseln.
 - `update/` – Update-Funktion wie Mau-Mau Flip (siehe
   [`docs/technical-notes/updates.md`](docs/technical-notes/updates.md)).
-- Zufall: `QueuePlayer` mischt sichtbar, `ShuffleBag` liefert den Partymix;
-  kein Titel wiederholt sich, bevor alle einmal liefen (Unit-Test
-  `BagOrderTest`).
+- Zufall: `QueuePlayer` mischt sichtbar, `ShuffleBag` liefert den Partymix,
+  `Shuffler` die Reihenfolge (gleichmäßig oder lange nicht Gehörtes zuerst);
+  kein Titel wiederholt sich, bevor alle einmal liefen (Unit-Tests
+  `BagOrderTest`, `AgeOrderTest`).
+- Bewertungen: `tags/RatingTags` (Formate), `data/FileRatings` (Abgleich mit
+  den Dateien, nie zulasten der App-Bewertung), siehe
+  [`docs/technical-notes/bewertungen.md`](docs/technical-notes/bewertungen.md).
+- Hörbücher: `playback/Mp4Chapters`, `Audiobooks.kt` (`ChapterStore`,
+  `AudiobookPositions`), `ui/browse/AudiobookLibrary`, siehe
+  [`docs/technical-notes/hoerbuecher.md`](docs/technical-notes/hoerbuecher.md).
+- Kein `Player.Listener`-Wrapper per Kotlin-Delegation (`by`): Java-Default-
+  Methoden werden nicht weitergereicht, die Sitzung bekäme keine Ereignisse.
 
 Vor Änderungen an Wiedergabe, Energie oder Tags die Notizen in
 [`docs/technical-notes/`](docs/technical-notes/) lesen.

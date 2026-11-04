@@ -38,6 +38,8 @@ object Prefs {
     val minDurationSec get() = int("min_duration_sec", 0)
     val halfStars get() = bool("ratings_half_stars", false)
     val writeRatingsToTags get() = bool("ratings_write_tags", false)
+    val ratingsFromFiles get() = bool("ratings_read_files", true)
+    val ratingsInLists get() = bool("ratings_in_lists", true)
     val lyricsPreferEmbedded get() = bool("lyrics_prefer_id3", true)
 
     // Browsers
@@ -112,6 +114,9 @@ object Prefs {
     val balance get() = int("audio_balance", 0) / 100f
     val monoOutput get() = bool("mono_output", false)
     val useLimiter get() = bool("use_limiter", true)
+    val loudness get() = bool("loudmax", false)
+    val loudnessThresholdDb get() = int("loudmax_threshold", -6).toFloat()
+    val loudnessOutputDb get() = int("loudmax_output", -1).toFloat()
     val pauseBetweenSongs get() = bool("pause_between_songs", false)
     val pitch get() = int("audio_pitch", 100) / 100f
     val speed get() = int("audio_speed", 100) / 100f
@@ -132,8 +137,20 @@ object Prefs {
     val replayGainPreamp get() = int("rg_preamp", 0).toFloat()
     val replayGainClipping get() = bool("rg_clipping", true)
 
+    // Audiobooks (playback/Audiobooks.kt)
+    val chapterSkip get() = bool("audiobook_chapter_skip", true)
+    /** Extra "rate" button for Android Auto (which shows the notification's buttons). */
+    val rateButton get() = bool("auto_rate_button", true)
+    /** Books added under "Hörbücher" (file dialog or search); in the library even outside the music folders. */
+    var audiobookFiles: Set<String>
+        get() = sp.getStringSet("audiobook_files", emptySet())?.toSet() ?: emptySet()
+        set(value) = sp.edit().putStringSet("audiobook_files", value).apply()
+    val audiobookResume get() = bool("audiobook_resume", true)
+
     // Shuffle (see playback/Shuffler.kt)
-    val shuffleOldestFirst get() = str("shuffle_mode", "even") == "oldest"
+    var shuffleOldestFirst
+        get() = str("shuffle_mode", "even") == "oldest"
+        set(value) = sp.edit().putString("shuffle_mode", if (value) "oldest" else "even").apply()
     val shuffleWindow get() = str("shuffle_window", "4").toIntOrNull()?.takeIf { it in setOf(2, 4, 8) } ?: 4
 
     // Headset

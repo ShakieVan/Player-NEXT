@@ -57,13 +57,21 @@ bildet die gewohnte Bedienung nach und setzt auf einen sparsamen Unterbau:
   liefen (auch im Partymix und in jeder neuen Runde mit „Alle wiederholen“).
   Wahlweise **„Lange nicht Gehörtes zuerst“**: Jeder nächste Titel kommt
   zufällig aus der Hälfte, dem Viertel oder dem Achtel, das am längsten nicht
-  lief.
+  lief. Der Zufallsknopf schaltet Aus → Zufall → lange nicht Gehörtes (Uhr).
+- **Hörbücher:** eigene Kategorie mit Fortschritt; „Hörbücher suchen“ auf dem
+  ganzen Gerät oder einzeln per Dateiauswahl hinzufügen. M4B-Kapitel mit
+  Kapitelliste, ⏮/⏭ springen kapitelweise (auch Kopfhörer und Auto), jedes
+  Buch merkt sich seine Stelle.
 - **Equalizer:** 10 Bänder (±12 dB), Preamp, 27 Presets plus eigene, Hall,
   Bass- und Virtualizer-Drehknopf, Lautstärke.
 - **Audio:** Gapless, automatisches und manuelles Crossfading, ReplayGain
   (Titel/Album, Vorverstärkung, Übersteuerungsschutz), Balance, Mono,
-  Begrenzer, Tonhöhe, Geschwindigkeit, Pause zwischen Titeln, einstellbarer
-  Audiofokus.
+  Begrenzer, **Lautheits-Maximierer wie LoudMax** (Look-ahead-Limiter mit
+  Schwelle und Ausgangspegel), Tonhöhe, Geschwindigkeit, Pause zwischen
+  Titeln, einstellbarer Audiofokus.
+- **Bewertungen** in allen Titellisten, automatisch aus den Dateien gelesen
+  (POPM wie Windows Media Player/MediaMonkey, foobar2000, FLAC/Ogg, M4A), im
+  Tag-Editor sichtbar und änderbar, in Android Auto per Taste.
 - **Statistiken und smarte Playlists:** Bewertungen (auch halbe Sterne),
   Wiedergabe-/Überspringzähler, zuletzt gespielt; Kürzlich hinzugefügt, Am
   besten bewertet, Am häufigsten/seltensten, Kürzlich wiedergegeben, Podcasts

@@ -24,6 +24,7 @@ abstract class BaseActivity : AppCompatActivity() {
     private var senderCallback: ((Boolean) -> Unit)? = null
     private var createCallback: ((Uri?) -> Unit)? = null
     private var openCallback: ((Uri?) -> Unit)? = null
+    private var openManyCallback: ((List<Uri>) -> Unit)? = null
     private var folderCallback: ((Uri?) -> Unit)? = null
 
     private val imageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -38,6 +39,9 @@ abstract class BaseActivity : AppCompatActivity() {
     }
     private val openLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         openCallback?.invoke(uri); openCallback = null
+    }
+    private val openManyLauncher = registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
+        openManyCallback?.invoke(uris); openManyCallback = null
     }
     private val folderLauncher = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         folderCallback?.invoke(uri); folderCallback = null
@@ -62,6 +66,11 @@ abstract class BaseActivity : AppCompatActivity() {
     fun openDocument(types: Array<String>, callback: (Uri?) -> Unit) {
         openCallback = callback
         openLauncher.launch(types)
+    }
+
+    fun openDocuments(types: Array<String>, callback: (List<Uri>) -> Unit) {
+        openManyCallback = callback
+        openManyLauncher.launch(types)
     }
 
     fun openFolder(callback: (Uri?) -> Unit) {

@@ -2,6 +2,8 @@ package de.shakie.playernext.playback
 
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import de.shakie.playernext.Prefs
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ShuffleOrder
 import kotlin.random.Random
@@ -101,6 +103,17 @@ class QueuePlayer(private val exo: ExoPlayer, private val hooks: Hooks) : Forwar
         exo.removeMediaItems(fresh.size, fresh.size + cur)
     }
 
+    /** The shuffle mode changed while shuffling: what is still to come gets an order in the new mode. */
+    fun reshuffleUpcoming() {
+        val count = exo.mediaItemCount
+        val cur = exo.currentMediaItemIndex
+        if (!exo.shuffleModeEnabled || count - cur < 3) return
+        val fresh = shuffled((cur + 1 until count).map { exo.getMediaItemAt(it) })
+        // Add first, then remove the old copies: the current item stays where it is.
+        exo.addMediaItems(count, fresh)
+        exo.removeMediaItems(cur + 1, count)
+    }
+
     /** Positions of the current queue items in unshuffled order (for saving), or null. */
     fun originalPositions(): IntArray? {
         val original = originalOrder ?: return null
@@ -170,24 +183,56 @@ class QueuePlayer(private val exo: ExoPlayer, private val hooks: Hooks) : Forwar
         super.clearMediaItems()
     }
 
+    // --- chapters: ⏮/⏭ inside an audiobook ------------------------------------------------
+
+    private fun currentChapters(): List<Chapter>? =
+        if (Prefs.chapterSkip) ChapterStore.cached(QueueItems.songOf(exo.currentMediaItem)?.path)?.takeIf { it.size > 1 } else null
+
+    /** Seeks to the next or previous chapter; false = no chapter there, change the track as usual. */
+    private fun chapterJump(forward: Boolean): Boolean {
+        val chapters = currentChapters() ?: return false
+        val target = ChapterNav.jumpTarget(chapters, exo.currentPosition, forward) ?: return false
+        exo.seekTo(target)
+        return true
+    }
+
+    // A single audiobook has no next item, so media3 would grey out ⏭ for Android Auto and Bluetooth. With
+    // chapters, next and previous stay available: the platform session rebuilds its actions from this on
+    // every player event. (No listener wrapper: Kotlin's `by` skips Java default methods, which would
+    // silently swallow every Player.Listener event.)
+    override fun getAvailableCommands(): Player.Commands {
+        val base = super.getAvailableCommands()
+        if (currentChapters() == null) return base
+        return base.buildUpon().addAll(
+            Player.COMMAND_SEEK_TO_NEXT, Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM,
+            Player.COMMAND_SEEK_TO_PREVIOUS, Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM,
+        ).build()
+    }
+
+    override fun isCommandAvailable(command: Int): Boolean = availableCommands.contains(command)
+
     // --- manual track changes ------------------------------------------------------------
 
     override fun seekToNext() {
+        if (chapterJump(true)) return
         hooks.beforeManualSkip(true)
         super.seekToNext()
     }
 
     override fun seekToNextMediaItem() {
+        if (chapterJump(true)) return
         hooks.beforeManualSkip(true)
         super.seekToNextMediaItem()
     }
 
     override fun seekToPrevious() {
+        if (chapterJump(false)) return
         if (exo.currentPosition <= exo.maxSeekToPreviousPosition) hooks.beforeManualSkip(false)
         super.seekToPrevious()
     }
 
     override fun seekToPreviousMediaItem() {
+        if (chapterJump(false)) return
         hooks.beforeManualSkip(false)
         super.seekToPreviousMediaItem()
     }

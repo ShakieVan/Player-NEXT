@@ -25,6 +25,8 @@ data class Song(
     val mimeType: String,
     val bitrate: Int,
     val isPodcast: Boolean,
+    /** In an audiobooks folder or an M4B file. */
+    val isAudiobook: Boolean = false,
 ) {
     val uri: Uri get() = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
     val folder: String get() = path.substringBeforeLast('/', "")
@@ -101,7 +103,8 @@ enum class BrowserType(val key: String) {
     PLAYLISTS("playlists"),
     FOLDERS("folders"),
     SONGS("songs"),
-    VIDEOS("videos");
+    VIDEOS("videos"),
+    AUDIOBOOKS("audiobooks");
 
     companion object {
         fun fromKey(key: String?): BrowserType? = entries.firstOrNull { it.key == key }

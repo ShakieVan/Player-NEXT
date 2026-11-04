@@ -10,6 +10,7 @@ import androidx.media3.common.Timeline
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
+import de.shakie.playernext.Prefs
 import de.shakie.playernext.data.PlaylistStore
 import de.shakie.playernext.data.Song
 import java.util.concurrent.CopyOnWriteArrayList
@@ -97,7 +98,9 @@ object PlayerHub {
 
     // --- queue building ----------------------------------------------------------------------
 
-    fun play(songs: List<Song>, startIndex: Int = 0, shuffle: Boolean = false) {
+    fun play(all: List<Song>, startIndex: Int = 0, shuffle: Boolean = false) {
+        // Shuffling music leaves audiobooks out; a list of only audiobooks shuffles as it is.
+        val songs = if (shuffle && all.any { !it.isAudiobook }) all.filter { !it.isAudiobook } else all
         if (songs.isEmpty()) return
         with { c ->
             val items = songs.map { QueueItems.request(it) }
@@ -143,11 +146,24 @@ object PlayerHub {
         if (c.playWhenReady) c.pause() else c.play()
     }
 
-    fun next() = with { it.seekToNextMediaItem() }
-    fun previous() = with { it.seekToPrevious() }
+    /** ⏭; inside an audiobook with chapters the next chapter (in-process, like the session's own player). */
+    fun next() = with { c ->
+        val target = if (Prefs.chapterSkip) ChapterNav.jumpTarget(currentChapters(), c.currentPosition, forward = true) else null
+        if (target != null) c.seekTo(target) else c.seekToNextMediaItem()
+    }
+
+    /** Chapters of the song playing, if it has any (audiobooks). */
+    fun currentChapters(): List<de.shakie.playernext.playback.Chapter> =
+        ChapterStore.cached(currentSong()?.path).orEmpty()
+
+    fun previous() = with { c ->
+        val target = if (Prefs.chapterSkip) ChapterNav.jumpTarget(currentChapters(), c.currentPosition, forward = false) else null
+        if (target != null) c.seekTo(target) else c.seekToPrevious()
+    }
     fun seekTo(ms: Long) = with { it.seekTo(ms) }
     fun seekBy(deltaMs: Long) = with { it.seekTo((it.currentPosition + deltaMs).coerceAtLeast(0)) }
-    fun toggleShuffle() = with { it.shuffleModeEnabled = !it.shuffleModeEnabled }
+    /** Off, evenly random, "long unheard first", off again (PlaybackService.cycleShuffle). */
+    fun toggleShuffle() = with { it.sendCustomCommand(SessionCommands.command(SessionCommands.SHUFFLE), Bundle.EMPTY) }
     fun cycleRepeat() = with {
         it.repeatMode = when (it.repeatMode) {
             Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL

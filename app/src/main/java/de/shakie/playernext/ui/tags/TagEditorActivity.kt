@@ -23,11 +23,15 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import de.shakie.playernext.R
+import de.shakie.playernext.data.FileRatings
 import de.shakie.playernext.data.Library
 import de.shakie.playernext.data.Song
+import de.shakie.playernext.data.StatsStore
 import de.shakie.playernext.tags.TagIO
 import de.shakie.playernext.ui.BaseActivity
 import de.shakie.playernext.ui.common.ItemActions
+import de.shakie.playernext.ui.common.RatingView
+import de.shakie.playernext.util.Format
 import de.shakie.playernext.util.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +54,11 @@ class TagEditorActivity : BaseActivity() {
     private val dirty = HashSet<TagIO.Field>()
     private var artworkChange: TagIO.ArtworkChange = TagIO.ArtworkChange.Keep
     private lateinit var artView: ImageView
+    private lateinit var ratingView: RatingView
+    private lateinit var ratingHint: TextView
+    /** Rating in the file(s) when loaded; null = the files differ. */
+    private var originalRating: Int? = 0
+    private var ratingChanged = false
     private lateinit var progress: ProgressBar
     private var saving = false
 
@@ -78,9 +87,10 @@ class TagEditorActivity : BaseActivity() {
             title = if (songs.size == 1) getString(R.string.tag_editor_title) else getString(R.string.tag_editor_batch, songs.size)
             subtitle = if (songs.size == 1) songs[0].path.substringAfterLast('/') else null
             setSubtitleTextColor(getColor(R.color.pn_on_surface_dim))
-            setNavigationOnClickListener { finish() }
         }
         setSupportActionBar(toolbar)
+        // After setSupportActionBar, which replaces the navigation click listener with its own.
+        toolbar.setNavigationOnClickListener { finish() }
         root.addView(toolbar, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(56)))
         progress = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply {
             isIndeterminate = true
@@ -99,6 +109,22 @@ class TagEditorActivity : BaseActivity() {
             setOnClickListener { chooseArtwork() }
         }
         form.addView(artView, LinearLayout.LayoutParams(dp(160), dp(160)).apply { gravity = android.view.Gravity.CENTER_HORIZONTAL })
+        form.addView(TextView(this).apply {
+            setText(R.string.tag_rating_file)
+            setTextColor(getColor(R.color.pn_on_surface_variant))
+            setPadding(0, dp(12), 0, 0)
+        })
+        ratingView = RatingView(this).apply {
+            isEnabled = false
+            onRatingChanged = { ratingChanged = true; updateRatingHint() }
+        }
+        form.addView(ratingView, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(44)))
+        ratingHint = TextView(this).apply {
+            setTextColor(getColor(R.color.pn_on_surface_dim))
+            textSize = 12f
+            gravity = android.view.Gravity.CENTER_HORIZONTAL
+        }
+        form.addView(ratingHint)
         if (songs.size > 1) {
             form.addView(TextView(this).apply {
                 setText(R.string.tag_batch_hint)
@@ -185,10 +211,27 @@ class TagEditorActivity : BaseActivity() {
                 })
             }
             if (songs.size > 1) (fields[TagIO.Field.TITLE]?.parent?.parent as? View)?.visibility = View.GONE
+            val ratings = tags.map { it.rating }.distinct()
+            originalRating = ratings.singleOrNull()
+            ratingView.rating = originalRating ?: 0
+            ratingView.isEnabled = true
+            updateRatingHint()
             val art = tags.firstOrNull()?.artwork
             if (art != null && tags.all { it.artwork?.contentEquals(art) == true }) {
                 BitmapFactory.decodeByteArray(art, 0, art.size)?.let { artView.setImageBitmap(it) }
             }
+        }
+    }
+
+    /** The file's rating next to the one Player NEXT keeps, when they differ. */
+    private fun updateRatingHint() {
+        val app = songs.map { StatsStore[it.path].rating }.distinct().singleOrNull()
+        ratingHint.text = when {
+            ratingChanged -> getString(R.string.tag_rating_will_write)
+            originalRating == null -> getString(R.string.tag_multiple)
+            app != null && app != originalRating -> getString(R.string.tag_rating_app, Format.stars(app))
+            originalRating == 0 -> getString(R.string.tag_rating_none)
+            else -> ""
         }
     }
 
@@ -236,7 +279,8 @@ class TagEditorActivity : BaseActivity() {
             val v = fields[f]?.text?.toString()?.trim()
             if (v != original[f]) changes[f] = v
         }
-        if (changes.isEmpty() && artworkChange == TagIO.ArtworkChange.Keep) {
+        val rating = ratingView.rating.takeIf { ratingChanged && it != originalRating }
+        if (changes.isEmpty() && artworkChange == TagIO.ArtworkChange.Keep && rating == null) {
             finish()
             return
         }
@@ -251,7 +295,12 @@ class TagEditorActivity : BaseActivity() {
             ItemActions.toast(this@TagEditorActivity, getString(R.string.tag_saving))
             val error = withContext(Dispatchers.IO) {
                 try {
-                    TagIO.write(this@TagEditorActivity, songs, changes, artworkChange)
+                    TagIO.write(this@TagEditorActivity, songs, changes, artworkChange, rating = rating)
+                    if (rating != null) {
+                        // File and Player NEXT show the same stars afterwards.
+                        StatsStore.setRatings(songs.associate { it.path to rating })
+                        songs.forEach { FileRatings.wrote(it, rating) }
+                    }
                     null
                 } catch (e: Exception) {
                     e.message ?: e.javaClass.simpleName
