@@ -142,6 +142,12 @@ Neuerungen und installiert sie. Play Protect fragte diesmal wieder („App-Scan
 empfohlen“ → „App scannen“ → „Installieren“). Danach sind die Bewertungen
 erhalten, der Equalizer zeigt Maximierer und Pegelanzeige.
 
+04.11.2026 Beta 1.1.5 im Emulator: 1.1.4 findet nach „Jetzt prüfen“ „Neue
+Testversion 1.1.5 verfügbar.“ (7,1 MB) samt Neuerungen, lädt, prüft und
+installiert sie (Play Protect: „App scannen“ → „Installieren“ → „App wurde
+installiert.“). Danach sind die 4 Sterne aus 1.1.3 erhalten und erscheinen in
+der Albumliste und in der Warteschlange im neuen Zeilenaufbau.
+
 Play Protect zeigte dabei „App-Scan empfohlen“ (unbekannte App). Den Link
 „Ohne Scan installieren“ nimmt der Dialog über `adb shell input` nicht an;
 „App scannen“ → „Diese App ist anscheinend sicher“ → „Installieren“. Nutzer
