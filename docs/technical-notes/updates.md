@@ -137,6 +137,11 @@ Daten bleiben über die Datenbank-Umstellung (Version 2, Tabelle
 `file_ratings`) erhalten: 4 Sterne erscheinen jetzt in der Titelliste, der
 Favorit und die Warteschlange sind noch da.
 
+04.11.2026 Beta 1.1.4 im Emulator: 1.1.3 findet 1.1.4 im Beta-Kanal, zeigt die
+Neuerungen und installiert sie. Play Protect fragte diesmal wieder („App-Scan
+empfohlen“ → „App scannen“ → „Installieren“). Danach sind die Bewertungen
+erhalten, der Equalizer zeigt Maximierer und Pegelanzeige.
+
 Play Protect zeigte dabei „App-Scan empfohlen“ (unbekannte App). Den Link
 „Ohne Scan installieren“ nimmt der Dialog über `adb shell input` nicht an;
 „App scannen“ → „Diese App ist anscheinend sicher“ → „Installieren“. Nutzer
