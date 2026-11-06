@@ -148,6 +148,13 @@ installiert sie (Play Protect: „App scannen“ → „Installieren“ → „A
 installiert.“). Danach sind die 4 Sterne aus 1.1.3 erhalten und erscheinen in
 der Albumliste und in der Warteschlange im neuen Zeilenaufbau.
 
+06.11.2026 Beta 1.1.6 im Emulator (eigene Instanz BillCheck_Test_API_36,
+`-read-only`): Die frisch installierte 1.1.5 (Release-Bau) zeigt beim Start
+„Neue Testversion 1.1.6 verfügbar.“ samt Neuerungen, lädt 7,1 MB, fragt nach
+„Apps installieren“, dann Android-Installer und Play Protect („App scannen“ →
+„Installieren“ → „App installed.“). Danach läuft im Release-Bau 1.1.6 eine
+`.lrc` mit, der Refrain samt Folgezeile ist hervorgehoben.
+
 Play Protect zeigte dabei „App-Scan empfohlen“ (unbekannte App). Den Link
 „Ohne Scan installieren“ nimmt der Dialog über `adb shell input` nicht an;
 „App scannen“ → „Diese App ist anscheinend sicher“ → „Installieren“. Nutzer
