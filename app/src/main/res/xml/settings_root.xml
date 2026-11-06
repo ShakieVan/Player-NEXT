@@ -86,7 +86,7 @@
                     android:defaultValue="true"
                     android:key="lyrics_prefer_id3"
                     android:title="Liedtexte aus dem ID3-Tag bevorzugen"
-                    android:summary="Eingebettete Liedtexte vor .lrc-Dateien neben der Musikdatei anzeigen"
+                    android:summary="Eingebettete Liedtexte vor .lrc-Dateien neben der Musikdatei anzeigen. Mitlaufende Liedtexte (mit Zeitstempeln) gehen immer vor."
                     app:iconSpaceReserved="false" />
             </PreferenceCategory>
         </PreferenceScreen>

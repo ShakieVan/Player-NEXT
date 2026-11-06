@@ -23,6 +23,7 @@ Messwerte:
 | Kapitel | Einmal je Datei beim Titelwechsel, nur MP4-Familie, nur die Atom-Köpfe. |
 | Lautheits-Maximierer | Nur wenn eingeschaltet; dann läuft der DSP und die Hardware-Wiedergabe (Offload) ist aus. Die Gain-Reduktion wird nicht mehr je Frame in dB umgerechnet (ein `log10` je Frame weniger). |
 | Pegelanzeige im Equalizer | Gemessen wird nur, solange der Equalizer im Vordergrund ist; gezeichnet höchstens 30 Bilder/s und nur beim Abspielen und Ausklingen, in der Pause 0 (gemessen). Ausnahme von „1/s“, weil eine Pegelanzeige mit 1/s nutzlos wäre; sie läuft nur, solange man hinsieht. |
+| Mitlaufende Liedtexte | Kein Takt: ein Rückruf genau zum Beginn der nächsten Zeile, nur bei sichtbarem Liedtext, im Vordergrund und beim Abspielen. Je Zeilenwechsel eine kurze Scroll-Animation (≈ 17 Bilder), nur die Farbe der Zeile ändert sich. Emulator, 10 s mit drei Wechseln: 62 Bilder, zugeklappt 10, pausiert 0. Scrollbalken aus (sonst 110 Bilder durch Ein-/Ausblenden). Siehe [`liedtexte.md`](liedtexte.md). |
 
 | Bedarfsgesteuerte Wiedergabe-Schleife | `experimentalSetDynamicSchedulingEnabled(true)`: ExoPlayers Schleife wacht nicht mehr alle 10 ms auf. Emulator: Wiedergabe-Thread 119 → 38 Ticks pro 30 s. |
 | Größerer AudioTrack-Puffer | 0,5–1 s PCM-Puffer, weniger Nachfüllvorgänge. Effektänderungen werden nach höchstens ~1 s hörbar. |

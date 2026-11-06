@@ -403,9 +403,10 @@ object ItemActions {
             val lyrics = withContext(Dispatchers.IO) { TagIO.readLyrics(activity, song, Prefs.lyricsPreferEmbedded) }
             MaterialAlertDialogBuilder(activity)
                 .setTitle(song.title)
-                .setMessage(lyrics ?: activity.getString(R.string.no_lyrics))
+                .setMessage(lyrics?.plain ?: activity.getString(R.string.no_lyrics))
                 .setPositiveButton(R.string.ok, null)
-                .setNeutralButton(R.string.edit) { _, _ -> LyricsEditor.edit(activity, song, lyrics.orEmpty()) }
+                // The editor gets the stored text so time tags survive saving.
+                .setNeutralButton(R.string.edit) { _, _ -> LyricsEditor.edit(activity, song, lyrics?.raw.orEmpty()) }
                 .show()
         }
     }

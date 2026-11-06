@@ -82,7 +82,9 @@ bildet die gewohnte Bedienung nach und setzt auf einen sparsamen Unterbau:
   Albuminterpret, Komponist, Genre, Jahr, Titel-/CD-Nummer, Gruppierung,
   Kommentar, BPM, Liedtext, Cover) – schreibt über die Android-Freigabe, ohne
   breiten Speicherzugriff.
-- **Liedtexte** aus dem Tag oder aus `.lrc`-Dateien, direkt bearbeitbar.
+- **Liedtexte** aus dem Tag oder aus `.lrc`-Dateien, direkt bearbeitbar. Mit
+  Zeitstempeln (LRC, `[01:23.45]Zeile`) laufen sie beim Abspielen mit, die
+  gesungene Zeile ist hervorgehoben.
 - **Benachrichtigung** mit zwei frei belegbaren Zusatztasten (Favorit, Stopp,
   Bewerten, Spulen …), Sperrbildschirm-Steuerung über Android, **Android Auto**,
   **Widgets** 4×1, 2×2, 4×2, 4×4 und Plus 4×2.

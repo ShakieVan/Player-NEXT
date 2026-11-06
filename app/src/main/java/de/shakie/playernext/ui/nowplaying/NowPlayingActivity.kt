@@ -6,6 +6,11 @@ import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.Menu
@@ -16,10 +21,12 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.WindowCompat
+import androidx.core.view.doOnLayout
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
@@ -42,6 +49,7 @@ import de.shakie.playernext.data.Song
 import de.shakie.playernext.data.StatsStore
 import de.shakie.playernext.playback.PlayerHub
 import de.shakie.playernext.playback.QueueItems
+import de.shakie.playernext.tags.Lyrics
 import de.shakie.playernext.tags.TagIO
 import de.shakie.playernext.ui.BaseActivity
 import de.shakie.playernext.ui.MainActivity
@@ -64,6 +72,9 @@ import kotlin.math.abs
 
 private const val PAYLOAD_RATING = "rating"
 
+/** No lyrics line highlighted yet (indexAt returns -1 before the first line). */
+private const val NO_LINE = -2
+
 class NowPlayingActivity : BaseActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var pager: ViewPager2
@@ -74,9 +85,20 @@ class NowPlayingActivity : BaseActivity() {
     private lateinit var seek: SeekBar
     private lateinit var elapsed: TextView
     private lateinit var total: TextView
+    private lateinit var titleView: TextView
+    private lateinit var subtitleView: TextView
     private lateinit var overlayTop: View
     private lateinit var overlayBottom: View
     private lateinit var lyricsPanel: View
+    private lateinit var lyricsScroll: ScrollView
+    private lateinit var lyricsText: TextView
+    private var lyrics: Lyrics? = null
+    private var lyricsLoading = false
+    private var lyricsLineStarts = IntArray(0)
+    private var lyricsLine = NO_LINE
+    private var lyricsTouchedAt = 0L
+    private val lyricsTick = Runnable { syncLyrics() }
+    private val lyricsSpan by lazy { ForegroundColorSpan(themeColor(R.attr.pnAccent)) }
     private lateinit var volumePanel: View
     private var userSeeking = false
     private var pagerProgrammatic = false
@@ -101,9 +123,14 @@ class NowPlayingActivity : BaseActivity() {
         seek = findViewById(R.id.seek)
         elapsed = findViewById(R.id.elapsed)
         total = findViewById(R.id.total)
+        // Looked up once: the queue rows use the same ids and come first in the layout.
+        titleView = findViewById(R.id.title)
+        subtitleView = findViewById(R.id.subtitle)
         overlayTop = findViewById(R.id.overlay_top)
         overlayBottom = findViewById(R.id.overlay_bottom)
         lyricsPanel = findViewById(R.id.lyrics_panel)
+        lyricsScroll = findViewById(R.id.lyrics_scroll)
+        lyricsText = findViewById(R.id.lyrics_text)
         volumePanel = findViewById(R.id.volume_panel)
         queueList = findViewById(R.id.queue_list)
 
@@ -185,11 +212,11 @@ class NowPlayingActivity : BaseActivity() {
 
         val song = PlayerHub.currentSong()
         findViewById<TextView>(R.id.position).text = if (items.isEmpty()) "0/0" else "${index + 1}/${items.size}"
-        findViewById<TextView>(R.id.title).apply {
+        titleView.apply {
             text = song?.title ?: c?.mediaMetadata?.title ?: ""
             isSelected = true
         }
-        findViewById<TextView>(R.id.subtitle).text = song?.let { listOf(it.artist, it.album).filter { s -> s.isNotBlank() }.joinToString(" - ") } ?: ""
+        subtitleView.text = song?.let { listOf(it.artist, it.album).filter { s -> s.isNotBlank() }.joinToString(" - ") } ?: ""
         if (song?.id != currentSongId) {
             currentSongId = song?.id ?: -1
             ArtLoader.load(findViewById(R.id.art_backdrop), song?.let { ArtKey.Song(it.id, it.albumId) }, dp(64), R.drawable.placeholder_album, blur = true)
@@ -221,6 +248,8 @@ class NowPlayingActivity : BaseActivity() {
             })
         }
         updateProgress()
+        // Play, pause, seek and song change all arrive here; the lyrics then pick the right line again.
+        syncLyrics()
         if (PlayerHub.partyShuffle != partyShown) {
             partyShown = PlayerHub.partyShuffle
             invalidateOptionsMenu()
@@ -376,6 +405,7 @@ class NowPlayingActivity : BaseActivity() {
 
     // --- overlay (rating bar and common actions) ----------------------------------------------
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupOverlay() {
         rating.onRatingChanged = { value ->
             PlayerHub.currentSong()?.let { s ->
@@ -427,16 +457,22 @@ class NowPlayingActivity : BaseActivity() {
         findViewById<View>(R.id.btn_lyrics).setOnClickListener {
             if (lyricsPanel.visibility == View.VISIBLE) {
                 lyricsPanel.visibility = View.GONE
+                handler.removeCallbacks(lyricsTick)
             } else {
                 queueList.visibility = View.GONE
                 lyricsPanel.visibility = View.VISIBLE
                 loadLyrics()
             }
         }
+        lyricsScroll.setOnTouchListener { _, _ ->
+            lyricsTouchedAt = SystemClock.uptimeMillis()
+            false
+        }
         findViewById<View>(R.id.lyrics_edit).setOnClickListener {
             val song = PlayerHub.currentSong() ?: return@setOnClickListener
-            val current = findViewById<TextView>(R.id.lyrics_text).tag as? String ?: ""
-            LyricsEditor.edit(this, song, current) { loadLyrics() }
+            if (lyricsLoading) return@setOnClickListener
+            // The stored text with its time tags, so saving keeps the lyrics synchronized.
+            LyricsEditor.edit(this, song, lyrics?.raw.orEmpty()) { loadLyrics() }
         }
     }
 
@@ -459,16 +495,87 @@ class NowPlayingActivity : BaseActivity() {
         if (!overlayVisible) volumePanel.visibility = View.GONE
     }
 
+    // --- lyrics -------------------------------------------------------------------------------
+
     private fun loadLyrics() {
         val song = PlayerHub.currentSong() ?: return
-        val tv = findViewById<TextView>(R.id.lyrics_text)
-        tv.text = getString(R.string.loading)
+        handler.removeCallbacks(lyricsTick)
+        lyrics = null
+        lyricsLoading = true
+        showPlainLyrics(getString(R.string.loading))
         lifecycleScope.launch {
-            val text = withContext(Dispatchers.IO) { TagIO.readLyrics(this@NowPlayingActivity, song, Prefs.lyricsPreferEmbedded) }
+            val loaded = withContext(Dispatchers.IO) { TagIO.readLyrics(this@NowPlayingActivity, song, Prefs.lyricsPreferEmbedded) }
             if (PlayerHub.currentSong()?.id != song.id) return@launch
-            tv.tag = text
-            tv.text = text ?: getString(R.string.no_lyrics)
+            lyrics = loaded
+            lyricsLoading = false
+            if (loaded?.synced == true) showSyncedLyrics(loaded) else showPlainLyrics(loaded?.plain ?: getString(R.string.no_lyrics))
         }
+    }
+
+    private fun showPlainLyrics(text: String) {
+        lyricsText.setTextColor(getColor(R.color.pn_on_surface))
+        lyricsText.setPadding(dp(24), dp(24), dp(24), dp(80))
+        lyricsText.text = text
+        lyricsScroll.scrollTo(0, 0)
+    }
+
+    /** One line per row, all dimmed; [syncLyrics] colors the sung line and scrolls it to a third of the panel. */
+    private fun showSyncedLyrics(l: Lyrics) {
+        val text = SpannableStringBuilder()
+        lyricsLineStarts = IntArray(l.lines.size)
+        l.lines.forEachIndexed { i, line ->
+            if (i > 0) text.append('\n')
+            lyricsLineStarts[i] = text.length
+            text.append(line.text)
+        }
+        lyricsText.setTextColor(getColor(R.color.pn_on_surface_dim))
+        lyricsText.setText(text, TextView.BufferType.SPANNABLE)
+        lyricsLine = NO_LINE
+        lyricsScroll.doOnLayout { scroll ->
+            // Posted: changing the padding inside a layout pass would force a second pass.
+            scroll.post {
+                val h = scroll.height
+                // Room above the first and below the last line, so every line can reach the focus point.
+                lyricsText.setPadding(dp(24), h / 3, dp(24), h - h / 3)
+                lyricsText.doOnLayout { if (lyrics === l) syncLyrics(smooth = false) }
+            }
+        }
+    }
+
+    /**
+     * Highlights the line sung now and waits exactly until the next one starts. Runs only while the lyrics are
+     * visible, the screen is in front (onPause clears the handler) and music plays; no fixed tick.
+     */
+    private fun syncLyrics(smooth: Boolean = true) {
+        handler.removeCallbacks(lyricsTick)
+        val l = lyrics?.takeIf { it.synced } ?: return
+        if (lyricsPanel.visibility != View.VISIBLE) return
+        val c = PlayerHub.controller ?: return
+        val pos = c.currentPosition
+        val i = l.indexAt(pos)
+        if (i != lyricsLine) {
+            lyricsLine = i
+            highlightLyrics(l, i, smooth)
+        }
+        if (c.isPlaying) {
+            val next = l.nextChangeAfter(pos) ?: return
+            val speed = c.playbackParameters.speed.coerceAtLeast(0.1f)
+            handler.postDelayed(lyricsTick, ((next - pos) / speed).toLong() + 20)
+        }
+    }
+
+    private fun highlightLyrics(l: Lyrics, index: Int, smooth: Boolean) {
+        val text = lyricsText.text as? Spannable ?: return
+        val group = l.groupOf(index)
+        val start = if (group.isEmpty()) 0 else lyricsLineStarts[group.first]
+        val end = if (group.isEmpty()) 0 else lyricsLineStarts[group.last] + l.lines[group.last].text.length
+        // Only the color changes, so the text keeps its layout and is merely redrawn.
+        if (end > start) text.setSpan(lyricsSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) else text.removeSpan(lyricsSpan)
+        // Someone scrolling through the text keeps their place for a moment.
+        if (SystemClock.uptimeMillis() - lyricsTouchedAt < 4000) return
+        val layout = lyricsText.layout ?: return
+        val y = if (group.isEmpty()) 0 else (lyricsText.paddingTop + layout.getLineTop(layout.getLineForOffset(start)) - lyricsScroll.height / 3).coerceAtLeast(0)
+        if (smooth) lyricsScroll.smoothScrollTo(0, y) else lyricsScroll.scrollTo(0, y)
     }
 
     // --- controls -----------------------------------------------------------------------------
@@ -553,6 +660,7 @@ class NowPlayingActivity : BaseActivity() {
             applyOverlayVisibility()
         } else {
             lyricsPanel.visibility = View.GONE
+            handler.removeCallbacks(lyricsTick)
             queueList.visibility = View.VISIBLE
             overlayTop.visibility = View.GONE
             overlayBottom.visibility = View.GONE

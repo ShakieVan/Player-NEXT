@@ -86,22 +86,25 @@ object TagIO {
         Tags(values, tag?.firstArtwork?.binaryData, header, try { RatingTags.read(tag) } catch (_: Exception) { 0 })
     }
 
-    fun readLyrics(context: Context, song: Song, preferEmbedded: Boolean): String? {
+    /**
+     * Lyrics embedded in the file or from an .lrc file of the same name. Synchronized lyrics win over plain
+     * ones; otherwise [preferEmbedded] decides.
+     */
+    fun readLyrics(context: Context, song: Song, preferEmbedded: Boolean): Lyrics? {
         val embedded = try {
-            withReadableFile(context, song) { AudioFileIO.read(it).tag?.getFirst(FieldKey.LYRICS) }
+            withReadableFile(context, song) { Lyrics.fieldOf(AudioFileIO.read(it).tag) }
         } catch (_: Exception) {
             null
-        }?.takeIf { it.isNotBlank() }
+        }?.let(Lyrics::parse)?.takeIf { it.plain.isNotBlank() }
         val lrc = File(song.path.substringBeforeLast('.') + ".lrc").takeIf { it.canRead() }?.let {
-            try { it.readText() } catch (_: Exception) { null }
-        }?.let(::stripLrcTimestamps)?.takeIf { it.isNotBlank() }
-        return if (preferEmbedded) embedded ?: lrc else lrc ?: embedded
+            try { Lyrics.decode(it.readBytes()) } catch (_: Exception) { null }
+        }?.let(Lyrics::parse)?.takeIf { it.plain.isNotBlank() }
+        val (first, second) = if (preferEmbedded) embedded to lrc else lrc to embedded
+        return when {
+            first?.synced == false && second?.synced == true -> second
+            else -> first ?: second
+        }
     }
-
-    private fun stripLrcTimestamps(text: String): String = text.lines()
-        .filterNot { it.matches(Regex("^\\[(ar|ti|al|by|offset|length|re|ve):.*]$")) }
-        .joinToString("\n") { it.replace(Regex("\\[\\d{1,2}:\\d{2}(?:[.:]\\d{1,3})?]"), "").trim() }
-        .trim()
 
     /** Rating in half stars (0..10) stored in the file, 0 if none; null if the file can't be read. */
     fun readRating(context: Context, song: Song, copy: Boolean = true): Int? = try {

@@ -54,6 +54,7 @@ Legende: ✅ umgesetzt · ➖ bewusst weggelassen (online oder nicht mehr mögli
 | Google-Drive-Sicherung | ➖ online; Sicherung als Datei |
 | Tag-Editor einzeln und stapelweise, Cover, Liedtext | ✅ |
 | Liedtexte aus dem Internet | ➖ online; eingebettet oder `.lrc` |
+| Liedtexte mit Zeitstempeln (LRC) | ✅ laufen in „Jetzt läuft“ mit, laufende Zeile hervorgehoben |
 | Scrobbler | ➖ online |
 
 ## System

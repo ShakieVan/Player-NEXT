@@ -85,16 +85,21 @@
         android:visibility="gone">
 
         <ScrollView
+            android:id="@+id/lyrics_scroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbars="none">
 
+            <!-- synchronized lyrics get padding of a third of the panel above and two thirds below in code -->
             <TextView
                 android:id="@+id/lyrics_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:lineSpacingMultiplier="1.25"
-                android:padding="24dp"
+                android:paddingStart="24dp"
+                android:paddingTop="24dp"
+                android:paddingEnd="24dp"
                 android:paddingBottom="80dp"
                 android:textColor="@color/pn_on_surface"
                 android:textIsSelectable="true"

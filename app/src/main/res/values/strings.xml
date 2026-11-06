@@ -142,7 +142,7 @@
     <string name="share">Teilen</string>
     <string name="lyrics">Liedtexte</string>
     <string name="queue">Warteschlange</string>
-    <string name="no_lyrics">Für diesen Titel sind keine Liedtexte gespeichert.\n\nÜber „Bearbeiten“ kannst du einen Liedtext in die Datei schreiben, oder lege eine .lrc-Datei mit gleichem Namen neben die Musikdatei.</string>
+    <string name="no_lyrics">Für diesen Titel sind keine Liedtexte gespeichert.\n\nÜber „Bearbeiten“ kannst du einen Liedtext in die Datei schreiben, oder lege eine .lrc-Datei mit gleichem Namen neben die Musikdatei.\n\nSteht vor jeder Zeile ihr Einsatz wie [01:23.45], läuft der Text beim Abspielen mit.</string>
     <string name="lyrics_edit">Liedtext bearbeiten</string>
     <string name="previous">Zurück</string>
     <string name="next">Weiter</string>

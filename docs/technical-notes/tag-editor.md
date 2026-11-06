@@ -31,7 +31,8 @@ Stapelbearbeitung: Felder mit unterschiedlichen Werten zeigen
 - Der Zurück-Pfeil braucht seinen Klick-Handler nach `setSupportActionBar`,
   das ihn sonst ersetzt (bis 1.1.2 im Tag- und im Smart-Playlist-Editor ohne
   Funktion).
-- Liedtexte: eingebettet (`LYRICS`/USLT) oder `.lrc` neben der Datei; die
-  Zeitstempel einer `.lrc` werden für die Anzeige entfernt.
+- Liedtexte: eingebettet (`LYRICS`/USLT) oder `.lrc` neben der Datei; mit
+  Zeitstempeln laufen sie in „Jetzt läuft“ mit. Der Editor zeigt und speichert
+  die Zeitstempel. Siehe [`liedtexte.md`](liedtexte.md).
 - Auf gesperrten Testhandys erscheint der Freigabedialog nicht über der
   Sperre; Schreibtests deshalb im Emulator.

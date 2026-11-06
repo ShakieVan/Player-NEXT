@@ -56,6 +56,9 @@ Playlists) nie verlieren, 3. Akku, 4. Nähe zu PlayerPro, 5. Komfort.
 - Bewertungen: `tags/RatingTags` (Formate), `data/FileRatings` (Abgleich mit
   den Dateien, nie zulasten der App-Bewertung), siehe
   [`docs/technical-notes/bewertungen.md`](docs/technical-notes/bewertungen.md).
+- Liedtexte: `tags/Lyrics` (LRC lesen, mitlaufende Zeilen), Anzeige in
+  `NowPlayingActivity`, siehe
+  [`docs/technical-notes/liedtexte.md`](docs/technical-notes/liedtexte.md).
 - Hörbücher: `playback/Mp4Chapters`, `Audiobooks.kt` (`ChapterStore`,
   `AudiobookPositions`), `ui/browse/AudiobookLibrary`, siehe
   [`docs/technical-notes/hoerbuecher.md`](docs/technical-notes/hoerbuecher.md).
@@ -70,7 +73,8 @@ Vor Änderungen an Wiedergabe, Energie oder Tags die Notizen in
 - Keine periodischen Timer im Hintergrund. UI-Takte (Fortschritt) nur im
   Vordergrund und höchstens 1/s, auf Sekundenwechsel ausgerichtet. Einzige
   Ausnahme: die Pegelanzeige im Equalizer (höchstens 30/s, nur sichtbar und
-  beim Abspielen).
+  beim Abspielen). Mitlaufende Liedtexte haben keinen Takt, sondern wachen
+  einmal je Zeilenwechsel auf (nur sichtbar und beim Abspielen).
 - `MediaSession` sendet keine periodischen Positionsmeldungen
   (`setPeriodicPositionUpdateEnabled(false)`).
 - Der DSP reicht bei neutralen Einstellungen unverändert durch; Audio-Offload
