@@ -13,8 +13,10 @@ import android.os.Looper
 import android.view.KeyEvent
 import android.view.View
 import android.widget.RemoteViews
+import androidx.annotation.OptIn
 import androidx.core.app.TaskStackBuilder
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.core.content.ContextCompat
 import de.shakie.playernext.Prefs
 import de.shakie.playernext.R
@@ -34,6 +36,7 @@ open class BaseWidget(private val layout: Int, private val artSize: Int, val cov
 
     override fun onDeleted(context: Context, ids: IntArray) = WidgetOptions.forget(context, ids)
 
+    @OptIn(UnstableApi::class)
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             Widgets.ACTION_SHUFFLE -> PlaybackService.instance?.cycleShuffle()
@@ -223,6 +226,7 @@ object Widgets {
     // Widget buttons come here instead of going through media3's MediaButtonReceiver: that one drops
     // everything but "play" when it has to start the service, and play/pause would pass the headset logic.
 
+    @OptIn(UnstableApi::class)
     fun playPause(context: Context) {
         val service = PlaybackService.instance
         if (service != null && service.exo.playWhenReady) {

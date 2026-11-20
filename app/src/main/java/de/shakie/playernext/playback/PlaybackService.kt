@@ -11,6 +11,7 @@ import android.media.audiofx.PresetReverb
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.OptIn
 import androidx.core.app.TaskStackBuilder
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -20,6 +21,7 @@ import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.util.ExperimentalApi
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -54,7 +56,7 @@ import de.shakie.playernext.ui.MainActivity
 import de.shakie.playernext.ui.nowplaying.NowPlayingActivity
 import de.shakie.playernext.widget.Widgets
 
-@UnstableApi
+@OptIn(UnstableApi::class, ExperimentalApi::class)
 class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Executor,
     HeadsetButtons.Actions, ShakeDetector.Callback {
 

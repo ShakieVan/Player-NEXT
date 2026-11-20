@@ -3,6 +3,7 @@ package de.shakie.playernext.playback
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import com.google.common.util.concurrent.Futures
@@ -13,7 +14,7 @@ import de.shakie.playernext.art.ArtLoader
 import java.util.concurrent.Executors
 
 /** Serves "playernext://" artwork URIs (notification, lock screen, Android Auto) from ArtLoader. */
-@UnstableApi
+@OptIn(UnstableApi::class)
 class ArtBitmapLoader : BitmapLoader {
     private val executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor())
 

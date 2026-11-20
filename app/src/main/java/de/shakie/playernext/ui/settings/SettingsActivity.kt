@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.annotation.OptIn
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -283,6 +285,7 @@ class SettingsActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceSt
             }
         }
 
+        @OptIn(UnstableApi::class)
         private fun openSystemEffects() {
             val sessionId = PlaybackService.instance?.exo?.audioSessionId ?: 0
             val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL)

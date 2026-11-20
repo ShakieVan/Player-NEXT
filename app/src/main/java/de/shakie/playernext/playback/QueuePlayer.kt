@@ -1,8 +1,10 @@
 package de.shakie.playernext.playback
 
+import androidx.annotation.OptIn
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import de.shakie.playernext.Prefs
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ShuffleOrder
@@ -14,6 +16,7 @@ import kotlin.random.Random
  * counter and drag & drop always match what plays next. ExoPlayer's own shuffle flag is
  * kept in sync but backed by an identity shuffle order.
  */
+@OptIn(UnstableApi::class)
 class QueuePlayer(private val exo: ExoPlayer, private val hooks: Hooks) : ForwardingPlayer(exo) {
 
     interface Hooks {

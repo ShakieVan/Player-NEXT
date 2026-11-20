@@ -24,6 +24,7 @@ import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.annotation.OptIn
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.WindowCompat
 import androidx.core.view.doOnLayout
@@ -33,6 +34,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -258,6 +260,7 @@ class NowPlayingActivity : BaseActivity() {
 
     private var partyShown = false
 
+    @OptIn(UnstableApi::class)
     private fun updateFormat(song: Song?) {
         val c = PlayerHub.controller
         val format = c?.currentTracks?.groups?.firstOrNull { it.type == C.TRACK_TYPE_AUDIO && it.length > 0 }?.getTrackFormat(0)

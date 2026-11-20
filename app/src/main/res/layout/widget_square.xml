@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- App widget (RemoteViews): the launcher inflates it without AppCompat, so only android:tint works. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UseAppTint"
     android:id="@+id/w_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">

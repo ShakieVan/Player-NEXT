@@ -1,8 +1,10 @@
 package de.shakie.playernext.playback.dsp
 
+import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.audio.BaseAudioProcessor
+import androidx.media3.common.util.UnstableApi
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.abs
@@ -15,6 +17,7 @@ import kotlin.math.pow
  * the buffer unchanged. The main player's instance ([metered]) also feeds [LevelMeter] while
  * the equalizer shows its meters.
  */
+@OptIn(UnstableApi::class)
 class DspAudioProcessor(private val metered: Boolean = false) : BaseAudioProcessor() {
     private var channels = 2
     private var sampleRate = 44100

@@ -115,5 +115,9 @@ Vor Änderungen an Wiedergabe, Energie oder Tags die Notizen in
   Kommentaren wie in Tube NEXT.
 - Kleine, prüfbare Schritte; nach Änderungen `assembleDebug` und
   `testDebugUnitTest`.
+- `lintDebug` ist fehlerfrei. Media3-APIs per `@OptIn(UnstableApi::class)`
+  freigeben, nicht mit `@UnstableApi` markieren (das zwingt alle Aufrufer
+  zum Opt-in). Widget-Layouts behalten `android:tint`: RemoteViews kennen
+  kein `app:tint`.
 - Dauerhafte Entscheidungen unter `docs/decisions/`, technisches Wissen unter
   `docs/technical-notes/` festhalten.
