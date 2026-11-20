@@ -167,8 +167,6 @@ class BrowseFragment : Fragment(R.layout.fragment_browse), RowCallbacks {
 
     private fun rootTypeOfKey() = if (kind == ALBUMS_OF_ARTIST) BrowserType.ARTISTS else BrowserType.GENRES
 
-    val isRoot: Boolean get() = key == null && kind in setOf(ALBUMS, ARTISTS, COMPOSERS, GENRES, PLAYLISTS, FOLDERS, SONGS, VIDEOS, AUDIOBOOKS, SEARCH)
-
     val iconRes: Int get() = iconFor(browserType)
 
     val title: String

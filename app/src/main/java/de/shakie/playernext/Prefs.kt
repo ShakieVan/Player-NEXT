@@ -26,11 +26,6 @@ object Prefs {
     } catch (_: ClassCastException) {
         sp.getString(key, null)?.toIntOrNull() ?: def
     }
-    private fun float(key: String, def: Float) = try {
-        sp.getFloat(key, def)
-    } catch (_: ClassCastException) {
-        sp.getString(key, null)?.toFloatOrNull() ?: def
-    }
 
     // Library
     val musicFolders: Set<String> get() = sp.getStringSet("music_folders", emptySet()) ?: emptySet()
@@ -101,16 +96,6 @@ object Prefs {
     val notifCustomRight get() = str("statusbar_custom_action_2", "custom_action_stop")
     val notifUsePrev get() = bool("statusbar_use_prev", true)
 
-    // Lockscreen
-    val lockscreenEnabled get() = bool("lockscreen_playerpro", false)
-    val lockscreenClock get() = bool("lockscreen_show_clock", true)
-    val lockscreenHideControls get() = bool("lockscreen_hide_pcontrols", false)
-    val lockscreenHideRatings get() = bool("lockscreen_hide_ratings", false)
-    val lockscreenHideShuffleRepeat get() = bool("lockscreen_hide_shufflerepeat", false)
-    val lockscreenBackground get() = str("lockscreen_bg", "wallpaper")
-    val lockscreenSwipe get() = bool("lockscreen_enable_swipe", true)
-    val lockscreenFullScreen get() = bool("lockscreen_full_screen", false)
-
     // Audio
     val balance get() = int("audio_balance", 0) / 100f
     val monoOutput get() = bool("mono_output", false)
@@ -180,6 +165,4 @@ object Prefs {
     val useShake get() = bool("use_shake", false)
     val shakeSensitivity get() = int("shake_sensitivity", 50)
     val shakeFlipPause get() = bool("shake_pause_upsidedown", false)
-
-    fun float01(key: String, def: Float) = float(key, def)
 }

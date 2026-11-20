@@ -35,6 +35,7 @@ import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionError
 import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
@@ -52,7 +53,6 @@ import de.shakie.playernext.playback.dsp.DspAudioProcessor
 import de.shakie.playernext.ui.MainActivity
 import de.shakie.playernext.ui.nowplaying.NowPlayingActivity
 import de.shakie.playernext.widget.Widgets
-import java.util.concurrent.CopyOnWriteArrayList
 
 @UnstableApi
 class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Executor,
@@ -65,9 +65,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         @Volatile
         var instance: PlaybackService? = null
             private set
-        private val stateListeners = CopyOnWriteArrayList<() -> Unit>()
-        fun addStateListener(l: () -> Unit) = stateListeners.add(l)
-        fun removeStateListener(l: () -> Unit) = stateListeners.remove(l)
     }
 
     lateinit var exo: ExoPlayer
@@ -218,7 +215,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         reverb?.release()
         session.release()
         exo.release()
-        stateListeners.forEach { it() }
         super.onDestroy()
     }
 
@@ -241,7 +237,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
                 scheduleSave(0)
             }
             updateShake()
-            notifyState()
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -251,7 +246,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
             if (isPlaying) handler.postDelayed(statsTick, 30_000)
             crossfader.reschedule()
             Widgets.update(this@PlaybackService)
-            notifyState()
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -274,7 +268,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
             refreshButtons()
             Widgets.update(this@PlaybackService)
             scheduleSave()
-            notifyState()
         }
 
         override fun onTimelineChanged(timeline: androidx.media3.common.Timeline, reason: Int) {
@@ -289,7 +282,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
             handler.post(systemQueueCheck)
             scheduleSave()
             Widgets.update(this@PlaybackService)
-            notifyState()
         }
 
         override fun onTracksChanged(tracks: Tracks) {
@@ -342,8 +334,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
             }
         }
     }
-
-    private fun notifyState() = stateListeners.forEach { it() }
 
     /**
      * Queues above [SYSTEM_QUEUE_LIMIT] are not handed to the system (lock screen, Bluetooth, Android
@@ -600,7 +590,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         exo.stop()
         player.clearMediaItems()
         saveQueue()
-        notifyState()
     }
 
     // Chapters known: the notification buttons (⏮/⏭ availability) are rebuilt.
@@ -655,7 +644,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
             }
             topUpPartyShuffle()
         }
-        notifyState()
     }
 
     /**
@@ -692,7 +680,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         }
         exo.pause()
         handler.postDelayed({ mixer.setSleep(1f) }, 500)
-        notifyState()
     }
 
     // --- shake ------------------------------------------------------------------------------
@@ -800,7 +787,6 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
             val song = QueueItems.songOf(exo.currentMediaItem)
             stats.startItem(song?.path, song?.duration ?: 0)
             Widgets.update(this)
-            notifyState()
         }
     }
 
@@ -822,7 +808,7 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
         ): ListenableFuture<SessionResult> {
             val merged = Bundle(customCommand.customExtras).apply { putAll(args) }
             val ok = handleCustomCommand(customCommand.customAction, merged)
-            return Futures.immediateFuture(SessionResult(if (ok) SessionResult.RESULT_SUCCESS else SessionResult.RESULT_ERROR_NOT_SUPPORTED))
+            return Futures.immediateFuture(SessionResult(if (ok) SessionResult.RESULT_SUCCESS else SessionError.ERROR_NOT_SUPPORTED))
         }
 
         override fun onMediaButtonEvent(session: MediaSession, controllerInfo: MediaSession.ControllerInfo, intent: Intent): Boolean =
@@ -902,7 +888,7 @@ class PlaybackService : MediaLibraryService(), QueuePlayer.Hooks, SleepTimer.Exe
             val song = QueueItems.songIdOf(mediaId.substringAfter("|song:"))?.let { Library.snapshot.songsById[it] }
             return Futures.immediateFuture(
                 if (song != null) LibraryResult.ofItem(QueueItems.build(song), null)
-                else LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE)
+                else LibraryResult.ofError(SessionError.ERROR_BAD_VALUE)
             )
         }
 

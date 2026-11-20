@@ -14,8 +14,6 @@ object Permissions {
 
     fun hasAudio(context: Context) = granted(context, audio)
     fun hasVideo(context: Context) = granted(context, video)
-    fun hasNotifications(context: Context) =
-        Build.VERSION.SDK_INT < 33 || granted(context, Manifest.permission.POST_NOTIFICATIONS)
 
     fun required(context: Context): Array<String> {
         val list = mutableListOf(audio)

@@ -9,6 +9,7 @@
   - [Tag-Editor](technical-notes/tag-editor.md)
   - [Bewertungen](technical-notes/bewertungen.md)
   - [Hörbücher](technical-notes/hoerbuecher.md)
+  - [Liedtexte](technical-notes/liedtexte.md)
   - [Update-Funktion](technical-notes/updates.md)
 - [Release-Notizen](releases/)
 - [Logo-Varianten](branding/) – erzeugt mit Qwen-Image-Edit-2511 aus dem

@@ -140,12 +140,6 @@ object StatsStore : ChangeNotifier() {
         notifyChanged()
     }
 
-    fun movePath(from: String, to: String) {
-        val s = synchronized(cache) { cache.remove(from) } ?: return
-        update(to) { s }
-        AppDatabase.write { db.writableDatabase.delete("stats", "path = ?", arrayOf(from)) }
-    }
-
     private fun update(path: String, change: (SongStats) -> SongStats) {
         val next = synchronized(cache) {
             change(cache[path] ?: SongStats()).also { cache[path] = it }
@@ -239,12 +233,6 @@ object PlaylistStore : ChangeNotifier() {
         notifyChanged()
     }
 
-    fun replacePath(from: String, to: String) {
-        db.writableDatabase.update("playlist_items", ContentValues().apply { put("path", to) }, "path = ?", arrayOf(from))
-        reload()
-        notifyChanged()
-    }
-
     private fun writeItems(id: Long, paths: List<String>) {
         val w = db.writableDatabase
         w.beginTransaction()
@@ -317,13 +305,6 @@ object FavoritesStore : ChangeNotifier() {
         } finally {
             w.endTransaction()
         }
-        reload()
-        notifyChanged()
-    }
-
-    fun replaceKey(type: ItemType, from: String, to: String) {
-        db.writableDatabase.update("favorites", ContentValues().apply { put("item_key", to) },
-            "type = ? AND item_key = ?", arrayOf(type.key, from))
         reload()
         notifyChanged()
     }

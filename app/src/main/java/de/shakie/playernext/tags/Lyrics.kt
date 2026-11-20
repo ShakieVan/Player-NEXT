@@ -92,7 +92,7 @@ class Lyrics private constructor(
         private val OFFSET = Regex("""^\s*\[offset:\s*([+-]?\d+)\s*]\s*$""", RegexOption.IGNORE_CASE)
 
         fun parse(raw: String): Lyrics {
-            val source = raw.replace("\r\n", "\n").replace('\r', '\n').removePrefix("﻿")
+            val source = raw.replace("\r\n", "\n").replace('\r', '\n').removePrefix("\uFEFF")
             var offset = 0L
             val plain = ArrayList<String>()
             // (times, text) per written line; times empty for untimed lines.

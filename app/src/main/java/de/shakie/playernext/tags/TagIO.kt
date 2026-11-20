@@ -2,7 +2,6 @@ package de.shakie.playernext.tags
 
 import android.content.Context
 import android.media.MediaScannerConnection
-import android.net.Uri
 import android.provider.MediaStore
 import de.shakie.playernext.data.Song
 import org.jaudiotagger.audio.AudioFileIO
@@ -170,6 +169,4 @@ object TagIO {
         if (paths.isEmpty()) return
         MediaScannerConnection.scanFile(context, paths.toTypedArray(), null, null)
     }
-
-    fun uriOf(song: Song): Uri = song.uri
 }

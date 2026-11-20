@@ -8,14 +8,11 @@
     <string name="save">Speichern</string>
     <string name="close">Schließen</string>
     <string name="edit">Bearbeiten</string>
-    <string name="yes">Ja</string>
-    <string name="no">Nein</string>
     <string name="unknown_artist">Unbekannter Interpret</string>
     <string name="unknown_album">Unbekanntes Album</string>
     <string name="unknown_genre">Unbekanntes Genre</string>
     <string name="various_artists">Verschiedene Interpreten</string>
     <string name="open_menu">Menü öffnen</string>
-    <string name="close_menu">Menü schließen</string>
     <string name="more_options">Weitere Optionen</string>
     <string name="back">Zurück</string>
 
@@ -49,7 +46,6 @@
     <string name="drawer_favorites">FAVORITEN</string>
     <string name="drawer_browsers">BROWSER</string>
     <string name="drawer_edit">Navigationsmenü anpassen</string>
-    <string name="drawer_edit_done">Fertig</string>
     <string name="drawer_edit_hint">Browser antippen zum Ein-/Ausblenden, Favoriten nach links wischen zum Entfernen, am Symbol ziehen zum Sortieren.</string>
     <string name="drawer_no_favorites">Noch keine Favoriten. Über „Zu Favoriten hinzufügen“ im Kontextmenü anlegen.</string>
 
@@ -73,7 +69,6 @@
     <string name="party_off">Partymix aus</string>
     <string name="sleep_timer">Einschlaf-Timer</string>
     <string name="exit">Beenden</string>
-    <string name="rescan">Medien aktualisieren</string>
 
     <string name="sort_title">Nach Titelname</string>
     <string name="sort_name">Nach Name</string>
@@ -124,7 +119,6 @@
     <string name="action_play_video">Video abspielen</string>
 
     <string name="art_choose">Bild aus Galerie wählen</string>
-    <string name="art_use_embedded">Eingebettetes Cover verwenden</string>
     <string name="art_remove">Eigenes Bild entfernen</string>
     <string name="art_saved">Bild gespeichert</string>
     <string name="art_failed">Bild konnte nicht geladen werden</string>
@@ -186,8 +180,6 @@
     <string name="repeat_off">Wiederholen aus</string>
     <string name="repeat_all">Alle wiederholen</string>
     <string name="repeat_one">Titel wiederholen</string>
-    <string name="offload_active">Hardware-Wiedergabe</string>
-    <string name="rating_set">Bewertung: %1$s</string>
 
     <!-- Details -->
     <string name="details_title">Titelinfos</string>
@@ -214,6 +206,8 @@
 
     <!-- Equalizer -->
     <string name="eq_preset">Preset</string>
+    <string name="eq_toggle_on">ON</string>
+    <string name="eq_toggle_off">OFF</string>
     <string name="eq_preamp">PREAMP</string>
     <string name="eq_loudness">Lautheits-Maximierer</string>
     <string name="eq_loud_threshold">SCHWELLE</string>
@@ -230,7 +224,6 @@
     <string name="eq_virtualizer">Virtualizer</string>
     <string name="eq_volume">Lautstärke</string>
     <string name="eq_save_preset">Preset speichern</string>
-    <string name="eq_preset_name">Name des Presets</string>
     <string name="eq_rename_preset">Preset umbenennen</string>
     <string name="eq_reset">Zurücksetzen</string>
     <string name="eq_manual">Manuell</string>
@@ -271,7 +264,6 @@
     <string name="removed_favorite">Aus Favoriten entfernt</string>
     <string name="enqueued">%d Titel zur Warteschlange hinzugefügt</string>
     <string name="play_next_added">%d Titel werden als Nächstes gespielt</string>
-    <string name="delete_confirm_songs">%d Titel endgültig von diesem Gerät löschen?</string>
     <string name="deleted_songs">%d Titel gelöscht</string>
     <string name="ringtone_set">„%1$s“ ist jetzt Klingelton</string>
     <string name="ringtone_permission">Bitte erlaube Player NEXT, Systemeinstellungen zu ändern, und wähle die Aktion erneut.</string>
@@ -309,7 +301,6 @@
     <string name="tag_comment">Kommentar</string>
     <string name="tag_bpm">BPM</string>
     <string name="tag_lyrics">Liedtext</string>
-    <string name="tag_rating">Bewertung</string>
     <string name="tag_artwork_change">Cover ändern</string>
     <string name="tag_artwork_remove">Cover entfernen</string>
     <string name="tag_batch_hint">Felder mit &lt;verschiedene&gt; bleiben unverändert, solange du sie nicht änderst.</string>
@@ -320,7 +311,6 @@
     <string name="tag_rating_will_write">Wird beim Speichern in die Datei und in Player NEXT übernommen</string>
     <string name="tag_saved">Tags gespeichert</string>
     <string name="tag_failed">Tags konnten nicht gespeichert werden: %1$s</string>
-    <string name="tag_loading">Tags werden gelesen …</string>
     <string name="tag_saving">Tags werden geschrieben …</string>
     <string name="tag_permission_denied">Schreibzugriff wurde nicht erlaubt</string>
 
@@ -405,7 +395,6 @@
     <string name="video_scale">Skalierung</string>
     <string name="video_rotate">Drehen</string>
     <string name="video_scale_fit">Einpassen</string>
-    <string name="video_scale_fill">Ausfüllen</string>
     <string name="video_scale_zoom">Zoomen</string>
     <string name="video_scale_stretch">Strecken</string>
 
@@ -425,7 +414,6 @@
     <string name="folder_picker_up">Übergeordneter Ordner</string>
     <string name="folder_picker_selected">Ausgewählt: %s</string>
     <string name="folder_picker_partly">%s · teilweise ausgewählt</string>
-    <string name="stats_imported">%d Bewertungen aus Dateien übernommen</string>
     <string name="ratings_import_title">Bewertungen aus Dateien</string>
     <string name="ratings_import_progress">%1$d von %2$d Dateien gelesen</string>
     <string name="ratings_import_done">%1$d Bewertungen übernommen, %2$d Dateien gelesen. Bewertungen, die du in Player NEXT gesetzt hast, bleiben erhalten.</string>

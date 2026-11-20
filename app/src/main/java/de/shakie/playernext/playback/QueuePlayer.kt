@@ -31,8 +31,6 @@ class QueuePlayer(private val exo: ExoPlayer, private val hooks: Hooks) : Forwar
         exo.setShuffleOrder(ShuffleOrder.UnshuffledShuffleOrder(0))
     }
 
-    val currentOriginalOrder: List<String>? get() = originalOrder
-
     fun restoreShuffleState(enabled: Boolean, original: List<String>?) {
         originalOrder = if (enabled) original?.toMutableList() else null
         exo.setShuffleOrder(ShuffleOrder.UnshuffledShuffleOrder(exo.mediaItemCount))

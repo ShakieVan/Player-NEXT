@@ -37,8 +37,8 @@
                 android:layout_marginStart="14dp"
                 android:background="@drawable/toggle_background"
                 android:textColor="@color/pn_on_surface"
-                android:textOff="OFF"
-                android:textOn="ON"
+                android:textOff="@string/eq_toggle_off"
+                android:textOn="@string/eq_toggle_on"
                 android:textStyle="bold" />
         </LinearLayout>
     </com.google.android.material.appbar.MaterialToolbar>
@@ -216,8 +216,8 @@
                     android:background="@drawable/toggle_background"
                     android:contentDescription="@string/eq_loudness"
                     android:textColor="@color/pn_on_surface"
-                    android:textOff="OFF"
-                    android:textOn="ON"
+                    android:textOff="@string/eq_toggle_off"
+                    android:textOn="@string/eq_toggle_on"
                     android:textStyle="bold" />
             </LinearLayout>
 

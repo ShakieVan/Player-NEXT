@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageButton
@@ -172,7 +171,4 @@ class VideoPlayerActivity : BaseActivity() {
         player = null
         super.onDestroy()
     }
-
-    @Suppress("unused")
-    private fun visibleFlag(v: Boolean) = if (v) View.VISIBLE else View.GONE
 }

@@ -43,7 +43,6 @@ import de.shakie.playernext.playback.QueueStore
 import de.shakie.playernext.update.UpdateActivity
 import de.shakie.playernext.update.Updater
 import com.google.android.material.snackbar.Snackbar
-import de.shakie.playernext.tags.TagIO
 import de.shakie.playernext.ui.browse.BrowseFragment
 import de.shakie.playernext.ui.browse.BrowserHost
 import de.shakie.playernext.ui.common.ItemActions
@@ -560,11 +559,5 @@ class MainActivity : BaseActivity(), BrowserHost {
             PlayerHub.disconnect()
             finishAffinity()
         }, 300)
-    }
-
-    @Suppress("unused")
-    private fun rescan() {
-        TagIO.rescan(this, Library.snapshot.songs.map { it.folder }.distinct())
-        ItemActions.toast(this, getString(R.string.rescan_started))
     }
 }

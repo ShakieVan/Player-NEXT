@@ -98,15 +98,6 @@ object ArtLoader {
         return try { decode(key, sizePx) } catch (_: Throwable) { null }?.also { cache.put(tag, it) }
     }
 
-    fun loadAsync(key: ArtKey, sizePx: Int, callback: (Bitmap?) -> Unit) {
-        val tag = "${key.cacheKey}@$sizePx"
-        cache.get(tag)?.let { callback(it); return }
-        executor.execute {
-            val bmp = loadBitmap(key, sizePx)
-            main.post { callback(bmp) }
-        }
-    }
-
     private fun decode(key: ArtKey, size: Int): Bitmap? = when (key) {
         is ArtKey.Album -> custom("album_${key.albumId}", size) ?: albumThumb(key.albumId, size)
         is ArtKey.Song -> custom("album_${key.albumId}", size).takeUnless { Prefs.preferEmbeddedArt }
