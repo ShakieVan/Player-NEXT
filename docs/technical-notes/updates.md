@@ -155,6 +155,18 @@ der Albumliste und in der Warteschlange im neuen Zeilenaufbau.
 „Installieren“ → „App installed.“). Danach läuft im Release-Bau 1.1.6 eine
 `.lrc` mit, der Refrain samt Folgezeile ist hervorgehoben.
 
+23.11.2026 Release 1.2.0 im Emulator (BillCheck_Test_API_36, `-read-only`):
+Vorab per `adb install -r` über die 1.1.6 gespielt – Warteschlange erhalten,
+`.lrc` läuft mit, Bewertung und Equalizer gehen, kein Absturz im Protokoll.
+Nach dem Veröffentlichen die echte 1.1.0 von GitHub installiert, einen Titel
+mit 4 Sternen bewertet: Updates zeigt „Neue Version 1.2.0 verfügbar.“ mit den
+Notizen als lesbarem Rohtext, lädt 6,8 MB, „Apps installieren“, Android-
+Installer, Play Protect („App scannen“ → „Installieren“) → „App installed.“
+In 1.2.0 sind die 4 Sterne aus 1.1.0 da (Datenbank-Umstellung 1 → 2 direkt),
+der Beta-Schalter steht auf aus, „Jetzt prüfen“ meldet „Du hast die neueste
+Version.“ Eine frische 1.1.6 (Beta-Kanal an) bietet 1.2.0 aus dem
+Haupt-Repository an und zeigt die Notizen mit Aufzählungspunkten.
+
 Play Protect zeigte dabei „App-Scan empfohlen“ (unbekannte App). Den Link
 „Ohne Scan installieren“ nimmt der Dialog über `adb shell input` nicht an;
 „App scannen“ → „Diese App ist anscheinend sicher“ → „Installieren“. Nutzer
